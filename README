@@ -4,3 +4,8 @@ Virtual Beanstalk is a web-based virtual machine manager where users will
 * access files on the virtual machine directly
 * create, duplicate, snapshot, and share virtual machine images
 * integrate non-virtual servers into the virtual network
+
+After compiling:
+$ qemu -vnc :0.0 linux-0.2.img &
+$ ./beanstalk
+Then go to http://localhost:3000/
