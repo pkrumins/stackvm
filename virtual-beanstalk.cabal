@@ -1,0 +1,26 @@
+name:           virtual-beanstalk
+version:        0.1.0
+homepage:       http://github.com/substack/virtual-beanstalk
+synopsis:       Configure, network, and interact with virtual machines entirely
+                over the web
+description:
+    Virtual Beanstalk is a web-based virtual machine manager where users can
+    * interact directly with the graphical or text console
+    * drop virtual machines into a virtual network diagram
+    * access files on the virtual machine directly
+    * create, duplicate, snapshot, and share virtual machine images
+    * integrate non-virtual servers into the virtual network
+    
+    Virtual Beanstalk is released under the AGPLv3.
+
+license:        OtherLicense
+license-file:   LICENSE
+author:         James Halliday
+maintainer:     substack@gmail.com
+cabal-version:  >= 1.2
+build-type:     Simple
+
+executable beanstalk
+    main-is:            Main.hs
+    Build-Depends:      base, bytestring >= 0.9.1.5, hack, network,
+                        hack-handler-happstack, gd, network-rfb
