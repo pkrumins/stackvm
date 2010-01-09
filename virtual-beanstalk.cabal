@@ -23,4 +23,4 @@ build-type:     Simple
 executable beanstalk
     main-is:            Main.hs
     Build-Depends:      base, bytestring >= 0.9.1.5, hack, network,
-                        hack-handler-happstack, gd, network-rfb
+                        hack-handler-happstack, gd, network-rfb, loli
