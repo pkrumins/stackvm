@@ -1,33 +1,27 @@
 module Beanstalk.VM (
-    RChan, VM(..), updateThread, pngData
+    VM(..), updateThread, pngData
 ) where
 
-import qualified Network.RFB as RFB
 import qualified Graphics.GD as GD
+import Network.RFB
 
 import Control.Monad (forever, mapM_)
 import Control.Applicative ((<$>))
-
-import Control.Concurrent.STM.TChan
-import Control.Monad.STM (atomically)
 
 import qualified Data.ByteString as B
 import Data.ByteString.Lazy
 repack = pack . B.unpack
 
-type RChan = TChan [RFB.Rectangle]
-
 data VM = VM {
-    vmRFB :: RFB.RFB,
-    vmChan :: RChan
+    vmRFB :: RFB
 }
 
 pngData :: VM -> IO ByteString
-pngData vm = repack <$> GD.savePngByteString im where
-    im = RFB.fbImage $ RFB.rfbFB $ vmRFB vm
+pngData vm = do
+    im <- getImage $ vmRFB vm
+    repack <$> GD.savePngByteString im
 
 updateThread :: VM -> IO ()
 updateThread vm = forever $ do
     let rfb = vmRFB vm
-    update <- RFB.getUpdate rfb
-    mapM_ (RFB.render rfb) $ RFB.fbuRectangles update
+    renderImage' rfb =<< rectangles <$> getUpdate rfb
