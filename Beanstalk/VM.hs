@@ -1,6 +1,6 @@
 module Beanstalk.VM (
     VM(..), UpdateData(..), DrawData(..),
-    updateThread, getScreen, newVM
+    updateThread, getScreen, getUpdates, newVM
 ) where
 
 import qualified Graphics.GD as GD
@@ -12,6 +12,8 @@ import Control.Applicative ((<$>))
 
 import Control.Concurrent.STM (atomically)
 import Control.Concurrent.STM.TMVar
+
+import Data.Digest.OpenSSL.MD5 (md5sum)
 
 import qualified Data.ByteString as BS
 import qualified Data.ByteString.Lazy as BL
@@ -64,7 +66,21 @@ getScreen' rfb = do
         drawSize = fbWidth &&& fbHeight $ rfbFB rfb,
         drawBytes = bytes
     }
- 
+
+getUpdates :: VM -> Version -> IO UpdateData
+getUpdates vm version = do
+    updates <- reverse
+        <$> takeWhile ((< version) . updateVersion)
+        <$> (atomically $ readTMVar $ vmUpdates vm)
+    return $ UpdateData {
+        updateBytes = sum $ map updateBytes updates,
+        updateVersion =
+            if null updates
+                then 0
+                else updateVersion $ head updates,
+        updateData = concatMap updateData updates
+    }
+
 updateThread :: VM -> IO ()
 updateThread vm = forever $ do
     let rfb = vmRFB vm
