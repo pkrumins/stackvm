@@ -29,3 +29,6 @@ with_type = update . set_content_type
 
 with_body :: ByteString -> HackT
 with_body = update . set_body
+
+with_header :: String -> String -> HackT
+with_header = \field -> update . set_header field

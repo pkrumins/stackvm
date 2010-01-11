@@ -23,9 +23,12 @@ data VM = VM {
     vmScreen :: TMVar DrawData
 }
 
+type Version = Int
+type ByteSize = Int
+
 data UpdateData = UpdateData {
-    updateBytes :: Int,
-    updateVersion :: Int,
+    updateBytes :: ByteSize,
+    updateVersion :: Version,
     updateData :: [DrawData]
 }
 
@@ -33,7 +36,7 @@ data DrawData = DrawData {
     drawPng :: BL.ByteString,
     drawPos :: (Int,Int),
     drawSize :: (Int,Int),
-    drawBytes :: Int
+    drawBytes :: ByteSize
 }
 
 newVM :: RFB -> IO VM
