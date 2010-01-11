@@ -1,12 +1,12 @@
 module Beanstalk.VM (
     VM(..), UpdateData(..), DrawData(..),
-    updateThread, getScreenPng, newVM
+    updateThread, getScreen, newVM
 ) where
 
 import qualified Graphics.GD as GD
 import Network.RFB
 
-import Control.Monad (forever, mapM_, when)
+import Control.Monad (forever, when, forM)
 import Control.Arrow ((&&&))
 import Control.Applicative ((<$>))
 
@@ -20,8 +20,7 @@ repack = BL.pack . BS.unpack -- convert strict to lazy
 data VM = VM {
     vmRFB :: RFB,
     vmUpdates :: TMVar [UpdateData],
-    vmScreen :: TMVar UpdateData,
-    vmLatestUpdate :: TMVar Int
+    vmScreen :: TMVar DrawData
 }
 
 data UpdateData = UpdateData {
@@ -40,76 +39,51 @@ data DrawData = DrawData {
 newVM :: RFB -> IO VM
 newVM rfb = do
     updates <- atomically $ newTMVar []
-    screen <- atomically . newTMVar =<< getScreenUpdate rfb 0
-    latest <- atomically $ newTMVar 0
+    screen <- atomically . newTMVar =<< getScreen' rfb
     
     return $ VM {
         vmRFB = rfb,
         vmUpdates = updates,
-        vmScreen = screen,
-        vmLatestUpdate = latest
+        vmScreen = screen
     }
 
--- get the screen png if it needs to be gotten
-getScreenPng :: VM -> IO BL.ByteString
-getScreenPng vm = do
-    screen <- atomically $ readTMVar $ vmScreen vm
-    let screenV = updateVersion screen
-    updateV <- atomically $ readTMVar $ vmLatestUpdate vm
-    
-    if screenV == updateV
-        then return $ drawPng $ head $ updateData screen
-        else do
-            let tm = vmScreen vm
-            update <- getScreenUpdate (vmRFB vm) updateV
-            atomically $ swapTMVar tm update
-            return $ drawPng $ head $ updateData update
+getScreen :: VM -> IO DrawData
+getScreen = getScreen' . vmRFB
 
--- get the screen as an UpdateData
-getScreenUpdate :: RFB -> Int -> IO UpdateData
-getScreenUpdate rfb version = do
+getScreen' :: RFB -> IO DrawData
+getScreen' rfb = do
     im <- getImage rfb
     png <- repack <$> GD.savePngByteString im
     let bytes = fromIntegral $ BL.length png
-    return $ UpdateData {
-        updateBytes = bytes,
-        updateVersion = version,
-        updateData = (:[]) $ DrawData {
-            drawPng = png,
-            drawPos = (0,0),
-            drawSize = fbWidth &&& fbHeight $ rfbFB rfb,
-            drawBytes = bytes
-        }
+    return $ DrawData {
+        drawPng = png,
+        drawPos = (0,0),
+        drawSize = fbWidth &&& fbHeight $ rfbFB rfb,
+        drawBytes = bytes
     }
-
+ 
 updateThread :: VM -> IO ()
 updateThread vm = forever $ do
-    let tm = vmLatestUpdate vm
-    updateV <- atomically $ takeTMVar tm
-    updateV' <- atomically $ swapTMVar tm (succ updateV)
+    let rfb = vmRFB vm
+    rx <- rectangles <$> getUpdate rfb
+    renderImage' rfb rx
+    dx <- forM rx $ \rect -> do
+        let im = rawImage $ rectEncoding rect
+        png <- repack <$> GD.savePngByteString im
+        return $ DrawData {
+            drawPng = png,
+            drawPos = rectPos rect,
+            drawSize = rectSize rect,
+            drawBytes = fromIntegral $ BL.length png
+        }
     
+    let tm = vmUpdates vm
+    updates <- atomically $ takeTMVar tm
     let
-        drawRect :: Rectangle -> IO DrawData
-        drawRect rect = do
-            let im = rawImage $ rectEncoding rect
-            png <- repack <$> GD.savePngByteString im
-            return $ DrawData {
-                drawPng = png,
-                drawPos = rectPos rect,
-                drawSize = rectSize rect,
-                drawBytes = fromIntegral $ BL.length png
-            }
-        
-        rfb = vmRFB vm
-    
-    dx <- mapM drawRect =<< rectangles <$> getUpdate rfb
-    
-    let
-        tm = vmUpdates vm
+        ver = if null updates then 0 else updateVersion $ head updates
         update = UpdateData {
             updateBytes = sum $ map drawBytes dx,
-            updateVersion = updateV',
+            updateVersion = ver + 1,
             updateData = dx
         }
-    updates <- atomically $ takeTMVar tm
     atomically $ putTMVar tm $ update : updates
