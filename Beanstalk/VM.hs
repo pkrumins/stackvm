@@ -13,8 +13,6 @@ import Control.Applicative ((<$>))
 import Control.Concurrent.STM (atomically)
 import Control.Concurrent.STM.TMVar
 
-import Data.Digest.OpenSSL.MD5 (md5sum)
-
 import qualified Data.ByteString as BS
 import qualified Data.ByteString.Lazy as BL
 repack = BL.pack . BS.unpack -- convert strict to lazy

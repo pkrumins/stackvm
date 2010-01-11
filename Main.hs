@@ -11,6 +11,7 @@ import Control.Concurrent.STM.TMVar
 import Data.Maybe (fromJust)
 import Control.Applicative ((<$>))
 import Data.ByteString.Lazy.Char8 (pack)
+import qualified Text.JSON as JS
 
 main :: IO ()
 main = do
@@ -35,19 +36,24 @@ beanstalkRoutes vm = do
         with_header "Image-Size" $ show $ drawSize draw
         with_body $ drawPng draw
     
-    get "/api/console/get_update/:version" $ do
+    get "/api/console/get_update_list/:version" $ do
         versionId <- read <$> fromJust <$> capture "version"
         updates <- io $ getUpdates vm versionId
         let updateCount = length $ updateData updates
-        let latest = updateVersion updates
+        let latestVersion = updateVersion updates
         with_type "text/javascript"
-        with_body $ pack $ show $ [updateCount,latest]
+        with_body $ pack $
+            if updateCount > 200
+                then JS.encode [[latestVersion,-1]]
+                else JS.encode $ [[latestVersion,updateCount]]
+                    ++ [ [
+                        fst $ drawPos u, snd $ drawPos u,
+                        fst $ drawSize u, snd $ drawSize u
+                    ] | u <- updateData updates ]
     
     get "/api/console/get_screen" $ do
         draw <- io $ getScreen vm
         with_type "image/png"
-        with_header "Image-Position" $ show $ drawPos draw
-        with_header "Image-Size" $ show $ drawSize draw
         with_body $ drawPng draw
     
     get "/" $ do
