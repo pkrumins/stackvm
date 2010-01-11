@@ -70,14 +70,14 @@ getScreen' rfb = do
 getUpdates :: VM -> Version -> IO UpdateData
 getUpdates vm version = do
     updates <- reverse
-        <$> takeWhile ((< version) . updateVersion)
+        <$> takeWhile ((> version) . updateVersion)
         <$> (atomically $ readTMVar $ vmUpdates vm)
     return $ UpdateData {
         updateBytes = sum $ map updateBytes updates,
         updateVersion =
             if null updates
-                then 0
-                else updateVersion $ head updates,
+                then version
+                else updateVersion $ last updates,
         updateData = concatMap updateData updates
     }
 

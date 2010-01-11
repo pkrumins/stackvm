@@ -38,9 +38,10 @@ beanstalkRoutes vm = do
     get "/api/console/get_update/:version" $ do
         versionId <- read <$> fromJust <$> capture "version"
         updates <- io $ getUpdates vm versionId
-        
+        let updateCount = length $ updateData updates
+        let latest = updateVersion updates
         with_type "text/javascript"
-        with_body $ pack $ show $ length $ updateData updates
+        with_body $ pack $ show $ [updateCount,latest]
     
     get "/api/console/get_screen" $ do
         draw <- io $ getScreen vm
