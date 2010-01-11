@@ -5,6 +5,10 @@ function Console(console_elem) {
             .append(
                 $(document.createElement("img"))
                     .attr("src", "/api/console/get_screen")
+                    .css({
+                        position : "absolute",
+                        left : 0, top : 0
+                    })
             );
     }
     
@@ -15,8 +19,8 @@ function Console(console_elem) {
             .attr("src", uri)
             .css({
                 position : "absolute",
-                top : args.x,
-                left : args.y,
+                left : args.x,
+                top : args.y,
                 width : args.width,
                 height : args.height
             });
@@ -34,6 +38,7 @@ function Console(console_elem) {
             else {
                 for (var i = 1; i < data.length; i++) {
                     var item = data[i];
+                    console.log(item.join(","));
                     get_update({
                         version_id : version_id,
                         update_id : i - 1,
@@ -49,6 +54,7 @@ function Console(console_elem) {
     };
     
     this.run = function () {
+        get_screen();
         get_updates(0);
     };
     

@@ -32,8 +32,6 @@ beanstalkRoutes vm = do
         
         let draw = updateData updates !! updateId
         with_type "image/png"
-        with_header "Image-Position" $ show $ drawPos draw
-        with_header "Image-Size" $ show $ drawSize draw
         with_body $ drawPng draw
     
     get "/api/console/get_update_list/:version" $ do
