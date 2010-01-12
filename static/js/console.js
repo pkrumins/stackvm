@@ -1,5 +1,5 @@
 function Console(console_elem) {
-    function get_screen() {
+    this.render = function () {
         var im = $(document.createElement("img"))
             .attr("src", "/api/console/get_screen"
                 + "?" + String(Math.floor(Math.random() * 1e10))
@@ -7,13 +7,15 @@ function Console(console_elem) {
             .css({
                 position : "absolute",
                 left : 0, top : 0
+            })
+            .load(function () {
+                console_elem.empty();
+                console_elem.prepend(im);
             });
-        console_elem
-            .empty()
-            .append(im);
+        console_elem.prepend(im);
     }
     
-    function get_update(args) {
+    this.render_update = function (args) {
         var uri = "/api/console/get_update/"
             + String(args.version_id) + "/" + String(args.update_id);
             + "?" + String(Math.floor(Math.random() * 1e10));
@@ -29,9 +31,22 @@ function Console(console_elem) {
         console_elem.append(im);
     }
     
-    function get_updates(version_id) {
-        var uri = "/api/console/get_update_list/" + String(version_id)
-            + "?" + String(Math.floor(Math.random() * 1e10));
+    this.get_latest_version = function () {
+        var version;
+        $.ajax({
+            async : false,
+            url : "/api/console/get_latest_version",
+            dataType : "json",
+            cache : false,
+            success : function (data) { version = data },
+            error : function () { version = 0 },
+            timeout : 3000
+        });
+        return version;
+    }
+    
+    function handle_updates (version_id) {
+        var uri = "/api/console/get_update_list/" + String(version_id);
         $.ajax({
             url : uri,
             dataType : "json",
@@ -40,13 +55,13 @@ function Console(console_elem) {
                 var latest_version = data[0][0];
                 var update_count = data[0][1];
                 if (update_count < 0) {
-                    get_screen();
+                    up.render();
                 }
                 else {
                     for (var i = 1; i < data.length; i++) {
                         var item = data[i];
                         console.log(item.join(","));
-                        get_update({
+                        up.render_update({
                             version_id : version_id,
                             update_id : i - 1,
                             x : item[0],
@@ -56,18 +71,19 @@ function Console(console_elem) {
                         });
                     }
                 }
-                get_updates(latest_version);
+                handle_updates(latest_version);
             },
             error : function () {
-                get_updates(version_id);
+                handle_updates(version_id);
             },
             timeout : 3000,
         });
     };
     
     this.run = function () {
-        get_screen();
-        get_updates(0);
+        var v = this.get_latest_version();
+        this.render();
+        handle_updates(v);
     };
     
     var up = this;

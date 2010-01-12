@@ -18,7 +18,7 @@ import qualified Text.JSON as JS
 main :: IO ()
 main = do
     rfb <- connect' "localhost" $ PortNumber 5900
-    vm <- newVM rfb
+    vm <- newVM rfb 30
     forkIO $ updateThread vm
     putStrLn "http://localhost:3000/"
     run $ loli $ do
@@ -47,17 +47,21 @@ beanstalkRoutes vm = do
         
         let updateCount = length $ updateData updates
         let latestVersion = updateVersion updates
-        io $ print updateCount
         
         with_type "text/javascript"
         with_body $ pack $
-            if updateCount > 100
+            if updateCount >= 30
                 then JS.encode [[latestVersion,-1]]
                 else JS.encode $ [[latestVersion,updateCount]]
                     ++ [ [
                         fst $ drawPos u, snd $ drawPos u,
                         fst $ drawSize u, snd $ drawSize u
                     ] | u <- updateData updates ]
+    
+    get "/api/console/get_latest_version" $ do
+        with_type "text/javascript"
+        with_body =<< pack <$> show <$> updateVersion
+            <$> io (getUpdates vm 0)
     
     get "/api/console/get_screen" $ do
         draw <- io $ getScreen vm

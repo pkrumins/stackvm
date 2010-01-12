@@ -20,6 +20,7 @@ repack = BL.pack . BS.unpack -- convert strict to lazy
 data VM = VM {
     vmRFB :: RFB,
     vmUpdates :: TMVar [UpdateData],
+    vmUpdateMax :: Int,
     vmScreen :: TMVar DrawData
 }
 
@@ -39,14 +40,15 @@ data DrawData = DrawData {
     drawBytes :: ByteSize
 }
 
-newVM :: RFB -> IO VM
-newVM rfb = do
+newVM :: RFB -> Int -> IO VM
+newVM rfb uMax = do
     updates <- atomically $ newTMVar []
     screen <- atomically . newTMVar =<< getScreen' rfb
     
     return $ VM {
         vmRFB = rfb,
         vmUpdates = updates,
+        vmUpdateMax = uMax,
         vmScreen = screen
     }
 
@@ -84,16 +86,18 @@ updateThread vm = forever $ do
     let rfb = vmRFB vm
     rx <- rectangles <$> getUpdate rfb
     renderImage' rfb rx
-    dx <- forM rx $ \rect -> do
-        let im = rawImage $ rectEncoding rect
-        png <- repack <$> GD.savePngByteString im
-        return $ DrawData {
-            drawPng = png,
-            drawPos = rectPos rect,
-            drawSize = rectSize rect,
-            drawBytes = fromIntegral $ BL.length png
-        }
-    
+    dx <- if length rx > vmUpdateMax vm
+        then (:[]) <$> getScreen vm
+        else forM rx $ \rect -> do
+            let im = rawImage $ rectEncoding rect
+            png <- repack <$> GD.savePngByteString im
+            return $ DrawData {
+                drawPng = png,
+                drawPos = rectPos rect,
+                drawSize = rectSize rect,
+                drawBytes = fromIntegral $ BL.length png
+            }
+     
     let tm = vmUpdates vm
     updates <- atomically $ takeTMVar tm
     let
@@ -103,4 +107,6 @@ updateThread vm = forever $ do
             updateVersion = ver + 1,
             updateData = dx
         }
-    atomically $ putTMVar tm $ update : updates
+    if length rx > vmUpdateMax vm
+        then atomically $ putTMVar tm [update]
+        else atomically $ putTMVar tm $ update : updates
