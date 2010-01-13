@@ -2,7 +2,14 @@
 <script src="/js/console.js" type="text/javascript"></script>
 <script type="text/javascript">
     jQuery(window).load(function () {
-        new Console(jQuery("#console")).run();
+        var con = new Console(jQuery("#console"));
+        con.run()
+        jQuery(window).keydown(function (ev) {
+            con.send_key_down(ev.keyCode);
+        });
+        jQuery(window).keyup(function (ev) {
+            con.send_key_up(ev.keyCode);
+        });
     });
 </script>
 

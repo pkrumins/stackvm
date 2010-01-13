@@ -49,14 +49,12 @@ beanstalkRoutes vm = do
         let latestVersion = updateVersion updates
         
         with_type "text/javascript"
-        with_body $ pack $
-            if updateCount >= 30
-                then JS.encode [[latestVersion,-1]]
-                else JS.encode $ [[latestVersion,updateCount]]
-                    ++ [ [
-                        fst $ drawPos u, snd $ drawPos u,
-                        fst $ drawSize u, snd $ drawSize u
-                    ] | u <- updateData updates ]
+        with_body $ pack $ JS.encode
+            $ [[latestVersion]]
+            ++ [ [
+                fst $ drawPos u, snd $ drawPos u,
+                fst $ drawSize u, snd $ drawSize u
+            ] | u <- updateData updates ]
     
     get "/api/console/get_latest_version" $ do
         with_type "text/javascript"
@@ -67,6 +65,16 @@ beanstalkRoutes vm = do
         draw <- io $ getScreen vm
         with_type "image/png"
         with_body $ drawPng draw
+    
+    get "/api/console/send_key_down/:key" $ do
+        key <- read <$> fromJust <$> capture "key"
+        io $ sendKeyEvent (vmRFB vm) True key
+        with_body $ pack "ok"
+    
+    get "/api/console/send_key_up/:key" $ do
+        key <- read <$> fromJust <$> capture "key"
+        io $ sendKeyEvent (vmRFB vm) False key
+        with_body $ pack "ok"
     
     get "/" $ do
         with_type "text/html"
