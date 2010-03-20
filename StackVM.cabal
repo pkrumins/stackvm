@@ -1,6 +1,6 @@
-name:           virtual-beanstalk
-version:        0.1.0
-homepage:       http://github.com/substack/virtual-beanstalk
+name:           StackVM
+version:        0.1.1
+homepage:       http://github.com/substack/stackvm
 synopsis:       Configure, network, and interact with virtual machines entirely
                 over the web
 description:
@@ -20,7 +20,7 @@ maintainer:     substack@gmail.com
 cabal-version:  >= 1.2
 build-type:     Simple
 
-executable beanstalk
+executable stackvm
     main-is:            Main.hs
     Build-Depends:      base, bytestring >= 0.9.1.5, hack, network,
                         hack-handler-happstack, gd, network-rfb, loli, stm,

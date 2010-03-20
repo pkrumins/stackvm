@@ -1,4 +1,4 @@
-module Beanstalk.Web (
+module StackVM.Web (
     module Hack,
     module Hack.Contrib.Response,
     module Network.Loli,

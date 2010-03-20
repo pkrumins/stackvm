@@ -41,7 +41,6 @@ function Console(console_elem) {
                 var latest_version = data[0][0];
                 for (var i = 1; i < data.length; i++) {
                     var item = data[i];
-                    console.log(item.join(","));
                     up.render_update({
                         version_id : version_id,
                         update_id : i - 1,
@@ -61,21 +60,29 @@ function Console(console_elem) {
     };
     
     function keymap(code) {
-        return {
-            13 : 0xff0d
-        }[code] || code;
+        var syms = {
+            8 : 0xff00 + 8, // backspace
+            13 : 0xff00 + 13, // return
+            17 : 0xffe4, // left control
+            18 : 0xff00 + 18, // left shift
+            191 : 47
+        };
+        return syms[code] || code;
     }
     
     this.send_key_down = function (key_code) {
         var code = keymap(key_code);
-        console.log("key down " + String(code));
-        $.get("/api/console/send_key_down/" + String(code));
+        if (code) {
+            console.log("key down " + String(code));
+            $.get("/api/console/send_key_down/" + String(code));
+        }
     };
     
     this.send_key_up = function (key_code) {
         var code = keymap(key_code);
-        console.log("key up " + String(code));
-        $.get("/api/console/send_key_up/" + String(code));
+        if (code) {
+            $.get("/api/console/send_key_up/" + String(code));
+        }
     };
     
     this.run = function () {

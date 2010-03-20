@@ -4,11 +4,13 @@
     jQuery(window).load(function () {
         var con = new Console(jQuery("#console"));
         con.run()
-        jQuery(window).keydown(function (ev) {
+        jQuery(document).keydown(function (ev) {
             con.send_key_down(ev.keyCode);
+            return false;
         });
-        jQuery(window).keyup(function (ev) {
+        jQuery(document).keyup(function (ev) {
             con.send_key_up(ev.keyCode);
+            return false;
         });
     });
 </script>

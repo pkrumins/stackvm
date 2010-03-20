@@ -1,4 +1,4 @@
-module Beanstalk.VM (
+module StackVM.VM (
     VM(..), UpdateData(..), DrawData(..),
     updateThread, getScreen, getUpdates, newVM
 ) where

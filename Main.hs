@@ -1,7 +1,7 @@
 module Main where
 
-import Beanstalk.Web
-import Beanstalk.VM
+import StackVM.Web
+import StackVM.VM
 import Network.RFB
 
 import Control.Concurrent (forkIO)

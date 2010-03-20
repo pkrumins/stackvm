@@ -1,4 +1,4 @@
-Virtual Beanstalk is a web-based virtual machine manager where users will
+StackVM is a web-based virtual machine manager where users will
 * interact directly with the graphical or text console
 * drop virtual machines into a virtual network diagram
 * access files on the virtual machine directly
@@ -7,5 +7,5 @@ Virtual Beanstalk is a web-based virtual machine manager where users will
 
 After compiling:
 $ qemu -vnc :0.0 linux-0.2.img &
-$ ./beanstalk
+$ ./stackvm
 Then go to http://localhost:3000/
