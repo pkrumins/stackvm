@@ -5,12 +5,10 @@ module StackVM.Web (
     module Network.Loli.Type,
     module Network.Loli.Utils,
     module Network.Loli.Template.TextTemplate,
-    run, capture,
-    with_type, with_body, with_header
+    capture, with_type, with_body, with_header
 ) where
 
 import Hack
-import Hack.Handler.Happstack (run)
 import Hack.Contrib.Response
 
 import Network.Loli

@@ -4,6 +4,8 @@ import StackVM.Web
 import StackVM.VM
 import Network.RFB
 
+import Hack.Handler.Happstack
+
 import Control.Concurrent (forkIO)
 import Control.Concurrent.STM (atomically)
 import Control.Concurrent.STM.TMVar
@@ -17,16 +19,16 @@ import qualified Text.JSON as JS
 
 main :: IO ()
 main = do
-    rfb <- connect' "localhost" $ PortNumber 5900
+    rfb <- connect' "127.0.0.1" $ PortNumber 5900
     vm <- newVM rfb 30
     forkIO $ updateThread vm
-    putStrLn "http://localhost:3000/"
-    run $ loli $ do
+    putStrLn "http://localhost:9000/"
+    runWithConfig (ServerConf 9000 "0.0.0.0") $ loli $ do
         public (Just "static") ["/css", "/js"]
-        beanstalkRoutes vm
+        stackRoutes vm
 
-beanstalkRoutes :: VM -> UnitT ()
-beanstalkRoutes vm = do
+stackRoutes :: VM -> UnitT ()
+stackRoutes vm = do
     get "/api/console/get_update/:version/:update" $ do
         versionId <- read <$> fromJust <$> capture "version"
         updateId <- read <$> fromJust <$> capture "update"
