@@ -89,7 +89,7 @@ updateThread vm = forever $ do
     dx <- if length rx > vmUpdateMax vm
         then (:[]) <$> getScreen vm
         else forM rx $ \rect -> do
-            let im = rawImage $ rectEncoding rect
+            im <- fromByteString (rectSize rect) (rawImage $ rectEncoding rect)
             png <- repack <$> GD.savePngByteString im
             return $ DrawData {
                 drawPng = png,
