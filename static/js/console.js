@@ -68,14 +68,15 @@ function Console(win) {
     };
     
     function keymap(code) {
-        var syms = {
+        return {
             8 : 0xff00 + 8, // backspace
             13 : 0xff00 + 13, // return
+            27 : 0xffe1, // left shift
+            16 : 0xffe2, // right shift
             17 : 0xffe4, // left control
             18 : 0xff00 + 18, // left shift
             191 : 47
-        };
-        return syms[code] || code;
+        }[code] || (code < 128 ? code : 0);
     }
     
     this.send_key_down = function (key_code) {

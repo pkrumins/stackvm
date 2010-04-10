@@ -15,23 +15,27 @@
         }
         
         jQuery(document).keydown(function (ev) {
+            var sent = false;
             for (var i in cons) {
                 var con = cons[i];
                 if (con.active) {
                     con.send_key_down(ev.keyCode);
+                    sent = true;
                 }
             }
-            return false;
+            return !sent;
         });
         
         jQuery(document).keyup(function (ev) {
+            var sent = false;
             for (var i in cons) {
                 var con = cons[i];
                 if (con.active) {
                     con.send_key_up(ev.keyCode);
+                    sent = true;
                 }
             }
-            return false;
+            return !sent;
         });
     });
 </script>
