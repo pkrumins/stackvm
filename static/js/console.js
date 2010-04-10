@@ -1,4 +1,4 @@
-function Console(console_elem) {
+function Console(win) {
     this.render = function () {
         var im = $(document.createElement("img"))
             .attr("src", "/api/console/get_screen"
@@ -6,13 +6,14 @@ function Console(console_elem) {
             )
             .css({
                 position : "absolute",
-                left : 0, top : 0
+                left : win.css("left") + 2,
+                top : win.css("top") + 2
             })
             .load(function () {
-                console_elem.empty();
-                console_elem.prepend(im);
+                elem.empty();
+                elem.prepend(im);
             });
-        console_elem.prepend(im);
+        elem.prepend(im);
     }
     
     this.render_update = function (args) {
@@ -23,12 +24,12 @@ function Console(console_elem) {
             .attr("src", uri)
             .css({
                 position : "absolute",
-                left : args.x,
-                top : args.y,
+                left : win.css("left") + 2 + args.x,
+                top : win.css("top") + 2 + args.y,
                 width : args.width,
                 height : args.height
             });
-        console_elem.append(im);
+        elem.append(im);
     }
     
     function handle_updates (version_id) {
@@ -90,5 +91,20 @@ function Console(console_elem) {
         handle_updates(0);
     };
     
+    this.active = false;
+    
     var up = this;
+    var elem = $(document.createElement("div"))
+        . addClass("console");
+    win.append(elem);
+    
+    win.mouseover(function (ev) {
+        up.active = true;
+        win.addClass("active-window");
+    });
+    
+    win.mouseout(function (ev) {
+        up.active = false;
+        win.removeClass("active-window");
+    });
 }
