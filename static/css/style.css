@@ -4,14 +4,14 @@ div.window {
     border-width: 2px;
 }
 
-#active-window {
-    border-color: red;
-}
-
 div.title {
     background-color: rgb(50,50,50);
     color: white;
     font-weight: bold;
+}
+
+div.active-title {
+    background-color: rgb(130,50,50);
 }
 
 div.console {

@@ -112,13 +112,14 @@ function Console(win) {
     
     win.mouseover(function (ev) {
         up.active = true;
-        win.addClass("active-window");
+        title.addClass("active-title");
     });
     
     win.mouseout(function (ev) {
         up.active = false;
-        win.removeClass("active-window");
+        title.removeClass("active-title");
     });
     
     win.width(400);
+    win.draggable();
 }
