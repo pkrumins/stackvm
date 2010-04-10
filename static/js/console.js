@@ -7,7 +7,7 @@ function Console(win) {
             .css({
                 position : "absolute",
                 left : win.css("left") + 2,
-                top : win.css("top") + 2
+                top : win.css("top") + title.css("height") + 4
             })
             .load(function () {
                 elem.empty();
@@ -25,10 +25,17 @@ function Console(win) {
             .css({
                 position : "absolute",
                 left : win.css("left") + 2 + args.x,
-                top : win.css("top") + 2 + args.y,
+                top : win.css("top") + title.css("height") + 4 + args.y,
                 width : args.width,
                 height : args.height
             });
+        win.width(Math.max(
+            win.width(), args.width + 2
+        ));
+        win.height(Math.max(
+            win.height(), args.height + title.height() + 2
+        ));
+        
         elem.append(im);
     }
     
@@ -94,6 +101,11 @@ function Console(win) {
     this.active = false;
     
     var up = this;
+    var title = $(document.createElement("div"))
+        . addClass("title")
+        . text("window title");
+    win.append(title);
+    
     var elem = $(document.createElement("div"))
         . addClass("console");
     win.append(elem);
@@ -107,4 +119,6 @@ function Console(win) {
         up.active = false;
         win.removeClass("active-window");
     });
+    
+    win.width(400);
 }

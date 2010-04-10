@@ -1,10 +1,4 @@
-#content {
-    border-color: rgb(150,150,150);
-    border-style: solid;
-    border-width: 2px;
-}
-
-#window {
+div.window {
     border-color: black;
     border-style: solid;
     border-width: 2px;
@@ -14,9 +8,13 @@
     border-color: red;
 }
 
-#console {
-    background-color: black;
-    border-style: solid;
-    border-width: 1px;
-    border-color: green;
+div.title {
+    background-color: rgb(50,50,50);
+    color: white;
+    font-weight: bold;
+}
+
+div.console {
+    margin-top: 1px;
+    margin-left: 1px;
 }
