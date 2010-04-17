@@ -8,15 +8,19 @@ var fs   = require('fs');
 var repl = require('repl');
 var url  = require('url');
 
-var allowed_paths = /^\/$|^(\/js\/|\/css\/)/;
+var bosh_port = 5555;
+var bosh_host = 'localhost';
+
+var allowed_paths = /^\/$|^(\/http-bind|\/js\/|\/css\/)/;
 var mime_types = {
   js:   'text/javascript',
   html: 'text/html',
   css:  'text/css'
 };
 var path_handlers = {
-  '/':    function(path, res) { serve_file('../views/index.html', res); },
-  'else': function(path, res) { serve_file('../static' + path, res); }
+  '/':    function(path, req, res) { serve_file('../views/index.html', res); },
+  '/http-bind': function(path, req, res) { proxy_bosh(path, req, res); },
+  'else': function(path, req, res) { serve_file('../static' + path, res); }
 }
 
 function ext_to_mime(ext) {
@@ -36,9 +40,29 @@ function allowed(path) {
   return allowed_paths.test(path);
 }
 
-function path_handler(path, res) {
+function path_handler(path, req, res) {
   f = path_handlers[path] || path_handlers['else'];
-  f(path, res);
+  f(path, req, res);
+}
+
+function proxy_bosh(path, req, res) {
+  var bosh     = http.createClient(bosh_port, bosh_host);
+  var bosh_req = bosh.request(req.method, req.url, req.headers);
+  bosh_req.addListener('response', function (bosh_res) {
+    res.writeHead(bosh_res.statusCode, bosh_res.headers);
+    bosh_res.addListener('data', function (chunk) {
+      res.write(chunk);
+    });
+    bosh_res.addListener('end', function () {
+      res.close();
+    });
+  });
+  req.addListener('data', function (chunk) {
+    bosh_req.write(chunk);
+  });
+  req.addListener('end', function () {
+    bosh_req.close();
+  });
 }
 
 function serve_file(real_path, res) {
@@ -83,8 +107,7 @@ function conn_handler(req, res)
     not_found(res, 'forbidden');
     return;
   }
-  
-  path_handler(parsed.pathname, res);
+  path_handler(parsed.pathname, req, res);
 }
 
 http.createServer(conn_handler).listen(9000, '0.0.0.0');
