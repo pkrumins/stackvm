@@ -5,7 +5,6 @@
 var sys  = require('sys');
 var http = require('http');
 var fs   = require('fs');
-var repl = require('repl');
 var url  = require('url');
 
 var bosh_port = 5555;
