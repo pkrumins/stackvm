@@ -17,13 +17,19 @@ import Control.Monad (msum, mzero)
 import Data.ByteString.Lazy.Char8 (pack)
 import qualified Text.JSON as JS
 
+import System.Environment (getArgs)
+
 main :: IO ()
 main = do
-    rfb <- connect' "127.0.0.1" $ PortNumber 5900
+    args <- getArgs
+    let (vm_port, stackvm_port) = case args of
+                                    [] -> (5900, 25900)
+                                    _  -> (read $ args!!0, read $ args!!1)
+    rfb <- connect' "127.0.0.1" $ PortNumber $ fromIntegral vm_port
     vm <- newVM rfb 30
     forkIO $ updateThread vm
-    putStrLn "http://localhost:9000/"
-    runWithConfig (ServerConf 9000 "0.0.0.0") $ loli $ do
+    putStrLn $ "Running on http://localhost:" ++ show stackvm_port
+    runWithConfig (ServerConf stackvm_port "0.0.0.0") $ loli $ do
         public (Just "static") ["/css", "/js"]
         stackRoutes vm
 
