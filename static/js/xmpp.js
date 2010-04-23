@@ -1,8 +1,9 @@
 var XMPP = (function() {
   var xmpp_connection = null;
+  var really_connected = false;     // can't rely on xmpp_connection.connected
 
   function connected() {
-    return xmpp_connection && xmpp_connection.connected;
+    return really_connected;
   }
 
   function connect() {
@@ -21,18 +22,23 @@ var XMPP = (function() {
     }
     else if (status == Strophe.Status.CONNECTED) {
       log('Strophe connected.');
+
+      really_connected = true;
       for (i in msg_queue) {
         xmpp_connection.send(msg_queue[i]);
       }
       msg_queue = [];
     }
     else if (status == Strophe.Status.CONNFAIL) {
+      really_connected = false;
       log('Strophe failed to connect.');
     }
     else if (status == Strophe.Status.DISCONNECTING) {
+      really_connected = false;
       log('Strophe is disconnecting.');
     }
     else if (status == Strophe.Status.DISCONNECTED) {
+      really_connected = false;
       log('Strophe disconnected.');
     }
     else if (status == Strophe.Status.AUTHENTICATING) {
@@ -45,9 +51,20 @@ var XMPP = (function() {
 
   function onMessage(msg) {
     jmsg = $(msg);
-    vm_id = jmsg.find('text').text();
-    console.log(vm_id);
-    return true; // must have - if removed, removes the handler
+    vm_id = jmsg.find('vm_id').text();
+    action = jmsg.find('action').text();
+    handler = find_handler(vm_id);
+    if (!handler) {
+      log("Unknown vm '" + vm_id + "'");
+      return;
+    }
+    action_fn = handler[action];
+    if (!action_fn) {
+      log("Handler function for action '" + action + "' not found!");
+      return;
+    }
+    handler[action](jmsg);
+    return true; // must have - if removed, removes the onMessage callback from xmpp
   }
 
   msg_queue = [];
@@ -62,7 +79,6 @@ var XMPP = (function() {
   }
 
   var handlers = {};
-
   function find_handler(vm_id) {
     return handlers[vm_id];
   }
