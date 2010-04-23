@@ -1,0 +1,41 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+    "http://www.w3.org/TR/html4/strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-US" xml:lang="en-US">
+  <head>
+    <title>StackVM</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <link rel="StyleSheet" href="/css/style.css" type="text/css">
+    <script
+      src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"
+      type="text/javascript"
+    ></script>
+    <script
+      src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.0/jquery-ui.min.js"
+      type="text/javascript"
+    ></script>
+    <script src="/js/strophe.js" type="text/javascript"></script>
+    <script src="/js/xmpp.js" type="text/javascript"></script>
+    <script src="/js/vm.js" type="text/javascript"></script>
+  </head>
+  <body>
+    <div id="content">
+      <p>
+        Your VMs: <a href="#" id="linux1">linux</a> | <a href="#" id="dos1">dos</a>
+      </p>
+      <script>
+        $('#linux1,#dos1').click(function(ev) {
+          ev.preventDefault();
+          vm = VM_Manager.get(this.id);
+          if (!vm) {
+            var vm = new VM(this.id);
+            VM_Manager.add(vm);
+            vm.run();
+          } else {
+            // focus on vm
+          }
+        });
+      </script>
+    </div>
+  </body>
+</html>
+
