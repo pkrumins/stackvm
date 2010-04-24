@@ -4,7 +4,7 @@
 // license. For more info see the COPYING file.
 
 // Node libs
-var tcp = require("tcp");
+var tcp = require("net");
 
 // External libs
 var xml = require("./node-xml");
@@ -141,6 +141,7 @@ exports.Connection.prototype = {
 		// afterward, but should be kept in mind should any arise.
 		this.socket = tcp.createConnection(this.port, this.host)
 		this.socket.setTimeout(0);
+    this.socket.setEncoding('utf8');
 
 		this.socket.addListener("connect", recontext(this, conn._socket_connected));
 		this.socket.addListener("disconnect", recontext(this, conn._socket_disconnected));

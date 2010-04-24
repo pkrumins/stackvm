@@ -3,7 +3,7 @@
 */
 
 var sys  = require('sys');
-var tcp  = require('tcp');
+var tcp  = require('net');
 var http = require('http');
 // var buffer = require('buffer');    new in node 0.1.90
 

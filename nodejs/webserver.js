@@ -53,14 +53,14 @@ function proxy_bosh(path, req, res) {
       res.write(chunk);
     });
     bosh_res.addListener('end', function () {
-      res.close();
+      res.end();
     });
   });
   req.addListener('data', function (chunk) {
     bosh_req.write(chunk);
   });
   req.addListener('end', function () {
-    bosh_req.close();
+    bosh_req.end();
   });
 }
 
@@ -79,9 +79,9 @@ function serve_file(real_path, res) {
         not_found(res, err.message);
         return;
       }
-      res.writeHead(200);
-      res.write(data, {'Content-Type': file_to_mime(real_path) });
-      res.close();
+      res.writeHead(200, {'Content-Type': file_to_mime(real_path) });
+      res.write(data);
+      res.end();
     });
   });
 }
@@ -95,7 +95,7 @@ function not_found(res, msg) {
   if (msg) {
     res.write(msg);
   }
-  res.close();
+  res.end();
 }
 
 function conn_handler(req, res)

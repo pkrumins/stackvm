@@ -3,9 +3,6 @@
 // (C) Rob Righter (@robrighter) 2009 - 2010, Licensed under the MIT-LICENSE
 // Contributions from David Joham
  
-
-(function () { 
-
 // CONSTANTS
 var whitespace = "\n\r\t ";
 
@@ -1122,7 +1119,6 @@ SAXStrings.replace = function(strD, iB, iE, strF, strR) {
     iE = iE || strD.length;
 
     return strD.substring(iB, iE).split(strF).join(strR);
-
 }
 
 var Stack = function() {
@@ -1147,7 +1143,6 @@ Stack.prototype.peek = function() {
     }
 
     return this.m_arr[this.m_arr.length - 1];
-
 }
 
 Stack.prototype.pop = function() {
@@ -1158,7 +1153,6 @@ Stack.prototype.pop = function() {
     var o = this.m_arr[this.m_arr.length - 1];
     this.m_arr.length--;
     return o;
-
 }
 
 Stack.prototype.push = function(o) {
@@ -1242,8 +1236,5 @@ function __unescapeString(str) {
   return str;
 }
 
-process.mixin(exports, {
-  SaxParser: SaxParser
-});
+exports.SaxParser = SaxParser
 
-})()
