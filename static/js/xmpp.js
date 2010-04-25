@@ -68,13 +68,16 @@ var XMPP = (function() {
   }
 
   msg_queue = [];
-  function send_msg(msg) {
+  function send_msg(msg, instant) {
     if (!connected()) {
       msg_queue.push(msg);
       connect();
     }
     else {
       xmpp_connection.send(msg);
+      if (instant) {
+        xmpp_connection.flush();
+      }
     }
   }
 
@@ -90,8 +93,8 @@ var XMPP = (function() {
     del_event_handler: function(vm_id) {
       delete handlers[vm_id];
     },
-    send_msg: function(msg) {
-      send_msg(msg);
+    send_msg: function(msg, instant) {
+      send_msg(msg, instant);
     }
   }
 })();
