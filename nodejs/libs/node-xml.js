@@ -786,8 +786,8 @@ SaxParser.DTD_E = 11;
 SaxParser.prototype.parseFile = function(filename) { //This function will only work in the node.js environment.
     var fs = require('fs');
     var that = this;
-    fs.cat(filename).addCallback(function (content) {
-      that.parseString(content);
+    fs.readFile(filename, function (err, data) {
+      that.parseString(data);
     });
 }
 
