@@ -1,21 +1,18 @@
-div.window {
-    border-color: black;
-    border-style: solid;
-    border-width: 2px;
+.window {
+  border-color: black;
+  border-style: solid;
+  border-width: 2px;
+  padding: 2px;
 }
 
-div.title {
-    background-color: rgb(50,50,50);
-    color: white;
-    font-weight: bold;
+.window .title {
+  background-color: rgb(50,50,50);
+  color: white;
+  font-weight: bold;
+  padding-left: 2px;
 }
 
-div.active-title {
-    background-color: rgb(130,50,50);
-}
-
-div.console {
-    margin-top: 1px;
-    margin-left: 1px;
+.window .active-title {
+  background-color: rgb(130,50,50);
 }
 
