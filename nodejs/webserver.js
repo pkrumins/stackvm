@@ -10,11 +10,14 @@ var url  = require('url');
 var bosh_port = 5555;
 var bosh_host = 'localhost';
 
-var allowed_paths = /^\/$|^(\/http-bind|\/js\/|\/css\/)/;
+var allowed_paths = /^\/$|^(\/http-bind|\/js\/|\/css\/|\/img\/)/;
 var mime_types = {
   js:   'text/javascript',
   html: 'text/html',
-  css:  'text/css'
+  css:  'text/css',
+  jpg:  'image/jpeg',
+  gif:  'image/gif',
+  png:  'image/png'
 };
 var path_handlers = {
   '/':    function(path, req, res) { serve_file('../views/index.html', res); },
@@ -40,6 +43,7 @@ function allowed(path) {
 }
 
 function path_handler(path, req, res) {
+  // TODO: make sure /img/../../../../passwd doesn't work
   f = path_handlers[path] || path_handlers['else'];
   f(path, req, res);
 }
