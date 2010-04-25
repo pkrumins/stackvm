@@ -17,9 +17,9 @@ var Base64 = (function () {
             var i = 0;
         
             do {
-                chr1 = input.charCodeAt(i++);
-                chr2 = input.charCodeAt(i++);
-                chr3 = input.charCodeAt(i++);
+                chr1 = input[i++] || '';
+                chr2 = input[i++] || '';
+                chr3 = input[i++] || '';
                 
                 enc1 = chr1 >> 2;
                 enc2 = ((chr1 & 3) << 4) | (chr2 >> 4);
