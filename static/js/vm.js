@@ -1,5 +1,6 @@
 var VM_Manager = (function() {
   var vms = {};
+  var active_vm = null;
 
   return {
     add: function(vm) {
@@ -10,7 +11,13 @@ var VM_Manager = (function() {
     },
     del: function(id) {
       delete vms[id];
-    }
+    },
+    get_active_vm: function() {
+      return active_vm;
+    },
+    set_active_vm: function(vm) {
+      active_vm = vm;
+    },
   }
 })();
 
@@ -25,12 +32,13 @@ function VM_Event_Handler(vm) {
     console.log('stackvm connected');
   }
 
-  this.update_screen = function(msg) {
-    console.log('update_screen');
+  this.redraw_screen = function(msg) {
     var png = msg.find('png').text();
     var img = $('<img>').attr('src', 'data:image/png;base64,' + png);
     vm.win.append(img);
   }
+
+  this.d
 
   this.disconnect = function(msg) {
     console.log('stackvm disconnected');
@@ -75,20 +83,32 @@ function VM(vm_id) {
   var event_emitter = new VM_Event_Emitter(this);
 
   function create_window() {
-    var win = $('<div>').
+    var win = $('<div class="window">').
+                 attr('tabindex', 0).  // needed for keydown/keyup
                  data('vm_id', vm_id).
-                 attr('id', vm_id + '_window').
-                 attr('class', 'window').
-                 height(400). // while testing
-                 width(400);
-    $('#content').append(win);
+                 draggable().
+                 width(640).
+                 height(480);
+
+    win.append($('<div class="title">').text(vm_id));
+    win.append($('<div class="console">'));
+
+    win.mouseover(function(ev) {
+        VM_Manager.set_active_vm(this);
+        $('.title', win).addClass("active-title");
+    });
+    win.mouseout(function(ev) {
+        VM_Manager.set_active_vm(null);
+        $('.title', win).removeClass("active-title");
+    });
     win.keydown(function(ev) {
-        alert('foo');
       event_emitter.send_key_down(ev.keyCode);
     });
     win.keyup(function(ev) {
       event_emitter.send_key_up(ev.keyCode);
     });
+
+    $('#content').append(win);
     return win;
   }
 
