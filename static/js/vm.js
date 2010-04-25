@@ -38,8 +38,6 @@ function VM_Event_Handler(vm) {
     vm.win.append(img);
   }
 
-  this.d
-
   this.disconnect = function(msg) {
     console.log('stackvm disconnected');
   }
@@ -49,8 +47,21 @@ function VM_Event_Emitter(vm) {
   this.vm = vm;
 
   function prepare_msg() {
-    return $msg({to: 'vm.localhost'}).c('vm_id').t(vm.vm_id).up()
+    return $msg({to: 'vm.localhost'}).
+             c('vm_id').t(vm.vm_id).up()
   }
+
+  function keymap(code) {
+      var syms = {
+          8 :  0xff00 + 8,  // backspace
+          13 : 0xff00 + 13, // return
+          17 : 0xffe4,      // left control
+          18 : 0xff00 + 18, // left shift
+          191 : 47
+      };
+      return String(syms[code] || code);
+  }
+
 
   this.start_vm = function() {
     XMPP.send_msg(
@@ -59,20 +70,20 @@ function VM_Event_Emitter(vm) {
     );
   }
   this.send_key_down = function(key_code) {
-    // TODO: see the flush() method in strophe.js, seems like
-    // strophe.js queues events up to 100ms, and we can't have 100ms
-    // lag for sending each key!
+    console.log('sending ' + keymap(key_code));
     XMPP.send_msg(
         prepare_msg().
         c('action').t('key_down').up().
-        c('key').t(key_code)
+        c('key').t(keymap(key_code)),
+        true
     );
   }
   this.send_key_up = function(key_code) {
     XMPP.send_msg(
         prepare_msg().
-        c('action').t('key_down').up().
-        c('key').t(key_code)
+        c('action').t('key_up').up().
+        c('key').t(keymap(key_code)),
+        true
     );
   }
 }
