@@ -78,6 +78,13 @@ function handler_start_vm(vm_id, msg) {
   ** But for now, let's use the same logic as in console.js
   */
 
+  xmpp_connection.send(
+    xmpp.message({to:msg.getAttribute('from')}).
+      c('vm_id').t(vm_id).up().
+      c('action').t('connected')
+  );
+      
+
   var vm  = http.createClient(vm_map[vm_id]['port'], vm_map[vm_id]['host']);
   var req = vm.request('GET', '/api/console/get_screen');
   req.addListener('response', function(res) {
@@ -88,9 +95,12 @@ function handler_start_vm(vm_id, msg) {
     });
     res.addListener('end', function () {
       xmpp_connection.send(xmpp.message({to:msg.getAttribute('from')}).
-      c('vm_id').t(vm_id).up().
-      c('action').t('redraw_screen').up().
-      c('png').t(base64.encode(png)));
+        c('vm_id').t(vm_id).up().
+        c('action').t('redraw_screen').up().
+        c('width').t(res.headers['screen-width']).up().
+        c('height').t(res.headers['screen-height']).up().
+        c('png').t(base64.encode(png))
+      );
     });
   });
   req.end();
@@ -119,28 +129,41 @@ var handlers = {
 
 function onMessage(msg) {
   var vm_id = msg.getChild('vm_id');
-  if (vm_id) {
-    vm_id = vm_id.getText();
-    if (!vm_map[vm_id]) {
-      xmpp_connection.send(
-        xmpp.message({to:msg.getAttribute('from')}).
-        c('vm_id').t(vm_id).up().
-        c('error').t("There is no VM with id '" + vm_id + "'"));
-      return;
-    }
-    action = msg.getChild('action').getText();
-    handler = handlers[action];
-    if (!handler) {
-      sys.log("Unknown action '" + action + "' for message:");
-      sys.log(msg.toString());
-      return;
-    }
-    handler(vm_id, msg);
-  }
-  else {
+  if (!vm_id) {
     sys.log("Unknown message: ");
     sys.log(msg.toString());
+    return;
   }
+  vm_id = vm_id.getText();
+  if (!vm_map[vm_id]) {
+    sys.log("Unknown VM ID: " + vm_id);
+    sys.log(msg.toString());
+    xmpp_connection.send(
+      xmpp.message({to:msg.getAttribute('from')}).
+      c('vm_id').t(vm_id).up().
+      c('error').t("There is no VM with id '" + vm_id + "'")
+    );
+    return;
+  }
+  action = msg.getChild('action');
+  if (!action) {
+    sys.log("Unknown action for VM ID: " + vm_id);
+    sys.log(msg.toString());
+    xmpp_connection.send(
+      xmpp_message({to:msg.getAttribute('from')}).
+      c('vm_id').t(vm_id).up().
+      c('error').t("No action specified for VM with id '" + vm_id + "'")
+    );
+    return;
+  }
+  action = action.getText();
+  handler = handlers[action];
+  if (!handler) {
+    sys.log("Unknown action " + action + " for VM ID: " + vm_id);
+    sys.log(msg.toString());
+    return;
+  }
+  handler(vm_id, msg);
 }
 
 var xmpp_connection = new xmpp.Connection(xmpp_host, xmpp_port);
