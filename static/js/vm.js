@@ -135,10 +135,12 @@ function VM(vm_id) {
 
     win.mouseover(function(ev) {
         VM_Manager.set_active_vm(this);
+        this.focus();
         $('.title', win).addClass("active-title");
     });
     win.mouseout(function(ev) {
         VM_Manager.set_active_vm(null);
+        $('.focusremover').focus();
         $('.title', win).removeClass("active-title");
     });
     win.keydown(function(ev) {
