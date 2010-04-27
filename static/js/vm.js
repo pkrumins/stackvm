@@ -134,14 +134,10 @@ function VM(vm_id) {
     win.append(console);
 
     win.mouseover(function(ev) {
-        VM_Manager.set_active_vm(this);
-        this.focus();
-        $('.title', win).addClass("active-title");
+      focus(win);
     });
     win.mouseout(function(ev) {
-        VM_Manager.set_active_vm(null);
-        $('.focusremover').focus();
-        $('.title', win).removeClass("active-title");
+      unfocus(win);
     });
     win.keydown(function(ev) {
       event_emitter.send_key_down(ev.keyCode);
@@ -152,6 +148,26 @@ function VM(vm_id) {
 
     $('#content').append(win);
     return win;
+  }
+
+  function focus(win) {
+    VM_Manager.set_active_vm(win);
+    win.focus();
+    $('.title', win).addClass("active-title");
+  }
+
+  function unfocus(win) {
+    VM_Manager.set_active_vm(null);
+    $('.focusremover').focus();
+    $('.title', win).removeClass("active-title");
+  }
+
+  this.focus = function() {
+    focus(this.win);
+  }
+
+  this.unfocus = function() {
+    unfocus(this.win);
   }
 
   this.run = function() {
