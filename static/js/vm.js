@@ -51,10 +51,10 @@ function VM_Event_Handler(vm) {
     var img = png_img(msg.find('png').text());
     img.css({
       position: 'absolute',
-      left:     msg.find('x').text(),
-      top:      msg.find('y').text(),
-      width:    msg.find('width').text(),
-      height:   msg.find('height').text()
+      left:     parseInt(msg.find('x').text()),
+      top:      parseInt(msg.find('y').text()),
+      width:    parseInt(msg.find('width').text()),
+      height:   parseInt(msg.find('height').text()),
     });
     $('.console', vm.win).append(img);
   }

@@ -17,3 +17,7 @@
   background-color: rgb(130,50,50);
 }
 
+.window .console {
+  position: absolute;
+}
+

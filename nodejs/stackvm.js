@@ -83,7 +83,6 @@ function handler_start_vm(vm_id, msg) {
       c('vm_id').t(vm_id).up().
       c('action').t('connected')
   );
-      
 
   var vm  = http.createClient(vm_map[vm_id]['port'], vm_map[vm_id]['host']);
   var req = vm.request('GET', '/api/console/get_screen');
@@ -93,7 +92,7 @@ function handler_start_vm(vm_id, msg) {
     res.addListener('data', function (chunk) {
       png.write(chunk, 'binary');
     });
-    res.addListener('end', function () {
+    res.addListener('end', function() {
       xmpp_connection.send(xmpp.message({to:msg.getAttribute('from')}).
         c('vm_id').t(vm_id).up().
         c('action').t('redraw_screen').up().
@@ -102,6 +101,55 @@ function handler_start_vm(vm_id, msg) {
         c('png').t(base64.encode(png))
       );
     });
+  });
+  req.end();
+
+  update_fetcher(0, vm_id, msg);
+}
+
+function update_fetcher(version_id, vm_id, msg) {
+  var vm = http.createClient(vm_map[vm_id]['port'], vm_map[vm_id]['host']);
+  var req = vm.request('GET', '/api/console/get_update_list/' + version_id);
+  req.addListener('response', function(res) {
+    res.setEncoding('ascii');
+    var updates = new buffer.Buffer(parseInt(res.headers['content-length']));
+    res.addListener('data', function(chunk) {
+      updates.write(chunk);
+    });
+    res.addListener('end', function() {
+      updates = JSON.parse(updates.toString());
+      var latest_version = updates[0][0];
+      for (var i = 1; i < updates.length; i++) {
+        var item = updates[i];
+        push_update(vm_id, msg, item, version_id, i-1);
+      }
+      update_fetcher(latest_version, vm_id, msg);
+    });
+  });
+  req.end();
+}
+
+function push_update(vm_id, msg, item, version_id, update_id) {
+  var vm = http.createClient(vm_map[vm_id]['port'], vm_map[vm_id]['host']);
+  var url = '/api/console/get_update/' + version_id + '/' + update_id;
+  var req = vm.request('GET', url);
+  req.addListener('response', function(res) {
+    res.setEncoding('binary')
+    var png = new buffer.Buffer(parseInt(res.headers['content-length']));
+    res.addListener('data', function(chunk) {
+      png.write(chunk, 'binary');
+    });
+    res.addListener('end', function() {
+      xmpp_connection.send(xmpp.message({to:msg.getAttribute('from')}).
+        c('vm_id').t(vm_id).up().
+        c('action').t('update_screen').up().
+        c('x').t(item[0]).up().
+        c('y').t(item[1]).up().
+        c('width').t(item[2]).up().
+        c('height').t(item[3]).up().
+        c('png').t(base64.encode(png))
+      );
+    })
   });
   req.end();
 }
