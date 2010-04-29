@@ -55,6 +55,29 @@ function xmpp_connect_cb(status, error_message) {
 
 var stackvms = {};
 
+function Get(host, port, url) {
+  var vm  = http.createClient(port, host);
+  var req = vm.request('GET', url);
+  req.end();
+}
+
+function GetWithCallback(host, port, url, callback, encoding) {
+  var client = http.createClient(port, host);
+  var req    = client.request('GET', url);
+  var encoding = encoding||'binary';
+  req.addListener('response', function(res) {
+    res.setEncoding(encoding);
+    var data = new buffer.Buffer(parseInt(res.headers['content-length']));
+    res.addListener('data', function(chunk) {
+      data.write(chunk, encoding);
+    });
+    res.addListener('end', function() {
+      callback && callback(data, res);
+    });
+  });
+  req.end();
+}
+
 function handler_start_vm(vm_id, msg) {
   /*
   ** TODO: This when we have a permanent TCP connections with stackvm
@@ -84,39 +107,28 @@ function handler_start_vm(vm_id, msg) {
       c('action').t('connected')
   );
 
-  var vm  = http.createClient(vm_map[vm_id]['port'], vm_map[vm_id]['host']);
-  var req = vm.request('GET', '/api/console/get_screen');
-  req.addListener('response', function(res) {
-    res.setEncoding('binary');
-    var png = new buffer.Buffer(parseInt(res.headers['content-length']));
-    res.addListener('data', function (chunk) {
-      png.write(chunk, 'binary');
-    });
-    res.addListener('end', function() {
+  GetWithCallback(
+    vm_map[vm_id]['host'], vm_map[vm_id]['port'],
+    '/api/console/get_screen',
+    function(png, response) {
       xmpp_connection.send(xmpp.message({to:msg.getAttribute('from')}).
         c('vm_id').t(vm_id).up().
         c('action').t('redraw_screen').up().
-        c('width').t(res.headers['screen-width']).up().
-        c('height').t(res.headers['screen-height']).up().
+        c('width').t(response.headers['screen-width']).up().
+        c('height').t(response.headers['screen-height']).up().
         c('png').t(base64.encode(png))
       );
-    });
-  });
-  req.end();
+    }
+  );
 
   update_fetcher(0, vm_id, msg);
 }
 
 function update_fetcher(version_id, vm_id, msg) {
-  var vm = http.createClient(vm_map[vm_id]['port'], vm_map[vm_id]['host']);
-  var req = vm.request('GET', '/api/console/get_update_list/' + version_id);
-  req.addListener('response', function(res) {
-    res.setEncoding('ascii');
-    var updates = new buffer.Buffer(parseInt(res.headers['content-length']));
-    res.addListener('data', function(chunk) {
-      updates.write(chunk);
-    });
-    res.addListener('end', function() {
+  GetWithCallback(
+    vm_map[vm_id]['host'], vm_map[vm_id]['port'],
+    '/api/console/get_update_list/' + version_id,
+    function(updates, response) {
       updates = JSON.parse(updates.toString());
       var latest_version = updates[0][0];
       for (var i = 1; i < updates.length; i++) {
@@ -124,22 +136,16 @@ function update_fetcher(version_id, vm_id, msg) {
         push_update(vm_id, msg, item, version_id, i-1);
       }
       update_fetcher(latest_version, vm_id, msg);
-    });
-  });
-  req.end();
+    },
+    'ascii'
+  );
 }
 
 function push_update(vm_id, msg, item, version_id, update_id) {
-  var vm = http.createClient(vm_map[vm_id]['port'], vm_map[vm_id]['host']);
-  var url = '/api/console/get_update/' + version_id + '/' + update_id;
-  var req = vm.request('GET', url);
-  req.addListener('response', function(res) {
-    res.setEncoding('binary')
-    var png = new buffer.Buffer(parseInt(res.headers['content-length']));
-    res.addListener('data', function(chunk) {
-      png.write(chunk, 'binary');
-    });
-    res.addListener('end', function() {
+  GetWithCallback(
+    vm_map[vm_id]['host'], vm_map[vm_id]['port'],
+    '/api/console/get_update/' + version_id + '/' + update_id,
+    function(png, response) {
       xmpp_connection.send(xmpp.message({to:msg.getAttribute('from')}).
         c('vm_id').t(vm_id).up().
         c('action').t('update_screen').up().
@@ -149,24 +155,24 @@ function push_update(vm_id, msg, item, version_id, update_id) {
         c('height').t(item[3]).up().
         c('png').t(base64.encode(png))
       );
-    })
-  });
-  req.end();
+    }
+  );
 }
 
 function handler_key_down(vm_id, msg) {
   var key = msg.getChild('key').getText();
-  sys.log('got: ' + key);
-  var vm  = http.createClient(vm_map[vm_id]['port'], vm_map[vm_id]['host']);
-  var req = vm.request('GET', '/api/console/send_key_down/' + key);
-  req.end();
+  Get(
+    vm_map[vm_id]['host'], vm_map[vm_id]['port'],
+    '/api/console/send_key_down/' + key
+  );
 }
 
 function handler_key_up(vm_id, msg) {
   var key = msg.getChild('key').getText();
-  var vm  = http.createClient(vm_map[vm_id]['port'], vm_map[vm_id]['host']);
-  var req = vm.request('GET', '/api/console/send_key_up/' + key);
-  req.end();
+  Get(
+    vm_map[vm_id]['host'], vm_map[vm_id]['port'],
+    '/api/console/send_key_up/' + key
+  );
 }
 
 var handlers = {
