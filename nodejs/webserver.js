@@ -1,5 +1,6 @@
 /*
-** Simple stackvm webserver, written in nodejs.
+** Stackvm webserver.
+**
 */
 
 var sys  = require('sys');
@@ -7,21 +8,19 @@ var http = require('http');
 var fs   = require('fs');
 var url  = require('url');
 
-var bosh_port = 5555;
-var bosh_host = 'localhost';
-
-var allowed_paths = /^\/$|^(\/http-bind|\/js\/|\/css\/|\/img\/)/;
+var allowed_paths = /^\/$|^\/crossdomain.xml$|^(\/js\/|\/css\/|\/img\/)/;
 var mime_types = {
   js:   'text/javascript',
   html: 'text/html',
   css:  'text/css',
   jpg:  'image/jpeg',
   gif:  'image/gif',
-  png:  'image/png'
+  png:  'image/png',
+  swf:  'application/x-shockware-flash',
+  xml:  'application/xml'
 };
 var path_handlers = {
   '/':    function(path, req, res) { serve_file('../views/index.html', res); },
-  '/http-bind': function(path, req, res) { proxy_bosh(path, req, res); },
   'else': function(path, req, res) { serve_file('../static' + path, res); }
 }
 
@@ -48,26 +47,6 @@ function path_handler(path, req, res) {
   f(path, req, res);
 }
 
-function proxy_bosh(path, req, res) {
-  var bosh     = http.createClient(bosh_port, bosh_host);
-  var bosh_req = bosh.request(req.method, req.url, req.headers);
-  bosh_req.addListener('response', function (bosh_res) {
-    res.writeHead(bosh_res.statusCode, bosh_res.headers);
-    bosh_res.addListener('data', function (chunk) {
-      res.write(chunk);
-    });
-    bosh_res.addListener('end', function () {
-      res.end();
-    });
-  });
-  req.addListener('data', function (chunk) {
-    bosh_req.write(chunk);
-  });
-  req.addListener('end', function () {
-    bosh_req.end();
-  });
-}
-
 function serve_file(real_path, res) {
   fs.stat(real_path, function(err, stats) {
     if (err) {
@@ -91,14 +70,10 @@ function serve_file(real_path, res) {
 }
 
 function not_found(res, msg) {
-  var headers = {};
-  if (msg) {
-    headers = {'Content-Type': 'text/plain'};
-  }
-  res.writeHead(404, headers);
-  if (msg) {
-    res.write(msg);
-  }
+  var msg = msg || 'file not found'
+  var headers = {'Content-Type': 'text/plain'};
+  res.writeHead(404, {'Content-Type': 'text/plain'});
+  res.write(msg);
   res.end();
 }
 
@@ -113,6 +88,5 @@ function conn_handler(req, res)
   path_handler(parsed.pathname, req, res);
 }
 
-http.createServer(conn_handler).listen(9000, '0.0.0.0');
-sys.puts('Webserver running at 0.0.0.0:9000');
+exports.webserver = http.createServer(conn_handler);
 

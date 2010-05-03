@@ -25,7 +25,7 @@ function VM_Event_Handler(vm) {
   this.vm = vm;
 
   this.error = function(msg) {
-    console.log("Error: " + msg.find('error').text());
+    console.log("Error: " + msg.error);
   }
 
   this.connected = function(msg) {
@@ -33,34 +33,35 @@ function VM_Event_Handler(vm) {
   }
 
   function png_img(png) {
+    // TODO: use MHTML for IE
     return $('<img>').attr('src', 'data:image/png;base64,' + png);
   }
 
   this.redraw_screen = function(msg) {
-    var width  = parseInt(msg.find('width').text());
-    var height = parseInt(msg.find('height').text());
-    var img = png_img(msg.find('png').text());
+    var width  = parseInt(msg.width);
+    var height = parseInt(msg.height);
+    var img = png_img(msg.png);
     vm.win.width(width);
     vm.win.height(height + 22);
     $('.console', vm.win).append(img);
   }
 
   this.update_screen = function(msg) {
-    var width  = msg.find('width').text();
-    var height = msg.find('height').text();
-    var img = png_img(msg.find('png').text());
+    var width  = msg.width;
+    var height = msg.height;
+    var img = png_img(msg.png);
     img.css({
       position: 'absolute',
-      left:     parseInt(msg.find('x').text()),
-      top:      parseInt(msg.find('y').text()),
-      width:    parseInt(msg.find('width').text()),
-      height:   parseInt(msg.find('height').text()),
+      left:     parseInt(msg.x),
+      top:      parseInt(msg.y),
+      width:    parseInt(msg.width),
+      height:   parseInt(msg.height),
     });
     $('.console', vm.win).append(img);
   }
 
   this.disconnect = function(msg) {
-    console.log('stackvm disconnected');
+    console.log('vm ' + msg.vm_id + ' disconnected');
   }
 }
 
@@ -72,40 +73,38 @@ function VM_Event_Emitter(vm) {
   }
 
   function keymap(code) {
-      var syms = {
-          8 :  0xff00 + 8,  // backspace
-          13 : 0xff00 + 13, // return
-          17 : 0xffe4,      // left control
-          18 : 0xff00 + 18, // left shift
-          191 : 47
-      };
-      return syms[code] || code;
+    var syms = {
+      8 :  0xff00 + 8,  // backspace
+      13 : 0xff00 + 13, // return
+      17 : 0xffe4,      // left control
+      18 : 0xff00 + 18, // left shift
+      191 : 47
+    };
+    return syms[code] || code;
   }
 
   this.start_vm = function() {
-    XMPP.send_msg(
-        prepare_msg().
-        c('action').t('start_vm')
-    );
+    Connection.send_msg({
+      vm_id:  vm.vm_id,
+      action: 'start_vm'
+    });
   }
 
   this.send_key_down = function(key_code) {
     console.log('sending ' + keymap(key_code));
-    XMPP.send_msg(
-        prepare_msg().
-        c('action').t('key_down').up().
-        c('key').t(String(keymap(key_code))),
-        true
-    );
+    Connection.send_msg({
+      vm_id:  vm.vm_id,
+      action: 'key_down',
+      key:    String(keymap(key_code))
+    });
   }
 
   this.send_key_up = function(key_code) {
-    XMPP.send_msg(
-        prepare_msg().
-        c('action').t('key_up').up().
-        c('key').t(String(keymap(key_code))),
-        true
-    );
+    Connection.send_msg({
+      vm_id:  vm.vm_id,
+      action: 'key_up',
+      key:    String(keymap(key_code))
+    });
   }
 }
 
@@ -172,7 +171,7 @@ function VM(vm_id) {
 
   this.run = function() {
     this.win = create_window();
-    XMPP.add_event_handler(new VM_Event_Handler(this));
+    Connection.add_event_handler(new VM_Event_Handler(this));
     event_emitter.start_vm();
   }
 }
