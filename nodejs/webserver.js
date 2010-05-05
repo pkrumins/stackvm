@@ -1,8 +1,5 @@
 #!/usr/bin/env node
-/*
-** Stackvm webserver.
-**
-*/
+// Stackvm webserver.
 
 var sys  = require('sys');
 var http = require('http');

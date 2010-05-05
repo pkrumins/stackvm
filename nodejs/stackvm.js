@@ -1,7 +1,5 @@
 #!/usr/bin/env node
-/*
-** Stackvm mediator.
-*/
+// Stackvm mediator.
 
 var sys  = require('sys');
 var http = require('http');

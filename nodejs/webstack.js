@@ -1,7 +1,5 @@
 #!/usr/bin/env node
-/*
-** This program serves stackvm webpages and stackvm streams.
-*/
+// This program serves stackvm webpages and stackvm streams.
 
 var sys       = require('sys');
 var webserver = require('./webserver').webserver;

@@ -6,6 +6,11 @@ StackVM is a web-based virtual machine manager where users will
 * integrate non-virtual servers into the virtual network
 
 After compiling:
+1) start nodejs webstack:
+    sudo node ./nodejs/webstack.js
+2) start qemu and stackvm
     qemu -vnc :0.0 linux-0.2.img &
     ./stackvm
+
 Then go to http://localhost:9000/
+
