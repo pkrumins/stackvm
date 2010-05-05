@@ -72,6 +72,8 @@ stackRoutes vm = do
     get "/api/console/get_screen" $ do
         draw <- io $ getScreen vm
         with_type "image/png"
+        with_header "screen-width"  $ show $ fst $ drawSize draw
+        with_header "screen-height" $ show $ snd $ drawSize draw
         with_body $ drawPng draw
     
     get "/api/console/send_key_down/:key" $ do

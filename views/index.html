@@ -13,12 +13,14 @@
       src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.0/jquery-ui.min.js"
       type="text/javascript"
     ></script>
-    <script src="/js/strophe.js" type="text/javascript"></script>
-    <script src="/js/xmpp.js" type="text/javascript"></script>
+    <script src="/js/connection.js"></script>
+    <script src="/js/Socket.IO/socket.io.js"></script>
+    <script>io.setPath('/js/Socket.IO/')</script>
     <script src="/js/vm.js" type="text/javascript"></script>
   </head>
   <body>
     <div id="content">
+      <div class="focusremover" tabindex="0" style="width:0;height:0"></div>
       <p>
         Your VMs: <a href="#" id="linux1">linux</a> | <a href="#" id="dos1">dos</a>
       </p>
@@ -31,7 +33,7 @@
             VM_Manager.add(vm);
             vm.run();
           } else {
-            // focus on vm
+            vm.focus();
           }
         });
       </script>
