@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 /*
 ** This program serves stackvm webpages and stackvm streams.
 */
