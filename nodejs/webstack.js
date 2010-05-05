@@ -1,7 +1,3 @@
-/*
-** This program serves stackvm webpages and stackvm streams.
-*/
-
 var sys       = require('sys');
 var webserver = require('./webserver').webserver;
 var socketio  = require('./libs/socket.io');

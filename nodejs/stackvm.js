@@ -1,7 +1,3 @@
-/*
-** Stackvm mediator.
-*/
-
 var sys  = require('sys');
 var http = require('http');
 var base64 = require('./libs/base64');

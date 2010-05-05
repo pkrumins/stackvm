@@ -1,8 +1,3 @@
-/*
-** Stackvm webserver.
-**
-*/
-
 var sys  = require('sys');
 var http = require('http');
 var fs   = require('fs');
