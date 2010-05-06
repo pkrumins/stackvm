@@ -22,8 +22,10 @@ function GetWithCallback(host, port, url, callback, encoding) {
   req.addListener('response', function(res) {
     res.setEncoding(encoding);
     var data = new buffer.Buffer(parseInt(res.headers['content-length']));
+    var offset = 0;
     res.addListener('data', function(chunk) {
-      data.write(chunk, encoding);
+      var written = data.write(chunk, encoding, offset);
+      offset += written;
     });
     res.addListener('end', function() {
       callback && callback(data, res);
@@ -62,16 +64,17 @@ function handler_start_vm(msg, client) {
 
   GetWithCallback(
     vm_map[msg.vm_id]['host'], vm_map[msg.vm_id]['port'],
-    '/api/console/get_screen',
+    '/api/console/get_screen_base64',
     function(png, response) {
       client.send(JSON.stringify({
         vm_id:  msg.vm_id,
         action: 'redraw_screen',
         width:  response.headers['screen-width'],
         height: response.headers['screen-height'],
-        png:    base64.encode(png)
+        png:    png.toString('ascii')
       }));
-    }
+    },
+    'ascii'
   );
 
   update_fetcher(0, msg, client);
@@ -97,7 +100,7 @@ function update_fetcher(version_id, msg, client) {
 function push_update(msg, client, item, version_id, update_id) {
   GetWithCallback(
     vm_map[msg.vm_id]['host'], vm_map[msg.vm_id]['port'],
-    '/api/console/get_update/' + version_id + '/' + update_id,
+    '/api/console/get_update_base64/' + version_id + '/' + update_id,
     function(png, response) {
       client.send(JSON.stringify({
         vm_id:   msg.vm_id,
@@ -106,9 +109,10 @@ function push_update(msg, client, item, version_id, update_id) {
         y:       item[1],
         width:   item[2],
         height:  item[3],
-        png:     base64.encode(png)
+        png:     png.toString('ascii')
       }));
-    }
+    },
+    'ascii'
   );
 }
 
