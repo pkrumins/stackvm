@@ -15,6 +15,8 @@ import Control.Applicative ((<$>))
 import Control.Monad (msum, mzero)
 
 import Data.ByteString.Lazy.Char8 (pack)
+import Data.ByteString.Lazy (unpack)
+import Codec.Binary.Base64 (encode)
 import qualified Text.JSON as JS
 
 import System.Environment (getArgs)
@@ -35,6 +37,15 @@ main = do
 
 stackRoutes :: VM -> UnitT ()
 stackRoutes vm = do
+    get "/api/console/get_update_base64/:version/:update" $ do
+        versionId <- read <$> fromJust <$> capture "version"
+        updateId <- read <$> fromJust <$> capture "update"
+        updates <- io $ getUpdates vm versionId
+        
+        let draw = updateData updates !! updateId
+        with_type "text/plain"
+        with_body $ pack $ encode $ unpack $ drawPng draw
+
     get "/api/console/get_update/:version/:update" $ do
         versionId <- read <$> fromJust <$> capture "version"
         updateId <- read <$> fromJust <$> capture "update"
@@ -75,6 +86,13 @@ stackRoutes vm = do
         with_header "screen-width"  $ show $ fst $ drawSize draw
         with_header "screen-height" $ show $ snd $ drawSize draw
         with_body $ drawPng draw
+
+    get "/api/console/get_screen_base64" $ do
+        draw <- io $ getScreen vm
+        with_type "text/plain"
+        with_header "screen-width"  $ show $ fst $ drawSize draw
+        with_header "screen-height" $ show $ snd $ drawSize draw
+        with_body $ pack $ encode $ unpack $ drawPng draw
     
     get "/api/console/send_key_down/:key" $ do
         key <- read <$> fromJust <$> capture "key"
