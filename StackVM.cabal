@@ -24,4 +24,4 @@ executable stackvm
     main-is:            Main.hs
     Build-Depends:      base, bytestring >= 0.9.1.5, hack, network,
                         hack-handler-happstack, gd, network-rfb, loli, stm,
-                        hack-contrib, mtl, json
+                        hack-contrib, mtl, json, dataenc
