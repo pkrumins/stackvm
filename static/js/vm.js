@@ -72,17 +72,6 @@ function VM_Event_Emitter(vm) {
     return $msg({to: 'vm.localhost'}).c('vm_id').t(vm.vm_id).up()
   }
 
-  function keymap(code) {
-    var syms = {
-      8 :  0xff00 + 8,  // backspace
-      13 : 0xff00 + 13, // return
-      17 : 0xffe4,      // left control
-      18 : 0xff00 + 18, // left shift
-      191 : 47
-    };
-    return syms[code] || code;
-  }
-
   this.start_vm = function() {
     Connection.send_msg({
       vm_id:  vm.vm_id,
@@ -91,11 +80,10 @@ function VM_Event_Emitter(vm) {
   }
 
   this.send_key_down = function(key_code) {
-    console.log('sending ' + keymap(key_code));
     Connection.send_msg({
       vm_id:  vm.vm_id,
       action: 'key_down',
-      key:    String(keymap(key_code))
+      key:    String(KeyMapper.get_key_sym(key_code))
     });
   }
 
@@ -103,7 +91,7 @@ function VM_Event_Emitter(vm) {
     Connection.send_msg({
       vm_id:  vm.vm_id,
       action: 'key_up',
-      key:    String(keymap(key_code))
+      key:    String(KeyMapper.get_key_sym(key_code))
     });
   }
 }
