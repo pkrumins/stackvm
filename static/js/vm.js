@@ -37,27 +37,40 @@ function VM_Event_Handler(vm) {
     return $('<img>').attr('src', 'data:image/png;base64,' + png);
   }
 
+  function cleanup_images(except) {
+    $('.console img', vm.win)
+      .not(except)
+      .remove();
+  }
+
+  function update_screen(img, x, y, w, h) {
+    var console = $('.console', vm.win);
+    if (h > parseInt(vm.win.height())+22) {
+      vm.win.height(h+22); // 22 to account for window's .title.
+    }
+    if (w > parseInt(vm.win.width())) {
+      vm.win.width(w);
+    }
+    img.css({
+      position: 'absolute',
+      left:     x,
+      top:      y,
+      width:    w,
+      height:   h
+    });
+    console.append(img);
+  }
+
   this.redraw_screen = function(msg) {
-    var width  = parseInt(msg.width);
-    var height = parseInt(msg.height);
     var img = png_img(msg.png);
-    vm.win.width(width);
-    vm.win.height(height + 22);
-    $('.console', vm.win).append(img);
+    update_screen(img, 0, 0, parseInt(msg.width), parseInt(msg.height));
+    cleanup_images(img);
   }
 
   this.update_screen = function(msg) {
-    var width  = msg.width;
-    var height = msg.height;
     var img = png_img(msg.png);
-    img.css({
-      position: 'absolute',
-      left:     parseInt(msg.x),
-      top:      parseInt(msg.y),
-      width:    parseInt(msg.width),
-      height:   parseInt(msg.height),
-    });
-    $('.console', vm.win).append(img);
+    update_screen(img, parseInt(msg.x), parseInt(msg.y),
+      parseInt(msg.width), parseInt(msg.height));
   }
 
   this.disconnect = function(msg) {
@@ -66,16 +79,17 @@ function VM_Event_Handler(vm) {
 }
 
 function VM_Event_Emitter(vm) {
-  this.vm = vm;
-
-  function prepare_msg() {
-    return $msg({to: 'vm.localhost'}).c('vm_id').t(vm.vm_id).up()
-  }
-
   this.start_vm = function() {
     Connection.send_msg({
       vm_id:  vm.vm_id,
       action: 'start_vm'
+    });
+  }
+
+  this.redraw_screen = function() {
+    Connection.send_msg({
+      vm_id:  vm.vm_id,
+      action: 'redraw_screen'
     });
   }
 
@@ -99,22 +113,38 @@ function VM_Event_Emitter(vm) {
 function VM(vm_id) {
   this.vm_id  = vm_id;
   this.win = null;
+  this.title = null;
   var event_emitter = new VM_Event_Emitter(this);
 
   function create_window() {
-    var win = $('<div class="window">').
-                 attr('tabindex', 0).  // needed for keydown/keyup
-                 data('vm_id', vm_id).
-                 width(400).
-                 height(200).
-                 draggable();
+    var win = $('<div>')
+      . addClass('window')
+      . attr('tabindex', 0)
+      . data('vm_id', vm_id)
+      . width(400)
+      . height(200)
+      . draggable();
 
-    win.append($('<div class="title">').text(vm_id));
-    var console = $('<div class="console">');
+    var title = $('<div>').addClass('title');
+    title.append($('<div>').addClass('text').text(vm_id));
+    title.append(
+      $('<div>').addClass('buttons').append(
+        $('<div>').addClass('refresh').append(
+          $('<img>').attr('src', '/img/refresh.png').click(
+            function(ev) {
+              event_emitter.redraw_screen();
+            }
+          )
+        )
+      )
+    ).append($('<div>').addClass('clear'));
+    win.append(title);
+
+    var console = $('<div>').addClass('console');
     console.append(
-      $('<div class="loading">').css({
-        'margin-top':   (200-20)/2-10 + 'px',
-        'text-align':   'center',
+      $('<div>').addClass('loading').css({
+        'margin-top': (200-20)/2-10 + 'px',
+        'text-align': 'center',
       }).
       text('Loading ' + vm_id + '...')
     );
