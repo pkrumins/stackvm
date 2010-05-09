@@ -171,8 +171,11 @@ function VM(vm_id) {
     var mouse_mask = 0;
     
     win.mousemove(function(ev) {
-      console.log([ev.pageX,ev.pageY,mouse_mask]);
-      event_emitter.send_pointer(ev.pageX,ev.pageY,mouse_mask);
+      event_emitter.send_pointer(
+        ev.pageX - win.offset().left,
+        ev.pageY - win.offset().top,
+        mouse_mask
+      );
     });
     
     win.mousedown(function(ev) {
