@@ -6,7 +6,6 @@ var webserver = require('./webserver').webserver;
 var socketio  = require('./libs/socket.io');
 var stackvm   = require('./stackvm');
 
-sys.inspect(process.argv);
 var port = Number(process.argv[2]) || 9000;
 
 webserver.listen(port, '0.0.0.0');

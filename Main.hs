@@ -105,11 +105,9 @@ stackRoutes vm = do
         io $ sendKeyEvent (vmRFB vm) False key
         withBody $ pack "ok"
     
-    get "/api/console/send_pointer/:x,:y,:mask" $ do
-        x <- read <$> fromJust <$> capture "x"
-        y <- read <$> fromJust <$> capture "y"
-        mask <- read <$> fromJust <$> capture "mask"
-        io $ sendPointer (vmRFB vm) mask x y
+    get "/api/console/send_pointer/:pointer" $ do
+        [x,y,mask] <- read <$> fromJust <$> capture "pointer"
+        io $ sendPointer (vmRFB vm) (fromIntegral mask) x y
         withBody $ pack "ok"
     
     get "/" $ do

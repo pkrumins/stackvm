@@ -34,7 +34,6 @@ function VM_Event_Handler(vm) {
 
   function png_img(png) {
     // TODO: use MHTML for IE
-    console.log("beep");
     return $('<img>').attr('src', 'data:image/png;base64,' + png);
   }
 
@@ -46,10 +45,10 @@ function VM_Event_Handler(vm) {
 
   function update_screen(img, x, y, w, h) {
     var console = $('.console', vm.win);
-    if (h > parseInt(vm.win.height())+22) {
+    if (h > vm.win.height() + 22) {
       vm.win.height(h+22); // 22 to account for window's .title.
     }
-    if (w > parseInt(vm.win.width())) {
+    if (w > vm.win.width()) {
       vm.win.width(w);
     }
     img.css({
@@ -102,6 +101,16 @@ function VM_Event_Emitter(vm) {
     });
   }
 
+  this.send_pointer = function(x,y,mask) {
+    Connection.send_msg({
+      vm_id: vm.vm_id,
+      action: 'pointer',
+      x : String(x),
+      y : String(y),
+      mask : String(mask)
+    });
+  }
+
   this.send_key_up = function(key_code) {
     Connection.send_msg({
       vm_id:  vm.vm_id,
@@ -150,16 +159,36 @@ function VM(vm_id) {
       text('Loading ' + vm_id + '...')
     );
     win.append(con);
-
+    
     win.mouseover(function(ev) {
       focus(win);
     });
+    
     win.mouseout(function(ev) {
       unfocus(win);
     });
+    
+    var mouse_mask = 0;
+    
+    win.mousemove(function(ev) {
+      console.log([ev.pageX,ev.pageY,mouse_mask]);
+      event_emitter.send_pointer(ev.pageX,ev.pageY,mouse_mask);
+    });
+    
+    win.mousedown(function(ev) {
+      mouse_mask = 1;
+      event_emitter.send_pointer(ev.pageX,ev.pageY,mouse_mask);
+    });
+    
+    win.mouseup(function(ev) {
+      mouse_mask = 0;
+      event_emitter.send_pointer(ev.pageX,ev.pageY,mouse_mask);
+    });
+    
     win.keydown(function(ev) {
       event_emitter.send_key_down(ev.keyCode);
     });
+    
     win.keyup(function(ev) {
       event_emitter.send_key_up(ev.keyCode);
     });

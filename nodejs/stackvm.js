@@ -120,6 +120,13 @@ function handler_key_up(msg, client) {
   );
 }
 
+function handler_pointer(msg, client) {
+  Get(
+    vm_map[msg.vm_id]['host'], vm_map[msg.vm_id]['port'],
+    '/api/console/send_pointer/[' + [msg.x, msg.y, msg.mask].join(',') + ']'
+  );
+}
+
 function handler_redraw_screen(msg, client) {
   GetWithCallback(
     vm_map[msg.vm_id]['host'], vm_map[msg.vm_id]['port'],
@@ -142,7 +149,8 @@ var handlers = {
   'start_vm': function(msg, client) { handler_start_vm(msg, client); },
   'redraw_screen': function(msg, client) { handler_redraw_screen(msg, client); },
   'key_down': function(msg, client) { handler_key_down(msg, client); },
-  'key_up':   function(msg, client) { handler_key_up  (msg, client); },
+  'key_up': function(msg, client) { handler_key_up(msg, client); },
+  'pointer': function(msg, client) { handler_pointer(msg, client); },
 }
 
 function handle_message(msg, client) {
