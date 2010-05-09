@@ -34,6 +34,7 @@ function VM_Event_Handler(vm) {
 
   function png_img(png) {
     // TODO: use MHTML for IE
+    console.log("beep");
     return $('<img>').attr('src', 'data:image/png;base64,' + png);
   }
 
@@ -140,15 +141,15 @@ function VM(vm_id) {
     ).append($('<div>').addClass('clear'));
     win.append(title);
 
-    var console = $('<div>').addClass('console');
-    console.append(
+    var con = $('<div>').addClass('console');
+    con.append(
       $('<div>').addClass('loading').css({
         'margin-top': (200-20)/2-10 + 'px',
         'text-align': 'center',
       }).
       text('Loading ' + vm_id + '...')
     );
-    win.append(console);
+    win.append(con);
 
     win.mouseover(function(ev) {
       focus(win);
