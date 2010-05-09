@@ -18,8 +18,8 @@ var mime_types = {
   xml:  'application/xml'
 };
 var path_handlers = {
-  '/':    function(path, req, res) { serve_file('../views/index.html', res); },
-  'else': function(path, req, res) { serve_file('../static' + path, res); }
+  '/':    function(path, req, res) { serve_file('./static/html/index.html', res); },
+  'else': function(path, req, res) { serve_file('./static' + path, res); }
 }
 
 function ext_to_mime(ext) {
