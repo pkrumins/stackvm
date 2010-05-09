@@ -55,13 +55,13 @@ function serve_file(real_path, res) {
       not_found(res, 'not a file');
       return;
     }
-    fs.readFile(real_path, function(err, data) {
+    fs.readFile(real_path, 'binary', function(err, data) {
       if (err) {
         not_found(res, err.message);
         return;
       }
       res.writeHead(200, {'Content-Type': file_to_mime(real_path) });
-      res.write(data);
+      res.write(data, 'binary');
       res.end();
     });
   });
@@ -70,7 +70,8 @@ function serve_file(real_path, res) {
 function not_found(res, msg) {
   var msg = msg || 'file not found'
   var headers = {'Content-Type': 'text/plain'};
-  res.writeHead(404, {'Content-Type': 'text/plain'});
+
+  res.writeHead(404, headers);
   res.write(msg);
   res.end();
 }
