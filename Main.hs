@@ -23,15 +23,16 @@ import System.Environment (getArgs)
 
 main :: IO ()
 main = do
-    args <- getArgs
-    let (vm_port, stackvm_port) = case args of
-                                    [] -> (5900, 25900)
-                                    _  -> (read $ args!!0, read $ args!!1)
-    rfb <- connect' "127.0.0.1" $ PortNumber $ fromIntegral vm_port
+    (vmPort,stackvmPort) <- (<$> getArgs)
+        $ \argv -> case argv of
+            [] -> (5900, 25900)
+            [x,y] -> (read x, read y)
+    
+    rfb <- connect' "127.0.0.1" $ PortNumber $ fromIntegral vmPort
     vm <- newVM rfb 30
     forkIO $ updateThread vm
-    putStrLn $ "Running on http://localhost:" ++ show stackvm_port
-    runWithConfig (ServerConf stackvm_port "0.0.0.0") $ loli $ do
+    putStrLn $ "Running on http://localhost:" ++ show stackvmPort
+    runWithConfig (ServerConf stackvmPort "0.0.0.0") $ loli $ do
         public (Just "static") ["/css", "/js"]
         stackRoutes vm
 
@@ -43,8 +44,8 @@ stackRoutes vm = do
         updates <- io $ getUpdates vm versionId
         
         let draw = updateData updates !! updateId
-        with_type "text/plain"
-        with_body $ pack $ encode $ unpack $ drawPng draw
+        withType "text/plain"
+        withBody $ pack $ encode $ unpack $ drawPng draw
 
     get "/api/console/get_update/:version/:update" $ do
         versionId <- read <$> fromJust <$> capture "version"
@@ -52,8 +53,8 @@ stackRoutes vm = do
         updates <- io $ getUpdates vm versionId
         
         let draw = updateData updates !! updateId
-        with_type "image/png"
-        with_body $ drawPng draw
+        withType "image/png"
+        withBody $ drawPng draw
     
     get "/api/console/get_update_list/:version" $ do
         versionId <- read <$> fromJust <$> capture "version"
@@ -67,8 +68,8 @@ stackRoutes vm = do
         let updateCount = length $ updateData updates
         let latestVersion = updateVersion updates
         
-        with_type "text/javascript"
-        with_body $ pack $ JS.encode
+        withType "text/javascript"
+        withBody $ pack $ JS.encode
             $ [[latestVersion]]
             ++ [ [
                 fst $ drawPos u, snd $ drawPos u,
@@ -76,35 +77,34 @@ stackRoutes vm = do
             ] | u <- updateData updates ]
     
     get "/api/console/get_latest_version" $ do
-        with_type "text/javascript"
-        with_body =<< pack <$> show <$> updateVersion
+        withType "text/javascript"
+        withBody =<< pack <$> show <$> updateVersion
             <$> io (getUpdates vm 0)
     
     get "/api/console/get_screen" $ do
         draw <- io $ getScreen vm
-        with_type "image/png"
-        with_header "screen-width"  $ show $ fst $ drawSize draw
-        with_header "screen-height" $ show $ snd $ drawSize draw
-        with_body $ drawPng draw
+        withType "image/png"
+        withHeader "screen-width"  $ show $ fst $ drawSize draw
+        withHeader "screen-height" $ show $ snd $ drawSize draw
+        withBody $ drawPng draw
 
     get "/api/console/get_screen_base64" $ do
         draw <- io $ getScreen vm
-        with_type "text/plain"
-        with_header "screen-width"  $ show $ fst $ drawSize draw
-        with_header "screen-height" $ show $ snd $ drawSize draw
-        with_body $ pack $ encode $ unpack $ drawPng draw
+        withType "text/plain"
+        withHeader "screen-width"  $ show $ fst $ drawSize draw
+        withHeader "screen-height" $ show $ snd $ drawSize draw
+        withBody $ pack $ encode $ unpack $ drawPng draw
     
     get "/api/console/send_key_down/:key" $ do
         key <- read <$> fromJust <$> capture "key"
         io $ sendKeyEvent (vmRFB vm) True key
-        with_body $ pack "ok"
+        withBody $ pack "ok"
     
     get "/api/console/send_key_up/:key" $ do
         key <- read <$> fromJust <$> capture "key"
         io $ sendKeyEvent (vmRFB vm) False key
-        with_body $ pack "ok"
+        withBody $ pack "ok"
     
     get "/" $ do
-        with_type "text/html"
-        with_layout "layout.html"
-            $ output $ text_template "console.html"
+        withType "text/plain"
+        withBody $ pack "meow"

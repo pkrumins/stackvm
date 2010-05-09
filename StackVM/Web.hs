@@ -4,8 +4,7 @@ module StackVM.Web (
     module Network.Loli,
     module Network.Loli.Type,
     module Network.Loli.Utils,
-    module Network.Loli.Template.TextTemplate,
-    capture, with_type, with_body, with_header
+    capture, withType, withBody, withHeader
 ) where
 
 import Hack
@@ -14,7 +13,6 @@ import Hack.Contrib.Response
 import Network.Loli
 import Network.Loli.Type hiding (router)
 import Network.Loli.Utils 
-import Network.Loli.Template.TextTemplate
 
 import Data.List (find)
 
@@ -26,14 +24,14 @@ import Control.Applicative ((<$>))
 
 type HackT = ReaderT AppReader (StateT AppState IO) ()
 
-with_type :: String -> HackT
-with_type = update . set_content_type
+withType :: String -> HackT
+withType = update . set_content_type
 
-with_body :: ByteString -> HackT
-with_body = update . set_body
+withBody :: ByteString -> HackT
+withBody = update . set_body
 
-with_header :: String -> String -> HackT
-with_header = \field -> update . set_header field
+withHeader :: String -> String -> HackT
+withHeader = \field -> update . set_header field
 
 capture :: String -> AppUnitT (Maybe String)
 capture key = lookup key <$> captures
