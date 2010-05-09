@@ -11,6 +11,22 @@
   font-weight: bold;
   padding-left: 2px;
   margin-bottom: 2px;
+  overflow: hidden;
+}
+
+.window .title .text {
+  float: left
+}
+
+.window .title .buttons {
+  float: right;
+  margin-right: 5px;
+}
+
+.window .title .buttons .refresh {
+  height: 16px;
+  width: 16px;
+  padding-top: 1px;
 }
 
 .window .active-title {
@@ -19,5 +35,9 @@
 
 .window .console {
   position: absolute;
+}
+
+.clear {
+  clear: both;
 }
 
