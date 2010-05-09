@@ -8,6 +8,7 @@ this.flashsocket.init = function(listener){
 	listeners.push(listener);
 };
 
+/*
 net.createServer(function(socket){
 	socket.write('<?xml version="1.0"?>\n');
 	socket.write('<!DOCTYPE cross-domain-policy SYSTEM "http://www.macromedia.com/xml/dtds/cross-domain-policy.dtd">\n');
@@ -23,3 +24,4 @@ net.createServer(function(socket){
 	socket.write('</cross-domain-policy>\n');
 	socket.end();	
 }).listen(843);
+*/
