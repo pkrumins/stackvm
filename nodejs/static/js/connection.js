@@ -9,7 +9,10 @@ var Connection = (function() {
   }
 
   function connect() {
-    connection = new io.Socket('10.1.1.2', {rememberTransport: false, port:9000});
+    connection = new io.Socket(window.location.hostname, {
+      rememberTransport : false,
+      port : window.location.port
+    });
     connection.addEvent('connect', function() {
       really_connected = true;
       process_msg_queue();
@@ -73,4 +76,3 @@ var Connection = (function() {
     }
   }
 })();
-
