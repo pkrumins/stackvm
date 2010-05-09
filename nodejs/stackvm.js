@@ -65,20 +65,7 @@ function handler_start_vm(msg, client) {
     action: 'connected'
   }));
 
-  GetWithCallback(
-    vm_map[msg.vm_id]['host'], vm_map[msg.vm_id]['port'],
-    '/api/console/get_screen_base64',
-    function(png, response) {
-      client.send(JSON.stringify({
-        vm_id:  msg.vm_id,
-        action: 'redraw_screen',
-        width:  response.headers['screen-width'],
-        height: response.headers['screen-height'],
-        png:    png.toString('ascii')
-      }));
-    },
-    'ascii'
-  );
+  handler_redraw_screen(msg, client);
 
   update_fetcher(0, msg, client);
 }
@@ -133,8 +120,27 @@ function handler_key_up(msg, client) {
   );
 }
 
+function handler_redraw_screen(msg, client) {
+  GetWithCallback(
+    vm_map[msg.vm_id]['host'], vm_map[msg.vm_id]['port'],
+    '/api/console/get_screen_base64',
+    function(png, response) {
+      client.send(JSON.stringify({
+        vm_id:  msg.vm_id,
+        action: 'redraw_screen',
+        width:  response.headers['screen-width'],
+        height: response.headers['screen-height'],
+        png:    png.toString('ascii')
+      }));
+    },
+    'ascii'
+  );
+}
+
+// TODO: just call handler_*(msg, client) for the given action
 var handlers = {
   'start_vm': function(msg, client) { handler_start_vm(msg, client); },
+  'redraw_screen': function(msg, client) { handler_redraw_screen(msg, client); },
   'key_down': function(msg, client) { handler_key_down(msg, client); },
   'key_up':   function(msg, client) { handler_key_up  (msg, client); },
 }
