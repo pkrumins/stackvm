@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+#!/home/substack/prefix/bin/node
 // This program serves stackvm webpages and stackvm streams.
 
 var sys       = require('sys');
@@ -6,8 +6,11 @@ var webserver = require('./webserver').webserver;
 var socketio  = require('./libs/socket.io');
 var stackvm   = require('./stackvm');
 
-webserver.listen(9000, '0.0.0.0');
-sys.log("Webserver running at 0.0.0.0:9000.");
+sys.inspect(process.argv);
+var port = Number(process.argv[2]) || 9000;
+
+webserver.listen(port, '0.0.0.0');
+sys.log("Webserver running at 0.0.0.0:" + port + ".");
 
 socketio.listen(webserver, {
   onClientConnect: function(client) {
