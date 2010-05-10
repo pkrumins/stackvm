@@ -73,7 +73,7 @@ function VM_Event_Handler(vm) {
       parseInt(msg.width), parseInt(msg.height));
   }
 
-  this.disconnect = function(msg) {
+  this.disconnected = function(msg) {
     console.log('vm ' + msg.vm_id + ' disconnected');
   }
 }
