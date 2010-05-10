@@ -3,7 +3,7 @@ module StackVM.VM (
     updateThread, getUpdate, newVM, renderPng
 ) where
 
-import qualified Graphics.GD.State as GD
+import qualified Graphics.GD as GD
 import qualified Network.RFB as RFB
 import qualified Data.ByteString as BS
 import qualified Data.ByteString.Lazy as LBS
@@ -77,26 +77,26 @@ newUpdate UpdateFB{ updateImage = screenIm } rects = do
         
         size = (e - w, s - n)
     
-    im <- GD.newImage size $ forM_ rects
-        $ \rect -> do
-            let RFB.Rectangle{ RFB.rectPos = rPos@(rx,ry) } = rect
-                RFB.Rectangle{ RFB.rectSize = rSize@(sx,sy) } = rect
-                points = liftM2 (,)
-                    [ rx - w .. rx + sx - w ]
-                    [ ry - n .. ry + sy - n ]
-            case (RFB.rectEncoding rect) of
-                RFB.RawEncoding rawData -> do
-                    mapM_ (uncurry GD.setPixel)
-                        $ zip points
-                        $ map rgba
-                        $ splitEvery 4
-                        $ LBS.unpack rawData
-                    where
-                        rgba :: [Word8] -> GD.Color
-                        rgba cs = sum $ zipWith (*)
-                            (map fromIntegral cs) (iterate (*256) 1)
-                RFB.CopyRectEncoding pos -> do
-                    GD.copyRegion pos rSize screenIm rPos
+    im <- GD.newImage size
+    forM_ rects $ \rect -> do
+        let RFB.Rectangle{ RFB.rectPos = rPos@(rx,ry) } = rect
+            RFB.Rectangle{ RFB.rectSize = rSize@(sx,sy) } = rect
+            points = liftM2 (,)
+                [ rx - w .. rx + sx - w ]
+                [ ry - n .. ry + sy - n ]
+        case (RFB.rectEncoding rect) of
+            RFB.RawEncoding rawData -> do
+                mapM_ (\(pt,color) -> GD.setPixel pt color im)
+                    $ zip points
+                    $ map rgba
+                    $ splitEvery 4
+                    $ LBS.unpack rawData
+                where
+                    rgba :: [Word8] -> GD.Color
+                    rgba cs = sum $ zipWith (*)
+                        (map fromIntegral cs) (iterate (*256) 1)
+            RFB.CopyRectEncoding pos -> do
+                GD.copyRegion pos rSize screenIm rPos im
     
     return $ UpdateFB {
         updateImage = im,
@@ -123,16 +123,15 @@ mergeUpdate u1 u2 = do
         s = maximum [ (snd $ updatePos u) + (snd $ updateSize u) | u <- uu ]
         e = maximum [ (fst $ updatePos u) + (fst $ updateSize u) | u <- uu ]
         
-        size = (e - w, s - n)
+        (width,height) = (e - w, s - n)
+        im = updateImage u1
     
-    im <- GD.withImage (updateImage u1) $ do
-        uncurry GD.resize size
-        GD.getImage
+    GD.resizeImage width height im
     
     return $ UpdateFB {
         updateImage = im,
         updatePos = (n,w),
-        updateSize = size,
+        updateSize = (width,height),
         updateID = 0
     }
 
