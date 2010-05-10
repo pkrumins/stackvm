@@ -17,6 +17,7 @@ import Data.List.Split (splitEvery)
 import Data.Word (Word8,Word32)
 
 import Control.Concurrent.MVar
+import Debug.Trace (trace)
 
 type UpdateID = Int
 
@@ -66,20 +67,23 @@ newUpdate :: UpdateFB -> [RFB.Rectangle] -> IO UpdateFB
 newUpdate UpdateFB{ updateImage = screenIm } rects = do
     let
         -- compute the bounds of the new synthesis image
-        nw = join (***) minimum $ unzip $ map RFB.rectPos rects
-        se = join (***) minimum $ unzip -- rectSE = rectNW + size
-            $ map (join (***) (uncurry (+)) . (RFB.rectPos &&& RFB.rectSize))
-            rects
-        size = join (***) (uncurry subtract) (nw,se)
-        (imX,imY) = nw
+        n = minimum $ map (snd . RFB.rectPos) rects
+        w = minimum $ map (fst . RFB.rectPos) rects
+        
+        s = maximum ss
+        ss = [ (snd $ RFB.rectPos r) + (snd $ RFB.rectSize r) | r <- rects ]
+        e = maximum es
+        es = [ (fst $ RFB.rectPos r) + (fst $ RFB.rectSize r) | r <- rects ]
+        
+        size = (e - w, s - n)
     
     im <- GD.newImage size $ forM_ rects
         $ \rect -> do
             let RFB.Rectangle{ RFB.rectPos = rPos@(rx,ry) } = rect
                 RFB.Rectangle{ RFB.rectSize = rSize@(sx,sy) } = rect
                 points = liftM2 (,)
-                    [ rx - imX .. rx + sx - imX ]
-                    [ ry - imY .. ry + sy - imY ]
+                    [ rx - w .. rx + sx - w ]
+                    [ ry - n .. ry + sy - n ]
             case (RFB.rectEncoding rect) of
                 RFB.RawEncoding rawData -> do
                     mapM_ (uncurry GD.setPixel)
@@ -91,17 +95,18 @@ newUpdate UpdateFB{ updateImage = screenIm } rects = do
                         rgba :: [Word8] -> GD.Color
                         rgba cs = sum $ zipWith (*)
                             (map fromIntegral cs) (iterate (*256) 1)
-                RFB.CopyRectEncoding pos ->
+                RFB.CopyRectEncoding pos -> do
                     GD.copyRegion pos rSize screenIm rPos
     
     return $ UpdateFB {
         updateImage = im,
-        updatePos = nw,
+        updatePos = (n,w),
         updateSize = size,
         updateID = 0
     }
  
 getUpdate :: VM -> UpdateID -> IO UpdateFB
+getUpdate VM{ vmScreen = sVar } 0 = readMVar sVar
 getUpdate VM{ vmUpdates = uVar, vmScreen = sVar } version = do
     mUpdate <- find ((version ==) . updateID) <$> readMVar uVar
     case mUpdate of
@@ -111,16 +116,14 @@ getUpdate VM{ vmUpdates = uVar, vmScreen = sVar } version = do
 -- Overlay the imagery from u1 onto the data and image in u2.
 mergeUpdate :: UpdateFB -> UpdateFB -> IO UpdateFB
 mergeUpdate u1 u2 = do
-    let nw = join (***) minimum
-            $ unzip $ map updatePos [u1,u2]
-        se = join (***) maximum
-            $ unzip $ map seCorner [u1,u2]
+    let
+        uu = [u1,u2]
+        n = minimum $ map (snd . updatePos) uu
+        w = minimum $ map (fst . updatePos) uu
+        s = maximum [ (snd $ updatePos u) + (snd $ updateSize u) | u <- uu ]
+        e = maximum [ (fst $ updatePos u) + (fst $ updateSize u) | u <- uu ]
         
-        seCorner u = pairwise (+) (updateSize u) (updatePos u)
-        pairwise f (a,b) (c,d) = (a `f` c, b `f` d)
-        
-        size = pairwise subtract nw se
-        (imX,imY) = nw
+        size = (e - w, s - n)
     
     im <- GD.withImage (updateImage u1) $ do
         uncurry GD.resize size
@@ -128,7 +131,7 @@ mergeUpdate u1 u2 = do
     
     return $ UpdateFB {
         updateImage = im,
-        updatePos = nw,
+        updatePos = (n,w),
         updateSize = size,
         updateID = 0
     }
@@ -136,9 +139,11 @@ mergeUpdate u1 u2 = do
 updateThread :: VM -> IO ()
 updateThread vm@VM{ vmRFB = rfb, vmLatest = idVar } = forever $ do
     let VM{ vmUpdates = updateVar, vmScreen = screenVar } = vm
-    screen <- takeMVar screenVar
     
-    update <- newUpdate screen . RFB.rectangles =<< RFB.getUpdate rfb
+    rects <- RFB.rectangles <$> RFB.getUpdate rfb
+    
+    screen <- takeMVar screenVar
+    update <- newUpdate screen rects
     
     uID <- takeMVar idVar
     putMVar idVar (uID + 1)
@@ -146,7 +151,7 @@ updateThread vm@VM{ vmRFB = rfb, vmLatest = idVar } = forever $ do
     -- updates are tied to the latest version upon creation
     let newestUpdate = update { updateID = uID }
     
-    putMVar updateVar . take 50 . (newestUpdate :)
+    putMVar updateVar . take 5 . (newestUpdate :)
         =<< mapM (mergeUpdate update)
         =<< takeMVar updateVar
     putMVar screenVar =<< mergeUpdate update screen
