@@ -1,112 +1,136 @@
 module StackVM.VM (
-    VM(..), UpdateData(..), DrawData(..),
-    updateThread, getScreen, getUpdates, newVM
+    VM(..), UpdateFB(..),
+    updateThread, getUpdate, newVM
 ) where
 
-import qualified Graphics.GD as GD
-import Network.RFB
+import qualified Graphics.GD.State as GD
+import qualified Network.RFB as RFB
+import qualified Data.ByteString as BS
+import qualified Data.ByteString.Lazy as LBS
 
-import Control.Monad (forever, when, forM)
-import Control.Arrow ((&&&))
+import Control.Monad (forever,forM_,join,liftM2)
+import Control.Arrow ((&&&),(***))
 import Control.Applicative ((<$>))
 
-import Control.Concurrent.STM (atomically)
-import Control.Concurrent.STM.TMVar
+import Data.List (find)
+import Data.List.Split (splitEvery)
+import Data.Word (Word8,Word32)
 
-import qualified Data.ByteString as BS
-import qualified Data.ByteString.Lazy as BL
-repack = BL.pack . BS.unpack -- convert strict to lazy
-
-data VM = VM {
-    vmRFB :: RFB,
-    vmUpdates :: TMVar [UpdateData],
-    vmUpdateMax :: Int,
-    vmScreen :: TMVar DrawData
-}
+import Control.Concurrent.MVar
 
 type Version = Int
-type ByteSize = Int
 
-data UpdateData = UpdateData {
-    updateBytes :: ByteSize,
-    updateVersion :: Version,
-    updateData :: [DrawData]
+data VM = VM {
+    vmRFB :: RFB.RFB,
+    vmUpdates :: MVar [UpdateFB],
+    vmScreen :: MVar UpdateFB,
+    vmLatest :: MVar Version
 }
 
-data DrawData = DrawData {
-    drawPng :: BL.ByteString,
-    drawPos :: (Int,Int),
-    drawSize :: (Int,Int),
-    drawBytes :: ByteSize
+data UpdateFB = UpdateFB {
+    updateImage :: GD.Image,
+    updatePng :: BS.ByteString,
+    updatePos :: (Int,Int),
+    updateSize :: (Int,Int),
+    updateBytes :: Int,
+    updateVersion :: Version
 }
 
-newVM :: RFB -> Int -> IO VM
-newVM rfb uMax = do
-    updates <- atomically $ newTMVar []
-    screen <- atomically . newTMVar =<< getScreen' rfb
+newVM :: RFB.RFB -> IO VM
+newVM rfb = do
+    updates <- newMVar []
+    let screenSize = RFB.fbWidth &&& RFB.fbHeight $ RFB.rfbFB rfb
+    screen <- newMVar
+        =<< updateFromImage (0,0) screenSize
+        =<< RFB.getImage rfb
+    version <- newMVar 0
     
     return $ VM {
         vmRFB = rfb,
         vmUpdates = updates,
-        vmUpdateMax = uMax,
-        vmScreen = screen
+        vmScreen = screen,
+        vmLatest = version
     }
 
-getScreen :: VM -> IO DrawData
-getScreen = getScreen' . vmRFB
-
-getScreen' :: RFB -> IO DrawData
-getScreen' rfb = do
-    im <- getImage rfb
-    png <- repack <$> GD.savePngByteString im
-    let bytes = fromIntegral $ BL.length png
-    return $ DrawData {
-        drawPng = png,
-        drawPos = (0,0),
-        drawSize = fbWidth &&& fbHeight $ rfbFB rfb,
-        drawBytes = bytes
+updateFromImage :: GD.Point -> GD.Size -> GD.Image -> IO UpdateFB
+updateFromImage pos size im = do
+    png <- GD.savePngByteString im
+    return $ UpdateFB {
+        updatePng = png,
+        updateImage = im,
+        updatePos = pos,
+        updateSize = size,
+        updateBytes = BS.length png,
+        updateVersion = 0
     }
 
-getUpdates :: VM -> Version -> IO UpdateData
-getUpdates vm version = do
-    updates <- reverse
-        <$> takeWhile ((> version) . updateVersion)
-        <$> (atomically $ readTMVar $ vmUpdates vm)
-    return $ UpdateData {
-        updateBytes = sum $ map updateBytes updates,
-        updateVersion =
-            if null updates
-                then version
-                else updateVersion $ last updates,
-        updateData = concatMap updateData updates
+newUpdate :: UpdateFB -> [RFB.Rectangle] -> IO UpdateFB
+newUpdate UpdateFB{ updateImage = screenIm } rects = do
+    let
+        -- compute the bounds of the new synthesis image
+        nw = join (***) minimum $ unzip $ map (RFB.rectPos) rects
+        se = join (***) minimum $ unzip -- rectSE = rectNW + size
+            $ map (join (***) (uncurry (+)) . (RFB.rectPos &&& RFB.rectSize))
+            rects
+        size = join (***) (uncurry subtract) (nw,se)
+        (imX,imY) = nw
+    
+    im <- GD.newImage size $ forM_ rects
+        $ \rect -> do
+            let RFB.Rectangle{ RFB.rectPos = rPos@(rx,ry) } = rect
+                RFB.Rectangle{ RFB.rectSize = rSize@(sx,sy) } = rect
+                points = liftM2 (,)
+                    [ rx - imX .. rx + sx - imX ]
+                    [ ry - imY .. ry + sy - imY ]
+            case (RFB.rectEncoding rect) of
+                RFB.RawEncoding rawData -> do
+                    mapM_ (uncurry GD.setPixel)
+                        $ zip points
+                        $ map rgba
+                        $ splitEvery 4
+                        $ LBS.unpack rawData
+                    where
+                        rgba :: [Word8] -> GD.Color
+                        rgba cs = sum $ zipWith (*)
+                            (map fromIntegral cs) (iterate (*256) 1)
+                RFB.CopyRectEncoding pos ->
+                    GD.copyRegion pos rSize screenIm rPos
+    png <- GD.savePngByteString im
+    
+    return $ UpdateFB {
+        updatePng = png,
+        updateImage = im,
+        updatePos = nw,
+        updateSize = size,
+        updateBytes = BS.length png,
+        updateVersion = 0
     }
+ 
+getUpdate :: VM -> Version -> IO UpdateFB
+getUpdate VM{ vmUpdates = uVar, vmScreen = sVar } version = do
+    mUpdate <- find ((version ==) . updateVersion) <$> readMVar uVar
+    case mUpdate of
+        Just update -> return update
+        Nothing -> readMVar sVar
+
+-- add rectangles to an update
+mergeUpdate :: UpdateFB -> UpdateFB -> IO UpdateFB
+mergeUpdate u1 u2 = undefined
 
 updateThread :: VM -> IO ()
-updateThread vm = forever $ do
-    let rfb = vmRFB vm
-    rx <- rectangles <$> getUpdate rfb
-    renderImage' rfb rx
-    dx <- if length rx > vmUpdateMax vm
-        then (:[]) <$> getScreen vm
-        else forM rx $ \rect -> do
-            im <- fromByteString (rectSize rect) (rawImage $ rectEncoding rect)
-            png <- repack <$> GD.savePngByteString im
-            return $ DrawData {
-                drawPng = png,
-                drawPos = rectPos rect,
-                drawSize = rectSize rect,
-                drawBytes = fromIntegral $ BL.length png
-            }
-     
-    let tm = vmUpdates vm
-    updates <- atomically $ takeTMVar tm
-    let
-        ver = if null updates then 0 else updateVersion $ head updates
-        update = UpdateData {
-            updateBytes = sum $ map drawBytes dx,
-            updateVersion = ver + 1,
-            updateData = dx
-        }
-    if length rx > vmUpdateMax vm
-        then atomically $ putTMVar tm [update]
-        else atomically $ putTMVar tm $ update : updates
+updateThread vm@VM{ vmRFB = rfb, vmLatest = versionVar } = forever $ do
+    let VM{ vmUpdates = updateVar, vmScreen = screenVar } = vm
+    screen <- takeMVar screenVar
+    
+    update <- newUpdate screen . RFB.rectangles =<< RFB.getUpdate rfb
+    
+    version <- takeMVar versionVar
+    putMVar versionVar (version + 1)
+    
+    -- updates are tied to the latest version upon creation
+    let newestUpdate = update { updateVersion = version }
+    
+    putMVar updateVar . take 50 . (newestUpdate :)
+        =<< mapM (mergeUpdate update)
+        =<< takeMVar updateVar
+    putMVar screenVar =<< mergeUpdate update screen
