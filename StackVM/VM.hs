@@ -24,7 +24,6 @@ type UpdateID = Int
 data VM = VM {
     vmRFB :: RFB.RFB,
     vmUpdates :: MVar [UpdateFB],
-    vmScreen :: MVar UpdateFB,
     vmLatest :: MVar UpdateID
 }
 
@@ -41,16 +40,11 @@ renderPng UpdateFB{ updateImage = im } = GD.savePngByteString im
 newVM :: RFB.RFB -> IO VM
 newVM rfb = do
     updates <- newMVar []
-    let screenSize = RFB.fbWidth &&& RFB.fbHeight $ RFB.rfbFB rfb
-    screen <- newMVar
-        =<< updateFromImage (0,0) screenSize
-        =<< RFB.getImage rfb
     version <- newMVar 0
     
     return $ VM {
         vmRFB = rfb,
         vmUpdates = updates,
-        vmScreen = screen,
         vmLatest = version
     }
 
@@ -63,8 +57,8 @@ updateFromImage pos size im = do
         updateID = 0
     }
 
-newUpdate :: UpdateFB -> [RFB.Rectangle] -> IO UpdateFB
-newUpdate UpdateFB{ updateImage = screenIm } rects = do
+newUpdate :: RFB.RFB -> [RFB.Rectangle] -> IO UpdateFB
+newUpdate rfb rects = do
     let
         -- compute the bounds of the new synthesis image
         n = minimum $ map (snd . RFB.rectPos) rects
@@ -96,7 +90,8 @@ newUpdate UpdateFB{ updateImage = screenIm } rects = do
                     rgba cs = sum $ zipWith (*)
                         (map fromIntegral cs) (iterate (*256) 1)
             RFB.CopyRectEncoding pos -> do
-                GD.copyRegion pos rSize screenIm rPos im
+                screenIm <- RFB.getImage rfb
+                GD.copyRegion rPos rSize screenIm pos im
     
     return $ UpdateFB {
         updateImage = im,
@@ -106,12 +101,20 @@ newUpdate UpdateFB{ updateImage = screenIm } rects = do
     }
  
 getUpdate :: VM -> UpdateID -> IO UpdateFB
-getUpdate VM{ vmScreen = sVar } 0 = readMVar sVar
-getUpdate VM{ vmUpdates = uVar, vmScreen = sVar } version = do
+getUpdate vm@VM{ vmUpdates = uVar } version = do
     mUpdate <- find ((version ==) . updateID) <$> readMVar uVar
+    print . map updateID =<< readMVar uVar
     case mUpdate of
         Just update -> return update
-        Nothing -> readMVar sVar
+        Nothing -> do
+            im <- RFB.getImage (vmRFB vm)
+            print (RFB.fbWidth &&& RFB.fbHeight $ RFB.rfbFB (vmRFB vm))
+            return $ UpdateFB {
+                updateImage = im,
+                updatePos = (0,0),
+                updateSize = (RFB.fbWidth &&& RFB.fbHeight $ RFB.rfbFB (vmRFB vm)),
+                updateID = 0
+            }
 
 -- Overlay the imagery from u1 onto the data and image in u2.
 mergeUpdate :: UpdateFB -> UpdateFB -> IO UpdateFB
@@ -124,25 +127,26 @@ mergeUpdate u1 u2 = do
         e = maximum [ (fst $ updatePos u) + (fst $ updateSize u) | u <- uu ]
         
         (width,height) = (e - w, s - n)
-        im = updateImage u1
+        im1 = updateImage u1
+        im2 = updateImage u2
+        (x,y) = updatePos u1
     
-    GD.resizeImage width height im
+    GD.resizeImage width height im2
+    GD.copyRegion (updateSize u1) (0,0) im1 (x - w, y - n) im2
     
-    return $ UpdateFB {
-        updateImage = im,
+    return $ u2 {
         updatePos = (n,w),
-        updateSize = (width,height),
-        updateID = 0
+        updateSize = (width,height)
     }
 
 updateThread :: VM -> IO ()
 updateThread vm@VM{ vmRFB = rfb, vmLatest = idVar } = forever $ do
-    let VM{ vmUpdates = updateVar, vmScreen = screenVar } = vm
+    let VM{ vmUpdates = updateVar } = vm
     
     rects <- RFB.rectangles <$> RFB.getUpdate rfb
     
-    screen <- takeMVar screenVar
-    update <- newUpdate screen rects
+    RFB.renderImages rfb rects
+    update <- newUpdate rfb rects
     
     uID <- takeMVar idVar
     putMVar idVar (uID + 1)
@@ -153,4 +157,3 @@ updateThread vm@VM{ vmRFB = rfb, vmLatest = idVar } = forever $ do
     putMVar updateVar . take 5 . (newestUpdate :)
         =<< mapM (mergeUpdate update)
         =<< takeMVar updateVar
-    putMVar screenVar =<< mergeUpdate update screen
