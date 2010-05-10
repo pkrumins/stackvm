@@ -1,5 +1,6 @@
 module StackVM.VM (
-    VM(..), UpdateFB(..), updateThread, getUpdate, newVM
+    VM(..), UpdateFB(..),
+    updateThread, getUpdate, newVM, renderPng
 ) where
 
 import qualified Graphics.GD.State as GD
@@ -17,21 +18,24 @@ import Data.Word (Word8,Word32)
 
 import Control.Concurrent.MVar
 
-type Version = Int
+type UpdateID = Int
 
 data VM = VM {
     vmRFB :: RFB.RFB,
     vmUpdates :: MVar [UpdateFB],
     vmScreen :: MVar UpdateFB,
-    vmLatest :: MVar Version
+    vmLatest :: MVar UpdateID
 }
 
 data UpdateFB = UpdateFB {
     updateImage :: GD.Image,
     updatePos :: (Int,Int),
     updateSize :: (Int,Int),
-    updateVersion :: Version
+    updateID :: UpdateID
 }
+
+renderPng :: UpdateFB -> IO BS.ByteString
+renderPng UpdateFB{ updateImage = im } = GD.savePngByteString im
 
 newVM :: RFB.RFB -> IO VM
 newVM rfb = do
@@ -55,7 +59,7 @@ updateFromImage pos size im = do
         updateImage = im,
         updatePos = pos,
         updateSize = size,
-        updateVersion = 0
+        updateID = 0
     }
 
 newUpdate :: UpdateFB -> [RFB.Rectangle] -> IO UpdateFB
@@ -94,12 +98,12 @@ newUpdate UpdateFB{ updateImage = screenIm } rects = do
         updateImage = im,
         updatePos = nw,
         updateSize = size,
-        updateVersion = 0
+        updateID = 0
     }
  
-getUpdate :: VM -> Version -> IO UpdateFB
+getUpdate :: VM -> UpdateID -> IO UpdateFB
 getUpdate VM{ vmUpdates = uVar, vmScreen = sVar } version = do
-    mUpdate <- find ((version ==) . updateVersion) <$> readMVar uVar
+    mUpdate <- find ((version ==) . updateID) <$> readMVar uVar
     case mUpdate of
         Just update -> return update
         Nothing -> readMVar sVar
@@ -121,21 +125,21 @@ mergeUpdate u1 u2 = do
         updateImage = im,
         updatePos = nw,
         updateSize = size,
-        updateVersion = 0
+        updateID = 0
     }
 
 updateThread :: VM -> IO ()
-updateThread vm@VM{ vmRFB = rfb, vmLatest = versionVar } = forever $ do
+updateThread vm@VM{ vmRFB = rfb, vmLatest = idVar } = forever $ do
     let VM{ vmUpdates = updateVar, vmScreen = screenVar } = vm
     screen <- takeMVar screenVar
     
     update <- newUpdate screen . RFB.rectangles =<< RFB.getUpdate rfb
     
-    version <- takeMVar versionVar
-    putMVar versionVar (version + 1)
+    uID <- takeMVar idVar
+    putMVar idVar (uID + 1)
     
     -- updates are tied to the latest version upon creation
-    let newestUpdate = update { updateVersion = version }
+    let newestUpdate = update { updateID = uID }
     
     putMVar updateVar . take 50 . (newestUpdate :)
         =<< mapM (mergeUpdate update)
