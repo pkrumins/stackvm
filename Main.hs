@@ -2,7 +2,8 @@ module Main where
 
 import StackVM.Web
 import StackVM.VM
-import Network.RFB
+import qualified Network.RFB as RFB
+import Network (PortID(..))
 
 import Hack.Handler.Happstack
 
@@ -14,12 +15,15 @@ import Data.Maybe (fromJust)
 import Control.Applicative ((<$>))
 import Control.Monad (msum, mzero)
 
-import Data.ByteString.Lazy.Char8 (pack)
-import Data.ByteString.Lazy (unpack)
+import qualified Data.ByteString as BS
+import qualified Data.ByteString.Lazy as LBS
+import qualified Data.ByteString.Lazy.Char8 as L8
 import Codec.Binary.Base64 (encode)
 import qualified Text.JSON as JS
 
 import System.Environment (getArgs)
+
+withText = withBody . L8.pack
 
 main :: IO ()
 main = do
@@ -28,8 +32,8 @@ main = do
             [] -> (5900, 25900)
             [x,y] -> (read x, read y)
     
-    rfb <- connect' "127.0.0.1" $ PortNumber $ fromIntegral vmPort
-    vm <- newVM rfb 30
+    rfb <- RFB.connect' "127.0.0.1" $ PortNumber $ fromIntegral vmPort
+    vm <- newVM rfb
     forkIO $ updateThread vm
     putStrLn $ "Running on http://localhost:" ++ show stackvmPort
     runWithConfig (ServerConf stackvmPort "0.0.0.0") $ loli $ do
@@ -38,78 +42,38 @@ main = do
 
 stackRoutes :: VM -> UnitT ()
 stackRoutes vm = do
-    get "/api/console/get_update_base64/:version/:update" $ do
-        versionId <- read <$> fromJust <$> capture "version"
-        updateId <- read <$> fromJust <$> capture "update"
-        updates <- io $ getUpdates vm versionId
-        
-        let draw = updateData updates !! updateId
+    let updateRoute :: AppUnitT LBS.ByteString
+        updateRoute = do
+            updateID <- read <$> fromJust <$> capture "updateID"
+            update@UpdateFB{
+                updateSize = size,
+                updatePos = pos
+            } <- io $ getUpdate vm updateID
+            
+            withHeader "screen-size" $ show size
+            withHeader "screen-pos" $ show pos
+            withHeader "update-id" $ show updateID
+            io $ LBS.pack . BS.unpack <$> renderPng update
+    
+    get "/api/console/get_update_base64/:updateID" $ do
         withType "text/plain"
-        withBody $ pack $ encode $ unpack $ drawPng draw
-
-    get "/api/console/get_update/:version/:update" $ do
-        versionId <- read <$> fromJust <$> capture "version"
-        updateId <- read <$> fromJust <$> capture "update"
-        updates <- io $ getUpdates vm versionId
-        
-        let draw = updateData updates !! updateId
+        withText . encode . LBS.unpack =<< updateRoute
+    
+    get "/api/console/get_update/:updateID" $ do
         withType "image/png"
-        withBody $ drawPng draw
-    
-    get "/api/console/get_update_list/:version" $ do
-        versionId <- read <$> fromJust <$> capture "version"
-        -- loop until updates are available
-        updates <- io $ msum $ repeat $ do
-            u <- getUpdates vm versionId
-            if null $ updateData u
-                then mzero
-                else return u
-        
-        let updateCount = length $ updateData updates
-        let latestVersion = updateVersion updates
-        
-        withType "text/javascript"
-        withBody $ pack $ JS.encode
-            $ [[latestVersion]]
-            ++ [ [
-                fst $ drawPos u, snd $ drawPos u,
-                fst $ drawSize u, snd $ drawSize u
-            ] | u <- updateData updates ]
-    
-    get "/api/console/get_latest_version" $ do
-        withType "text/javascript"
-        withBody =<< pack <$> show <$> updateVersion
-            <$> io (getUpdates vm 0)
-    
-    get "/api/console/get_screen" $ do
-        draw <- io $ getScreen vm
-        withType "image/png"
-        withHeader "screen-width"  $ show $ fst $ drawSize draw
-        withHeader "screen-height" $ show $ snd $ drawSize draw
-        withBody $ drawPng draw
-
-    get "/api/console/get_screen_base64" $ do
-        draw <- io $ getScreen vm
-        withType "text/plain"
-        withHeader "screen-width"  $ show $ fst $ drawSize draw
-        withHeader "screen-height" $ show $ snd $ drawSize draw
-        withBody $ pack $ encode $ unpack $ drawPng draw
+        withBody =<< updateRoute
     
     get "/api/console/send_key_down/:key" $ do
         key <- read <$> fromJust <$> capture "key"
-        io $ sendKeyEvent (vmRFB vm) True key
-        withBody $ pack "ok"
+        io $ RFB.sendKeyEvent (vmRFB vm) True key
+        withText "ok"
     
     get "/api/console/send_key_up/:key" $ do
         key <- read <$> fromJust <$> capture "key"
-        io $ sendKeyEvent (vmRFB vm) False key
-        withBody $ pack "ok"
+        io $ RFB.sendKeyEvent (vmRFB vm) False key
+        withText "ok"
     
     get "/api/console/send_pointer/:pointer" $ do
         [x,y,mask] <- read <$> fromJust <$> capture "pointer"
-        io $ sendPointer (vmRFB vm) (fromIntegral mask) x y
-        withBody $ pack "ok"
-    
-    get "/" $ do
-        withType "text/plain"
-        withBody $ pack "meow"
+        io $ RFB.sendPointer (vmRFB vm) (fromIntegral mask) x y
+        withText "ok"
