@@ -80,15 +80,8 @@ newUpdate rfb rects = do
                 [ ry - n .. ry + sy - n ]
         case (RFB.rectEncoding rect) of
             RFB.RawEncoding rawData -> do
-                mapM_ (\(pt,color) -> GD.setPixel pt color im)
-                    $ zip points
-                    $ map rgba
-                    $ splitEvery 4
-                    $ LBS.unpack rawData
-                where
-                    rgba :: [Word8] -> GD.Color
-                    rgba cs = sum $ zipWith (*)
-                        (map fromIntegral cs) (iterate (*256) 1)
+                srcIm <- RFB.fromByteString rSize rawData
+                GD.copyRegion (0,0) rSize srcIm rPos im
             RFB.CopyRectEncoding pos -> do
                 screenIm <- RFB.getImage rfb
                 GD.copyRegion rPos rSize screenIm pos im
@@ -103,18 +96,12 @@ newUpdate rfb rects = do
 getUpdate :: VM -> UpdateID -> IO UpdateFB
 getUpdate vm@VM{ vmUpdates = uVar } version = do
     mUpdate <- find ((version ==) . updateID) <$> readMVar uVar
-    print . map updateID =<< readMVar uVar
     case mUpdate of
         Just update -> return update
-        Nothing -> do
-            im <- RFB.getImage (vmRFB vm)
-            print (RFB.fbWidth &&& RFB.fbHeight $ RFB.rfbFB (vmRFB vm))
-            return $ UpdateFB {
-                updateImage = im,
-                updatePos = (0,0),
-                updateSize = (RFB.fbWidth &&& RFB.fbHeight $ RFB.rfbFB (vmRFB vm)),
-                updateID = 0
-            }
+        Nothing -> updateFromImage (0,0) size =<< RFB.getImage (vmRFB vm)
+            where
+                size = RFB.fbWidth &&& RFB.fbHeight $ rfb
+                rfb = RFB.rfbFB (vmRFB vm)
 
 -- Overlay the imagery from u1 onto the data and image in u2.
 mergeUpdate :: UpdateFB -> UpdateFB -> IO UpdateFB
