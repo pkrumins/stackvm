@@ -111,10 +111,15 @@ getUpdate VM{ vmUpdates = uVar, vmScreen = sVar } version = do
 -- Overlay the imagery from u1 onto the data and image in u2.
 mergeUpdate :: UpdateFB -> UpdateFB -> IO UpdateFB
 mergeUpdate u1 u2 = do
-    let nw = join (***) minimum $ unzip $ map updatePos [u1,u2]
-        se = join (***) (maximum . map (uncurry (+)))
-            $ unzip $ map (updateSize &&& updatePos) [u1,u2]
-        size = join (***) (uncurry subtract) (nw,se)
+    let nw = join (***) minimum
+            $ unzip $ map updatePos [u1,u2]
+        se = join (***) maximum
+            $ unzip $ map seCorner [u1,u2]
+        
+        seCorner u = pairwise (+) (updateSize u) (updatePos u)
+        pairwise f (a,b) (c,d) = (a `f` c, b `f` d)
+        
+        size = pairwise subtract nw se
         (imX,imY) = nw
     
     im <- GD.withImage (updateImage u1) $ do
