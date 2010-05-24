@@ -1,10 +1,12 @@
-#!/home/substack/prefix/bin/node
+#!/usr/bin/env node
 // This program serves stackvm webpages and stackvm streams.
+require.paths.unshift(__dirname + '/..');
 
 var sys       = require('sys');
-var webserver = require('./webserver').webserver;
-var socketio  = require('./libs/socket.io');
-var stackvm   = require('./stackvm');
+var socketio  = require('socket.io');
+
+var webserver = require('lib/webserver').webserver;
+var stackvm   = require('lib/stackvm');
 
 var port = Number(process.argv[2]) || 9000;
 
