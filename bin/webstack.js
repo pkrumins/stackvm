@@ -14,6 +14,9 @@ webserver.listen(port, '0.0.0.0');
 sys.log("Webserver running at 0.0.0.0:" + port + ".");
 
 socketio.listen(webserver, {
+    // flashsockets require that pesky 843 port, so forget those
+    transports : 'websocket htmlfile xhr-multipart xhr-polling'.split(/\s+/),
+    
     onClientConnect: function(client) {
         var client_ip = client.request.connection.remoteAddress;
         sys.log("Client from " + client_ip + " connected.");
