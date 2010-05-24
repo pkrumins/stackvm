@@ -20,18 +20,18 @@ function handler_start_vm(msg, client) {
             vm_id:  msg.vm_id,
             action: 'connected'
         }));
-        stackvm_socket.write('update ' + msg.vm_id + ' 0\n');
+        vm_connection_map[msg.vm_id].socket.write('update ' + msg.vm_id + ' 0\n');
         return;
     }
 
     var vm_host = vm_map[msg.vm_id]['host'];
     var vm_port = vm_map[msg.vm_id]['port'];
 
-    stackvm_socket = net.createConnection(vm_port, vm_host);
-    stackvm_socket.setTimeout(0);
-    stackvm_socket.setKeepAlive(true, 60*1000);
-    stackvm_socket.setEncoding('binary');
-    stackvm_socket.addListener('error', function(e) {
+    vm_socket = net.createConnection(vm_port, vm_host);
+    vm_socket.setTimeout(0);
+    vm_socket.setKeepAlive(true, 60*1000);
+    vm_socket.setEncoding('binary');
+    vm_socket.addListener('error', function(e) {
         sys.log("VM " + msg.vm_id + " connection error: " + String(e));
         client.send(JSON.stringify({
             vm_id:   msg.vm_id,
@@ -39,15 +39,15 @@ function handler_start_vm(msg, client) {
             message: String(e)
         }));
     });
-    stackvm_socket.addListener('connect', function() {
+    vm_socket.addListener('connect', function() {
         sys.log("Connected to " + msg.vm_id);
         client.send(JSON.stringify({
             vm_id:  msg.vm_id,
             action: 'connected'
         }));
-        stackvm_socket.write('update ' + msg.vm_id + ' 0\n');
+        vm_socket.write('update ' + msg.vm_id + ' 0\n');
     });
-    stackvm_socket.addListener('disconnect', function(errno) {
+    vm_socket.addListener('disconnect', function(errno) {
         sys.log("Disconnected from " + msg.vm_id);
         client.send(JSON.stringify({
             vm_id:  msg.vm_id,
@@ -55,34 +55,41 @@ function handler_start_vm(msg, client) {
         }));
     });
 
-    var EXPECT_SIZE = 0;
+    var EXPECT_SIZE_CMD = 0;
     var EXPECT_DATA = 1;
 
     vm_connection_map[msg.vm_id] = {
-        'state':  EXPECT_SIZE
+        'state': EXPECT_SIZE_CMD
     };
 
-    stackvm_socket.addListener('data', function(data) {
+    vm_socket.addListener('data', function(data) {
         // for now just send the data to the client, multiplex later on client id, and
         // keep track of update id.
         connmap = vm_connection_map[msg.vm_id];
-        if (connmap.state == EXPECT_SIZE) {
-            var size = parseInt(data);
+        if (connmap.state == EXPECT_SIZE_CMD) {
+            var size_cmd = data.split(' ', 2);
+            var size = parseInt(size_cmd[0]);
+            var cmd = size_cmd[1];
+
             connmap.state = EXPECT_DATA;
             connmap.buffer = new buffer.Buffer(size);
             connmap.size = size;
             connmap.written = 0;
+            connmap.cmd = cmd;
         }
         else if (connmap.state == EXPECT_DATA) {
             connmap.written += connmap.buffer.write(data, 'binary', connmap.written);
             if (connmap.written == connmap.size) {
                 sys.log(connmap.buffer.toString());
                 client.send(connmap.buffer.toString());
-                connmap.state = EXPECT_SIZE;
+                if (connmap.cmd == "update") {
+                    vm_socket.write('...');
+                }
+                connmap.state = EXPECT_SIZE_CMD;
             }
         }
     });
-    vm_connection_map[msg.vm_id].socket = stackvm_socket;
+    vm_connection_map[msg.vm_id].socket = vm_socket;
 }
 
 function handler_key_down(msg, client) {

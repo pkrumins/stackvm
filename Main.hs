@@ -99,10 +99,12 @@ handleUpdate clientHandle vm update_msg = do
     let jsonData = JS.encode . JS.toJSObject $
           [("vm_id", update_msg !! 1), {- todo: make this client_id later -}
            ("action", "update_screen"),
-           ("size", show size),
-           ("pos", show pos),
+           ("width", show $ fst size),
+           ("height", show $ snd size),
+           ("x", show $ fst pos),
+           ("y", show $ snd pos),
            ("png", encode $ BS.unpack png)]
-    hPutStrLn clientHandle $ show $ length jsonData
+    hPutStrLn clientHandle $ (show $ length jsonData) ++ " update " ++ (show updateID)
     hPutStrLn clientHandle jsonData
 
 handleKeyDown :: Handle -> VM -> [String] -> IO ()
