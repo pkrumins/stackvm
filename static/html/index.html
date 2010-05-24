@@ -22,11 +22,11 @@
   <body>
     <div id="content">
       <div class="focusremover" tabindex="0" style="width:0;height:0"></div>
-      <p>
-        Your VMs: <a href="#" id="linux1">linux</a> | <a href="#" id="dos1">dos</a>
+      <p class="vmlist">
+        Your VMs: <a href="#" id="linux">linux</a> | <a href="#" id="dos1">dos</a>
       </p>
       <script>
-        $('#linux1,#dos1').click(function(ev) {
+        $('.vmlist a').click(function(ev) {
           ev.preventDefault();
           vm = VM_Manager.get(this.id);
           if (!vm) {

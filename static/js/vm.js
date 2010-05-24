@@ -1,49 +1,66 @@
-var VM_Manager = (function() {
+var VM_Manager = (function () {
     var vms = {};
     var active_vm = null;
 
     return {
-        add: function(vm) {
+        add: function (vm) {
              vms[vm.vm_id] = vm;
         },
-        get: function(id) {
+        get: function (id) {
              return vms[id];
         },
-        del: function(id) {
+        del: function (id) {
              delete vms[id];
         },
-        get_active_vm: function() {
+        get_active_vm: function () {
              return active_vm;
         },
-        set_active_vm: function(vm) {
+        set_active_vm: function (vm) {
              active_vm = vm;
         },
     }
 })();
 
-function VM_Event_Handler(vm) {
+function VM_Event_Handler (vm) {
     this.vm = vm;
 
-    this.error = function(msg) {
+    this.error = function (msg) {
+        alert("Error: " + msg.error);
         console.log("Error: " + msg.error);
     }
 
-    this.connected = function(msg) {
+    this.connected = function (msg) {
         $('.loading', vm.win).hide();
     }
 
-    function png_img(png) {
+    this.redraw_screen = function (msg) {
+        var img = png_img(msg.png64);
+        update_screen(img, 0, 0, parseInt(msg.width), parseInt(msg.height));
+        cleanup_images(img);
+    }
+
+    this.update_screen = function (msg) {
+        var img = png_img(msg.png64);
+        update_screen(img, parseInt(msg.x), parseInt(msg.y),
+             parseInt(msg.width), parseInt(msg.height));
+    }
+
+    this.disconnected = function (msg) {
+        console.log('vm ' + msg.vm_id + ' disconnected');
+    }
+
+    function png_img (png) {
         // TODO: use MHTML for IE
         return $('<img>').attr('src', 'data:image/png;base64,' + png);
     }
 
-    function cleanup_images(except) {
+    function cleanup_images (except) {
         $('.console img', vm.win)
-             .not(except)
-             .remove();
+            .not(except)
+            .remove();
     }
 
-    function update_screen(img, x, y, w, h) {
+    function update_screen (img, x, y, w, h) {
         var console = $('.console', vm.win);
         if (h > vm.win.height() + 22) {
              vm.win.height(h+22); // 22 to account for window's .title.
@@ -53,80 +70,65 @@ function VM_Event_Handler(vm) {
         }
         img.css({
              position: 'absolute',
-             left:     x,
-             top:      y,
-             width:    w,
-             height:   h
+             left: x,
+             top: y,
+             width: w,
+             height: h
         });
         console.append(img);
     }
 
-    this.redraw_screen = function(msg) {
-        var img = png_img(msg.png);
-        update_screen(img, 0, 0, parseInt(msg.width), parseInt(msg.height));
-        cleanup_images(img);
-    }
-
-    this.update_screen = function(msg) {
-        var img = png_img(msg.png);
-        update_screen(img, parseInt(msg.x), parseInt(msg.y),
-             parseInt(msg.width), parseInt(msg.height));
-    }
-
-    this.disconnected = function(msg) {
-        console.log('vm ' + msg.vm_id + ' disconnected');
-    }
 }
 
-function VM_Event_Emitter(vm) {
-    this.start_vm = function() {
+function VM_Event_Emitter (vm) {
+    this.start_vm = function () {
         Connection.send_msg({
-             vm_id:  vm.vm_id,
-             action: 'start_vm'
+             vm_id: vm.vm_id,
+             action: 'start'
         });
     }
 
-    this.redraw_screen = function() {
+    this.redraw_screen = function () {
         Connection.send_msg({
-             vm_id:  vm.vm_id,
+             vm_id: vm.vm_id,
              action: 'redraw_screen'
         });
     }
 
-    this.send_key_down = function(key_code) {
+    this.send_key_down = function (key_code) {
         Connection.send_msg({
              vm_id:  vm.vm_id,
              action: 'key_down',
-             key:    String(KeyMapper.get_key_sym(key_code))
+             key: String(KeyMapper.get_key_sym (key_code))
         });
     }
 
-    this.send_pointer = function(x,y,mask) {
+    this.send_key_up = function (key_code) {
         Connection.send_msg({
-             vm_id: vm.vm_id,
-             action: 'pointer',
+             vm_id:  vm.vm_id,
+             action: 'key_up',
+             key: String(KeyMapper.get_key_sym(key_code))
+        });
+    }
+
+    this.send_pointer = function (x,y,mask) {
+        Connection.send_msg({
+             vm_id : vm.vm_id,
+             action : 'pointer',
              x : String(x),
              y : String(y),
              mask : String(mask)
         });
     }
-
-    this.send_key_up = function(key_code) {
-        Connection.send_msg({
-             vm_id:  vm.vm_id,
-             action: 'key_up',
-             key:    String(KeyMapper.get_key_sym(key_code))
-        });
-    }
 }
 
-function VM(vm_id) {
+function VM (vm_id) {
     this.vm_id  = vm_id;
     this.win = null;
     this.title = null;
     var event_emitter = new VM_Event_Emitter(this);
 
-    function create_window() {
+    function create_window () {
         var win = $('<div>')
              . addClass('window')
              . attr('tabindex', 0)
@@ -199,27 +201,27 @@ function VM(vm_id) {
         return win;
     }
 
-    function focus(win) {
+    function focus (win) {
         VM_Manager.set_active_vm(win);
         win.focus();
         $('.title', win).addClass("active-title");
     }
 
-    function unfocus(win) {
+    function unfocus (win) {
         VM_Manager.set_active_vm(null);
         $('.focusremover').focus();
         $('.title', win).removeClass("active-title");
     }
 
-    this.focus = function() {
+    this.focus = function () {
         focus(this.win);
     }
 
-    this.unfocus = function() {
+    this.unfocus = function () {
         unfocus(this.win);
     }
 
-    this.run = function() {
+    this.run = function () {
         this.win = create_window();
         Connection.add_event_handler(new VM_Event_Handler(this));
         event_emitter.start_vm();

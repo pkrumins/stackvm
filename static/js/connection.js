@@ -27,6 +27,7 @@ var Connection = (function() {
     }
 
     function dispatch_msg(msg) {
+        console.log(msg);
         var msg = JSON.parse(msg);
         var handler = find_event_handler(msg.vm_id);
         if (!handler) {
