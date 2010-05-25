@@ -45,6 +45,10 @@ function VM_Event_Handler (vm) {
              parseInt(msg.width), parseInt(msg.height));
     }
 
+    this.copy_rect = function (msg) {
+        alert('yeah');
+    }
+
     this.disconnected = function (msg) {
         console.log('vm ' + msg.vm_id + ' disconnected');
     }
