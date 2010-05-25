@@ -61,7 +61,7 @@ function VM_Event_Handler (vm) {
     }
 
     function update_screen (img, x, y, w, h) {
-        var console = $('.console', vm.win);
+        var con = $('.console', vm.win);
         if (h > vm.win.height() + 22) {
              vm.win.height(h+22); // 22 to account for window's .title.
         }
@@ -75,7 +75,7 @@ function VM_Event_Handler (vm) {
              width: w,
              height: h
         });
-        console.append(img);
+        con.append(img);
     }
 
 }
@@ -175,7 +175,6 @@ function VM (vm_id) {
         win.mousemove(function(ev) {
              var x = ev.pageX - win.offset().left - 3;
              var y = ev.pageY - win.offset().top - 23;
-             console.log([x,y].map(String).join(','));
              event_emitter.send_pointer(x,y,mouse_mask);
         });
         
