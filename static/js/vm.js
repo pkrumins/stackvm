@@ -92,6 +92,13 @@ function VM_Event_Emitter (vm) {
         });
     }
 
+    this.stop_vm = function () {
+        Connection.send_msg({
+            vm_id: vm.vm_id,
+            action: 'stop'
+        });
+    }
+
     this.redraw_screen = function () {
         Connection.send_msg({
              vm_id: vm.vm_id,
@@ -103,7 +110,7 @@ function VM_Event_Emitter (vm) {
         Connection.send_msg({
              vm_id:  vm.vm_id,
              action: 'key_down',
-             key: String(KeyMapper.get_key_sym (key_code))
+             key: String(KeyMapper.get_key_sym(key_code))
         });
     }
 
@@ -137,32 +144,40 @@ function VM (vm_id) {
              . addClass('window')
              . attr('tabindex', 0)
              . data('vm_id', vm_id)
-             . width(400)
-             . height(200)
              . draggable();
 
         var title = $('<div>').addClass('title');
         title.append($('<div>').addClass('text').text(vm_id));
         title.append(
-             $('<div>').addClass('buttons').append(
-               $('<div>').addClass('refresh').append(
-                 $('<img>').attr('src', '/img/refresh.png').click(
-                   function(ev) {
-                     event_emitter.redraw_screen();
-                   }
-                 )
-               )
-             )
-        ).append($('<div>').addClass('clear'));
+            $('<div>').addClass('buttons').append(
+                $('<span>').addClass('refresh').append(
+                    $('<img>').attr('src', '/img/refresh.png').click(
+                        function (ev) {
+                            event_emitter.redraw_screen();
+                        }
+                    )
+                )
+            ).append(
+                $('<span>').addClass('close').append(
+                    $('<img>').attr('src', '/img/close.png').click(
+                        function (ev) {
+                            event_emitter.stop_vm();
+                            VM_Manager.del(vm_id);
+                            win.remove();
+                        }
+                    )
+                )
+            )
+        ).append(
+            $('<div>').addClass('clear')
+        );
         win.append(title);
 
         var con = $('<div>').addClass('console');
         con.append(
-             $('<div>').addClass('loading').css({
-               'margin-top': (200-20)/2-10 + 'px',
-               'text-align': 'center',
-             }).
-             text('Loading ' + vm_id + '...')
+             $('<div>')
+             . addClass('loading')
+             . text('Loading ' + vm_id + '...')
         );
         win.append(con);
         
@@ -176,20 +191,20 @@ function VM (vm_id) {
         
         var mouse_mask = 0;
         
-        win.mousemove(function(ev) {
-             var x = ev.pageX - win.offset().left - 3;
-             var y = ev.pageY - win.offset().top - 23;
-             event_emitter.send_pointer(x,y,mouse_mask);
+        con.mousemove(function(ev) {
+             var x = ev.pageX - con.offset().left;
+             var y = ev.pageY - con.offset().top;
+             event_emitter.send_pointer(x, y, mouse_mask);
         });
         
-        win.mousedown(function(ev) {
+        con.mousedown(function(ev) {
              mouse_mask = 1;
-             event_emitter.send_pointer(ev.pageX,ev.pageY,mouse_mask);
+             event_emitter.send_pointer(ev.pageX, ev.pageY, mouse_mask);
         });
         
-        win.mouseup(function(ev) {
+        con.mouseup(function(ev) {
              mouse_mask = 0;
-             event_emitter.send_pointer(ev.pageX,ev.pageY,mouse_mask);
+             event_emitter.send_pointer(ev.pageX, ev.pageY, mouse_mask);
         });
         
         win.keydown(function(ev) {
