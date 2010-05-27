@@ -71,6 +71,9 @@ socketio.listen(webserver, {
             },
             key_up : function () {
                 vm.keyUp(client, parseInt(msg.key, 10));
+            },
+            redraw_screen : function () {
+                vm.requestRedrawScreen(client);
             }
         }[msg.action];
         if (f) f();
