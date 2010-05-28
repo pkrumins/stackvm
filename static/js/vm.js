@@ -26,9 +26,9 @@ function VM_Event_Handler (vm) {
 
     this.error = function (msg) {
         $('.center_message', vm.win)
-        . show()
-        . text(msg.message)
-        . css({ color: 'red' });
+            . show()
+            . text(msg.message)
+            . css({ color: 'red' });
     }
 
     this.connected = function (msg) {
@@ -178,8 +178,8 @@ function VM (vm_id) {
         var con = $('<div>').addClass('console');
         con.append(
              $('<div>')
-             . addClass('center_message')
-             . text('Loading ' + vm_id + '...')
+                . addClass('center_message')
+                . text('Loading ' + vm_id + '...')
         );
         win.append(con);
         
