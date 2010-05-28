@@ -25,12 +25,18 @@ function VM_Event_Handler (vm) {
     this.vm = vm;
 
     this.error = function (msg) {
-        alert("Error: " + msg.error);
-        console.log("Error: " + msg.error);
+        $('.center_message', vm.win)
+        . show()
+        . text(msg.message)
+        . css({ color: 'red' });
     }
 
     this.connected = function (msg) {
-        $('.loading', vm.win).hide();
+        $('.center_message', vm.win).hide();
+    }
+
+    this.disconnected = function (msg) {
+        console.log('vm ' + msg.vm_id + ' disconnected');
     }
 
     this.redraw_screen = function (msg) {
@@ -47,10 +53,6 @@ function VM_Event_Handler (vm) {
 
     this.copy_rect = function (msg) {
         alert('yeah');
-    }
-
-    this.disconnected = function (msg) {
-        console.log('vm ' + msg.vm_id + ' disconnected');
     }
 
     function png_img (png) {
@@ -176,7 +178,7 @@ function VM (vm_id) {
         var con = $('<div>').addClass('console');
         con.append(
              $('<div>')
-             . addClass('loading')
+             . addClass('center_message')
              . text('Loading ' + vm_id + '...')
         );
         win.append(con);

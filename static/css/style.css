@@ -5,6 +5,7 @@
   padding: 2px;
   width: 404px;
   height: 200px;
+  background-color: white;
 }
 
 .window .title {
@@ -55,7 +56,7 @@
   width: 100%;
 }
 
-.window .console .loading {
+.window .console .center_message {
   margin-top: 80px;
   text-align: center;
 }
