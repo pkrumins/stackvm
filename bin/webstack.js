@@ -33,7 +33,6 @@ socketio.listen(webserver, {
     onClientDisconnect : function(client) {
         var client_ip = client.request.connection.remoteAddress;
         sys.log("Client from " + client_ip + " disconnected.");
-        vms['linux'].stop(); // for now
     },
     
     onClientMessage : function(msg, client) {
@@ -47,18 +46,6 @@ socketio.listen(webserver, {
             },
             status : function () {
                 client.send(vm.status);
-            },
-            start : function () {
-                vm.start();
-                vm.attach(client);
-                client.send(JSON.stringify({
-                    vm_id : msg.vm_id,
-                    action : 'connected'
-                }));
-            },
-            stop : function () {
-                vm.stop();
-                vm.detach(client);
             },
             attach : function () {
                 vm.attach(client);
