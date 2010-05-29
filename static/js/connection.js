@@ -9,7 +9,8 @@ var Connection = (function() {
     }
     
     // A browser might support a transport, but that doesn't mean it will work
-    var transports = 'websocket flashsocket htmlfile xhr-multipart xhr-polling'
+    // Not using: flashsocket
+    var transports = 'websocket htmlfile xhr-multipart xhr-polling'
         .split(/\s+/);
     var iv = false;
     
@@ -26,6 +27,7 @@ var Connection = (function() {
                 console.log('Transport ' + transports[0] + ' not working');
                 transports.shift();
                 if (transports.length == 0) {
+                    clearInterval(iv);
                     throw 'No transports seem to work';
                 }
             }, 2000);

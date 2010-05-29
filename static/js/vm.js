@@ -87,17 +87,17 @@ function VM_Event_Handler (vm) {
 }
 
 function VM_Event_Emitter (vm) {
-    this.start_vm = function () {
+    this.attach_vm = function () {
         Connection.send_msg({
              vm_id: vm.vm_id,
-             action: 'start'
+             action: 'attach'
         });
     }
 
-    this.stop_vm = function () {
+    this.detach_vm = function () {
         Connection.send_msg({
             vm_id: vm.vm_id,
-            action: 'stop'
+            action: 'detach'
         });
     }
 
@@ -244,7 +244,7 @@ function VM (vm_id) {
     this.run = function () {
         this.win = create_window();
         Connection.add_event_handler(new VM_Event_Handler(this));
-        event_emitter.start_vm();
+        event_emitter.attach_vm();
     }
 }
 
