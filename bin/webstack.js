@@ -44,9 +44,6 @@ socketio.listen(webserver, {
                 for (var id in vms) acc.push(vms[id]);
                 client.send(acc);
             },
-            status : function () {
-                client.send(vm.status);
-            },
             attach : function () {
                 vm.attach(client);
             },
