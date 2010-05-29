@@ -31,12 +31,16 @@ function VM_Event_Handler (vm) {
             . css({ color: 'red' });
     }
 
-    this.connected = function (msg) {
+    this.attached = function (msg) {
         $('.center_message', vm.win).hide();
+        vm.event_emitter.redraw_screen();
     }
 
-    this.disconnected = function (msg) {
-        console.log('vm ' + msg.vm_id + ' disconnected');
+    this.detached = function (msg) {
+        $('.center_message', vm.win)
+            . show()
+            . text('vm has been detached')
+            . css({ color: 'red' });
     }
 
     this.redraw_screen = function (msg) {
@@ -62,8 +66,8 @@ function VM_Event_Handler (vm) {
 
     function cleanup_images (except) {
         $('.console img', vm.win)
-            .not(except)
-            .remove();
+            . not(except)
+            . remove();
     }
 
     function update_screen (img, x, y, w, h) {
@@ -136,10 +140,12 @@ function VM_Event_Emitter (vm) {
 }
 
 function VM (vm_id) {
+    var vm = this;
+
     this.vm_id  = vm_id;
     this.win = null;
     this.title = null;
-    var event_emitter = new VM_Event_Emitter(this);
+    this.event_emitter = new VM_Event_Emitter(this);
 
     function create_window () {
         var win = $('<div>')
@@ -155,7 +161,7 @@ function VM (vm_id) {
                 $('<span>').addClass('refresh').append(
                     $('<img>').attr('src', '/img/refresh.png').click(
                         function (ev) {
-                            event_emitter.redraw_screen();
+                            vm.event_emitter.redraw_screen();
                         }
                     )
                 )
@@ -163,7 +169,7 @@ function VM (vm_id) {
                 $('<span>').addClass('close').append(
                     $('<img>').attr('src', '/img/close.png').click(
                         function (ev) {
-                            event_emitter.stop_vm();
+                            vm.event_emitter.detach_vm();
                             VM_Manager.del(vm_id);
                             win.remove();
                         }
@@ -196,25 +202,25 @@ function VM (vm_id) {
         con.mousemove(function(ev) {
              var x = ev.pageX - con.offset().left;
              var y = ev.pageY - con.offset().top;
-             event_emitter.send_pointer(x, y, mouse_mask);
+             vm.event_emitter.send_pointer(x, y, mouse_mask);
         });
         
         con.mousedown(function(ev) {
              mouse_mask = 1;
-             event_emitter.send_pointer(ev.pageX, ev.pageY, mouse_mask);
+             vm.event_emitter.send_pointer(ev.pageX, ev.pageY, mouse_mask);
         });
         
         con.mouseup(function(ev) {
              mouse_mask = 0;
-             event_emitter.send_pointer(ev.pageX, ev.pageY, mouse_mask);
+             vm.event_emitter.send_pointer(ev.pageX, ev.pageY, mouse_mask);
         });
         
         win.keydown(function(ev) {
-             event_emitter.send_key_down(ev.keyCode);
+             vm.event_emitter.send_key_down(ev.keyCode);
         });
         
         win.keyup(function(ev) {
-             event_emitter.send_key_up(ev.keyCode);
+             vm.event_emitter.send_key_up(ev.keyCode);
         });
 
         $('#content').append(win);
@@ -244,7 +250,7 @@ function VM (vm_id) {
     this.run = function () {
         this.win = create_window();
         Connection.add_event_handler(new VM_Event_Handler(this));
-        event_emitter.attach_vm();
+        vm.event_emitter.attach_vm();
     }
 }
 
