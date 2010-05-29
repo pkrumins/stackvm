@@ -124,7 +124,7 @@ function VM_Event_Emitter (vm) {
         });
     }
 
-    this.send_pointer = function (x,y,mask) {
+    this.send_pointer = function (x, y, mask) {
         Connection.send_msg({
              vm_id : vm.vm_id,
              action : 'pointer',

@@ -1,7 +1,5 @@
 .window {
-  border-color: black;
-  border-style: solid;
-  border-width: 2px;
+  border: 2px solid black;
   padding: 2px;
   width: 404px;
   height: 200px;
@@ -34,6 +32,12 @@
 
 .window .title .buttons img:hover {
   border: 1px solid #AAA;
+}
+
+.window .title .buttons .pin {
+  height: 16px;
+  width: 16px;
+  margin-right: 2px;
 }
 
 .window .title .buttons .refresh {

@@ -72,6 +72,10 @@ socketio.listen(webserver, {
             key_up : function () {
                 vm.keyUp(client, parseInt(msg.key, 10));
             },
+            pointer : function () {
+                vm.pointer(parseInt(msg.x, 10), parseInt(msg.y, 10),
+                    parseInt(msg.mask, 10));
+            },
             redraw_screen : function () {
                 vm.requestRedrawScreen(client);
             }
