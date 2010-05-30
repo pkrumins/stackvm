@@ -78,7 +78,7 @@ function VM_Event_Handler (vm) {
 
     this.desktop_size = function (msg) {
         vm.win.height(msg.height + 22);
-        vm.win.width(msg.width + 22);
+        vm.win.width(msg.width);
     }
 
     this.copy_rect = function (msg) {
