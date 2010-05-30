@@ -45,14 +45,40 @@ function VM_Event_Handler (vm) {
 
     this.redraw_screen = function (msg) {
         var img = png_img(msg.png64);
-        update_screen(img, 0, 0, parseInt(msg.width), parseInt(msg.height));
+        var x = 0, y = 0;
+        var width = parseInt(msg.width, 10);
+        var height = parseInt(msg.height, 10);
+
+        update_screen(img, 0, 0, width, height);
         cleanup_images(img);
     }
 
     this.update_screen = function (msg) {
         var img = png_img(msg.png64);
-        update_screen(img, parseInt(msg.x), parseInt(msg.y),
-             parseInt(msg.width), parseInt(msg.height));
+        var x = parseInt(msg.x, 10);
+        var y = parseInt(msg.y, 10);
+        var width = parseInt(msg.width, 10);
+        var height = parseInt(msg.height, 10);
+
+        if (height > vm.win.height() + 22) {
+             vm.win.height(height+22); // 22 to account for window's .title.
+        }
+        if (width > vm.win.width()) {
+             vm.win.width(width);
+        }
+        img.css({
+             position : 'absolute',
+             left : x,
+             top : y,
+             width : width,
+             height : height
+        });
+        $('.console', vm.win).append(img);
+    }
+
+    this.desktop_size = function (msg) {
+        vm.win.height(msg.height + 22);
+        vm.win.width(msg.width + 22);
     }
 
     this.copy_rect = function (msg) {
@@ -69,25 +95,6 @@ function VM_Event_Handler (vm) {
             . not(except)
             . remove();
     }
-
-    function update_screen (img, x, y, w, h) {
-        var con = $('.console', vm.win);
-        if (h > vm.win.height() + 22) {
-             vm.win.height(h+22); // 22 to account for window's .title.
-        }
-        if (w > vm.win.width()) {
-             vm.win.width(w);
-        }
-        img.css({
-             position: 'absolute',
-             left: x,
-             top: y,
-             width: w,
-             height: h
-        });
-        con.append(img);
-    }
-
 }
 
 function VM_Event_Emitter (vm) {
