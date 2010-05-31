@@ -230,8 +230,10 @@ var KeyMapper = (function() {
         get_key_sym: function(keycode, shift) {
             var table = shift ? shiftedKeySym : unshiftedKeySym;
             return table[keycode] || keycode;
-      }
+        }
     };
 
 })();
+
+exports.KeyMapper = KeyMapper;
 

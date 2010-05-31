@@ -1,9 +1,34 @@
-// It's annoying having to work out the client-side library dependencies by
-// hand and to update the HTML parts in order to use new libraries.
+var require = (function () {
+
+var required = {};
 
 function require (src) {
-    document.write(
-        '<script src="/js/' + escape(src) + '" type="text/javascript"></script>'
-    );
+    if (required[src]) return required[src];
+
+    var exports = {};
+    (function () {
+        eval(getSync('/js/' + src + '.js'));
+    }).call(exports);
+    required[src] = exports;
+    return exports;
+
+    function getSync(uri) {
+        var http = false;
+        if (window.XMLHttpRequest) {
+            http = new XMLHttpRequest();
+        }
+        else {
+            http = new ActiveXObject("Microsoft.XMLHTTP");
+        }
+        if (http) {
+            http.open('GET', uri, false); // false makes it synchronous
+            http.send();
+            return http.responseText;
+        }
+    }
 }
+
+return require;
+
+})();
 

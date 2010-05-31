@@ -101,3 +101,5 @@ var Connection = (function() {
     }
 })();
 
+exports.Connection = Connection;
+
