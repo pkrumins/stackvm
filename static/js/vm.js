@@ -79,6 +79,7 @@ function VM_Event_Handler (vm) {
              height : height
         });
         $('.console', vm.win).append(img);
+        if (msg.fullScreen) cleanup_images(img);
     }
 
     this.desktop_size = function (msg) {
