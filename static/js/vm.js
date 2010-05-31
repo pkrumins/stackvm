@@ -23,6 +23,7 @@ var VM_Manager = (function () {
         },
     }
 })();
+
 exports.VM_Manager = VM_Manager;
 
 function VM_Event_Handler (vm) {
@@ -228,10 +229,12 @@ function VM (vm_id) {
         
         win.keydown(function(ev) {
              vm.event_emitter.send_key_down(ev.keyCode);
+             ev.preventDefault();
         });
         
         win.keyup(function(ev) {
              vm.event_emitter.send_key_up(ev.keyCode);
+             ev.preventDefault();
         });
 
         $('#content').append(win);
@@ -264,5 +267,6 @@ function VM (vm_id) {
         vm.event_emitter.attach_vm();
     }
 }
+
 exports.VM = VM;
 
