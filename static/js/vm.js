@@ -1,3 +1,6 @@
+var Connection = require('connection').Connection;
+var KeyMapper = require('keymap').KeyMapper;
+
 var VM_Manager = (function () {
     var vms = {};
     var active_vm = null;
@@ -20,6 +23,7 @@ var VM_Manager = (function () {
         },
     }
 })();
+exports.VM_Manager = VM_Manager;
 
 function VM_Event_Handler (vm) {
     this.vm = vm;
@@ -260,4 +264,5 @@ function VM (vm_id) {
         vm.event_emitter.attach_vm();
     }
 }
+exports.VM = VM;
 
