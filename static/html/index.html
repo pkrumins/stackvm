@@ -24,15 +24,14 @@
         Your VMs: <a href="#" id="linux">linux</a> | <a href="#" id="dos1">dos</a>
       </p>
       <script>
-        var VM_Manager = require('vm').VM_Manager;
-        var VM = require('vm').VM;
+        var VM = require('vm');
 
         $('.vmlist a').click(function(ev) {
           ev.preventDefault();
-          vm = VM_Manager.get(this.id);
+          vm = VM.Manager.get(this.id);
           if (!vm) {
-            var vm = new VM(this.id);
-            VM_Manager.add(vm);
+            var vm = new VM.VM(this.id);
+            VM.Manager.add(vm);
             vm.run();
           } else {
             vm.focus();

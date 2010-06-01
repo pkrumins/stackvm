@@ -1,8 +1,6 @@
 .window {
   border: 2px solid black;
   padding: 2px;
-  width: 404px;
-  height: 200px;
   background-color: white;
 }
 
@@ -51,7 +49,7 @@
   width: 16px;
 }
 
-.window .active-title {
+.window .activeTitle {
   background-color: rgb(130,50,50);
 }
 
@@ -60,7 +58,7 @@
   width: 100%;
 }
 
-.window .console .center_message {
+.window .console .centerMessage {
   margin-top: 80px;
   text-align: center;
 }

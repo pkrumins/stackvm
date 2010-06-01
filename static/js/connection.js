@@ -1,11 +1,11 @@
 var Connection = (function() {
     var connection = null;
-    var really_connected = false;
-    var msg_queue = [];
-    var event_handlers = {};
+    var reallyConnected = false;
+    var msgQueue = [];
+    var eventHandlers = {};
 
     function connected() {
-        return really_connected;
+        return reallyConnected;
     }
     
     // A browser might support a transport, but that doesn't mean it will work
@@ -35,46 +35,46 @@ var Connection = (function() {
         
         connection.addEvent('connect', function() {
             clearInterval(iv);
-            really_connected = true;
-            process_msg_queue();
+            reallyConnected = true;
+            processMsgQueue();
         });
         
         connection.addEvent('disconnect', function() {
-            really_connected = false;
+            reallyConnected = false;
         });
         
         connection.addEvent('message', function(msg) {
-            dispatch_msg(msg);
+            dispatchMsg(msg);
         });
         
         connection.connect();
     }
 
-    function dispatch_msg(msg) {
+    function dispatchMsg(msg) {
         var msg = JSON.parse(msg);
-        var handler = find_event_handler(msg.vm_id);
+        var handler = findEventHandler(msg.vmId);
         if (!handler) {
-            console.log("Unknown VM '" + msg.vm_id + "'");
+            console.log("Unknown VM '" + msg.vmId + "'");
             return;
         }
         actionfn = handler[msg.action];
         if (!actionfn) {
-            console.log("Unknown action '" + msg.action + "' for VM '" + msg.vm_id + "'");
+            console.log("Unknown action '" + msg.action + "' for VM '" + msg.vmId + "'");
             return;
         }
         actionfn(msg);
     }
 
-    function process_msg_queue() {
-        for (var i = 0; i < msg_queue.length; i++) {
-            send_msg(msg_queue[i]);
+    function processMsgQueue() {
+        for (var i = 0; i < msgQueue.length; i++) {
+            sendMsg(msgQueue[i]);
         }
-        msg_queue = [];
+        msgQueue = [];
     }
 
-    function send_msg(msg) {
+    function sendMsg(msg) {
         if (!connected()) {
-            msg_queue.push(msg);
+            msgQueue.push(msg);
             connect();
         }
         else {
@@ -82,21 +82,21 @@ var Connection = (function() {
         }
     }
 
-    function find_event_handler(vm_id) {
-        return event_handlers[vm_id];
+    function findEventHandler(vmId) {
+        return eventHandlers[vmId];
     }
 
     return {
-        add_event_handler: function(handler) {
-            event_handlers[handler.vm.vm_id] = handler;
+        addEventHandler: function(handler) {
+            eventHandlers[handler.vm.vmId] = handler;
         },
 
-        del_event_handler: function(vm_id) {
-            delete event_handlers[vm_id];
+        delEventHandler: function(vmId) {
+            delete eventHandlers[vmId];
         },
 
-        send_msg: function(msg) {
-            send_msg(msg);
+        sendMsg: function(msg) {
+            sendMsg(msg);
         }
     }
 })();

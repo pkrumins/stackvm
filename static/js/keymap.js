@@ -227,7 +227,7 @@ var KeyMapper = (function() {
     shiftedKeySym[222] = 0x22; // double quote
 
     return {
-        get_key_sym: function(keycode, shift) {
+        getKeySym: function(keycode, shift) {
             var table = shift ? shiftedKeySym : unshiftedKeySym;
             return table[keycode] || keycode;
         }
