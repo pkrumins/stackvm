@@ -1,9 +1,6 @@
 var Connection = require('connection').Connection;
 var KeyMapper = require('keymap').KeyMapper;
-
-// Hacking on this now, just named it SimpleDisplay for now until
-// I know what the interface is for <canvas> and <svg> displays
-var SimpleDisplay = require('display').SimpleDisplay;
+var StackedDisplay = require('display').StackedDisplay;
 
 var Manager = (function () {
     var vms = {};
@@ -34,66 +31,34 @@ function VmEventHandler (vm) {
     this.vm = vm;
 
     this.error = function (msg) {
-        $('.centerMessage', vm.win)
-            .show()
-            .text(msg.message)
-            .css({ color: 'red' });
+        vm.display.consoleMessage(msg.message);
     }
 
     this.attached = function (msg) {
-        $('.centerMessage', vm.win).hide();
-        vm.eventEmitter.redrawScreen();
+        vm.display.consoleMessage(null);
     }
 
     this.detached = function (msg) {
-        $('.centerMessage', vm.win)
-            .show()
-            .text('vm has been detached')
-            .css({ color: 'red' });
+        vm.dipslay.consoleMessage('vm has been detached');
     }
 
     this.updateScreen = function (msg) {
         var img = pngImg(msg.png64);
-        var x = parseInt(msg.x, 10);
-        var y = parseInt(msg.y, 10);
-        var width = parseInt(msg.width, 10);
-        var height = parseInt(msg.height, 10);
-
-        if (height > vm.win.height() + 22) {
-             vm.win.height(height+22); // 22 to account for window's .title.
-        }
-        if (width > vm.win.width()) {
-             vm.win.width(width);
-        }
-        img.css({
-             position : 'absolute',
-             left : x,
-             top : y,
-             width : width,
-             height : height
-        });
-        $('.console', vm.win).append(img);
-        if (msg.fullScreen) cleanupImages(img);
+        vm.display.conDraw(img, msg.x, msg.y, msg.width, msg.height,
+            msg.fullScreen);
     }
 
     this.desktopSize = function (msg) {
-        vm.win.height(msg.height + 22);
-        vm.win.width(msg.width);
+        vm.display.resize(msg.height, msg.width);
     }
 
     this.copyRect = function (msg) {
-        alert('yeah');
+        alert('copyRect incoming');
     }
 
     function pngImg (png) {
         // TODO: use MHTML for IE
         return $('<img>').attr('src', 'data:image/png;base64,' + png);
-    }
-
-    function cleanupImages (except) {
-        $('.console img', vm.win)
-            .not(except)
-            .remove();
     }
 }
 
@@ -151,37 +116,25 @@ function VM (vmId) {
 
     this.vmId = vmId;
     this.eventEmitter = new VmEventEmitter(this);
-    this.win = null;
-    this.display = new SimpleDisplay(vm, {width: 400, height: 200});
+    this.display = new StackedDisplay(vm, {width: 400, height: 200});
 
     function createWindow () {
         var win = vm.display.createWindow();
         $('#content').append(win);
-        return win;
-    }
-
-    function focus (win) {
-        Manager.setActiveVm(win);
-        win.focus();
-        $('.title', win).addClass("activeTitle");
-    }
-
-    function unfocus (win) {
-        Manager.setActiveVm(null);
-        $('.focusremover').focus();
-        $('.title', win).removeClass("activeTitle");
     }
 
     this.focus = function () {
-        focus(this.win);
+        Manager.setActiveVm(vm);
+        vm.display.focus();
     }
 
     this.unfocus = function () {
-        unfocus(this.win);
+        Manager.setActiveVm(null);
+        vm.display.unfocus();
     }
 
     this.run = function () {
-        this.win = createWindow();
+        createWindow();
         Connection.addEventHandler(new VmEventHandler(this));
         vm.eventEmitter.attachVm();
     }

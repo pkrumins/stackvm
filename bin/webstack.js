@@ -46,6 +46,7 @@ socketio.listen(webserver, {
             },
             attach : function () {
                 vm.attach(client);
+                vm.requestRedrawScreen(client);
             },
             detach : function () {
                 vm.detach(client);
