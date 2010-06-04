@@ -93,9 +93,9 @@ function Display(vm, opts) {
     }
 
     this.createConsole = function () {
-        var con = $('<div>').addClass('console');
+        var con = $('<div>').addClass('stackedConsole');
         con.append(
-             $('<div>')
+            $('<div>')
                 .addClass('centerMessage')
                 .hide()
         );
@@ -119,8 +119,8 @@ function Display(vm, opts) {
     }
 
     this.resize = function (width, height) {
-        D.win.width(width || D.width);
-        D.win.height(height && height+22 || D.height);
+        D.win.width(width)
+        D.win.height(height+22);
     }
 
     this.conDraw = function (img, x, y, width, height, fullScreen) {
@@ -133,7 +133,7 @@ function StackedDisplay (vm, opts) {
     var D = this;
 
     this.conDraw = function(img, x, y, width, height, fullScreen) {
-        if (height > D.win.height() + 22) D.win.height(height+22);
+        if (height > D.win.height()+22) D.win.height(height+22);
         if (width > D.win.width()) D.win.width(width);
         img.css({
              position : 'absolute',
@@ -153,5 +153,47 @@ function StackedDisplay (vm, opts) {
     }
 }
 
+function CanvasDisplay (vm, opts) {
+    Display.call(this, vm, opts);
+    var D = this;
+
+    this.createConsole = function () {
+        var con = $('<div>').addClass('canvasConsole');
+        var canvas = $('<canvas>')
+            .attr('width', D.width)
+            .attr('height', D.height-22);
+        var textArea = $('<div>')
+            .addClass('centerMessage')
+            .hide();
+        con.append(canvas).append(textArea);
+        D.canvas = canvas[0];
+        return con;
+    }
+
+    this.conDraw = function (img, x, y, width, height, fullScreen) {
+        img.ready(function () {
+            if (height > D.canvas.height) {
+                D.win.height(height+22);
+                D.canvas.height = height;
+            }
+            if (width > D.canvas.width) {
+                D.win.width(width);
+                D.canvas.width = width;
+            }
+            console.log(x, y, width, height);
+            console.log(D.canvas.width, D.canvas.height);
+            D.canvas.getContext('2d').drawImage(img[0], x, y);
+        });
+    }
+
+    this.resize = function (width, height) {
+        D.win.height(height+22);
+        D.canvas.height = height;
+        D.win.width(width);
+        D.canvas.width = width;
+    }
+}
+
 exports.StackedDisplay = StackedDisplay;
+exports.CanvasDisplay = CanvasDisplay;
 

@@ -53,8 +53,12 @@
   background-color: rgb(130,50,50);
 }
 
-.window .console {
+.window .stackedConsole {
   position: absolute;
+  width: 100%;
+}
+
+.window .canvasConsole {
   width: 100%;
 }
 

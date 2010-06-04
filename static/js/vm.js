@@ -1,6 +1,6 @@
 var Connection = require('connection').Connection;
 var KeyMapper = require('keymap').KeyMapper;
-var StackedDisplay = require('display').StackedDisplay;
+var Display = require('display');
 
 var Manager = (function () {
     var vms = {};
@@ -116,7 +116,8 @@ function VM (vmId) {
 
     this.vmId = vmId;
     this.eventEmitter = new VmEventEmitter(this);
-    this.display = new StackedDisplay(vm, {width: 400, height: 200});
+    this.display = new Display.StackedDisplay(vm, {width: 400, height: 200});
+    //this.display = new Display.CanvasDisplay(vm, {width: 400, height: 200});
 
     function createWindow () {
         var win = vm.display.createWindow();
