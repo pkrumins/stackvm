@@ -43,9 +43,8 @@ function VmEventHandler (vm) {
     }
 
     this.updateScreen = function (msg) {
-        var img = pngImg(msg.png64);
-        vm.display.conDraw(img, msg.x, msg.y, msg.width, msg.height,
-            msg.fullScreen);
+        vm.display.conDraw(msg.image64, msg.imageType, msg.x, msg.y,
+            msg.width, msg.height, msg.fullScreen);
     }
 
     this.desktopSize = function (msg) {
@@ -54,11 +53,6 @@ function VmEventHandler (vm) {
 
     this.copyRect = function (msg) {
         alert('copyRect incoming');
-    }
-
-    function pngImg (png) {
-        // TODO: use MHTML for IE
-        return $('<img>').attr('src', 'data:image/png;base64,' + png);
     }
 }
 

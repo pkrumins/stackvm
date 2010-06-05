@@ -1,3 +1,16 @@
+function toImg (img64, imgType) {
+    var imgTypes = {
+        png : 'data:image/png;base64,',
+        jpeg : 'data:image/jpeg;base64,',
+    };
+
+    if (!imgTypes[imgType])
+        throw "Unknown imgType '" + imgType + "' was passed to toImg";
+
+    // TODO: use MHTML for IE6
+    return $('<img>').attr('src', imgTypes[imgType] + img64);
+}
+
 function Display(vm, opts) {
     var D = this;
 
@@ -9,9 +22,7 @@ function Display(vm, opts) {
         var win = $('<div>')
             .addClass('window')
             .attr('tabindex', 0)
-            .data('vmId', vm.vmId)
-            .width(D.width + 'px')
-            .height(D.height + 'px')
+            .width(D.width)
             .draggable();
 
         var title = D.createTitle();
@@ -58,7 +69,6 @@ function Display(vm, opts) {
              mouseMask = 0;
              vm.eventEmitter.sendPointer(ev.pageX, ev.pageY, mouseMask);
         });
-        
 
         return win;
     }
@@ -93,12 +103,15 @@ function Display(vm, opts) {
     }
 
     this.createConsole = function () {
-        var con = $('<div>').addClass('stackedConsole');
-        con.append(
-            $('<div>')
-                .addClass('centerMessage')
-                .hide()
-        );
+        var con = $('<div>')
+            .addClass('stackedConsole')
+            .width(D.width)
+            .height(D.height)
+            .append(
+                $('<div>')
+                    .addClass('centerMessage')
+                    .hide()
+            );
         return con;
     }
 
@@ -119,11 +132,12 @@ function Display(vm, opts) {
     }
 
     this.resize = function (width, height) {
-        D.win.width(width)
-        D.win.height(height+22);
+        D.con.width(width);
+        D.win.width(width);
+        D.con.height(height); // win height is determined by con height
     }
 
-    this.conDraw = function (img, x, y, width, height, fullScreen) {
+    this.conDraw = function (img64, imgType, x, y, width, height, fullScreen) {
         throw "override Display.conDraw";
     }
 }
@@ -132,9 +146,13 @@ function StackedDisplay (vm, opts) {
     Display.call(this, vm, opts);
     var D = this;
 
-    this.conDraw = function(img, x, y, width, height, fullScreen) {
-        if (height > D.win.height()+22) D.win.height(height+22);
-        if (width > D.win.width()) D.win.width(width);
+    this.conDraw = function(img64, imgType, x, y, width, height, fullScreen) {
+        if (width > D.con.width()) {
+            D.con.width(width);
+            D.win.width(width);
+        }
+        if (height > D.con.height()) D.con.height(height);
+        var img = toImg(img64, imgType);
         img.css({
              position : 'absolute',
              left : x,
@@ -161,7 +179,7 @@ function CanvasDisplay (vm, opts) {
         var con = $('<div>').addClass('canvasConsole');
         var canvas = $('<canvas>')
             .attr('width', D.width)
-            .attr('height', D.height-22);
+            .attr('height', D.height);
         var textArea = $('<div>')
             .addClass('centerMessage')
             .hide();
@@ -170,15 +188,12 @@ function CanvasDisplay (vm, opts) {
         return con;
     }
 
-    this.conDraw = function (img, x, y, width, height, fullScreen) {
+    this.conDraw = function (img64, imgType, x, y, width, height, fullScreen) {
         img.ready(function () {
-            if (height > D.canvas.height) {
-                D.win.height(height+22);
-                D.canvas.height = height;
-            }
+            if (height > D.canvas.height) D.canvas.height = height;
             if (width > D.canvas.width) {
+                D.canvas.width = D.win.width = width;
                 D.win.width(width);
-                D.canvas.width = width;
             }
             console.log(x, y, width, height);
             console.log(D.canvas.width, D.canvas.height);
@@ -187,10 +202,9 @@ function CanvasDisplay (vm, opts) {
     }
 
     this.resize = function (width, height) {
-        D.win.height(height+22);
-        D.canvas.height = height;
-        D.win.width(width);
         D.canvas.width = width;
+        D.win.width(width);
+        D.canvas.height = height;
     }
 }
 

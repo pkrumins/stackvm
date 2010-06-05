@@ -11,7 +11,6 @@
   height: 20px;
   padding-left: 2px;
   margin-bottom: 2px;
-  overflow: hidden;
 }
 
 .window .title .text {
@@ -54,7 +53,7 @@
 }
 
 .window .stackedConsole {
-  position: absolute;
+  position: relative;
   width: 100%;
 }
 
