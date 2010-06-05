@@ -48,7 +48,7 @@ function VmEventHandler (vm) {
     }
 
     this.desktopSize = function (msg) {
-        vm.display.resize(msg.height, msg.width);
+        vm.display.resize(msg.width, msg.height);
     }
 
     this.copyRect = function (msg) {
