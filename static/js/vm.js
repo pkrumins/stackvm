@@ -110,8 +110,8 @@ function VM (vmId) {
 
     this.vmId = vmId;
     this.eventEmitter = new VmEventEmitter(this);
-    this.display = new Display.StackedDisplay(vm, {width: 400, height: 200});
-    //this.display = new Display.CanvasDisplay(vm, {width: 400, height: 200});
+    //this.display = new Display.StackedDisplay(vm, {width: 400, height: 200});
+    this.display = new Display.CanvasDisplay(vm, {width: 400, height: 200});
 
     function createWindow () {
         var win = vm.display.createWindow();

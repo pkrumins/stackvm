@@ -185,20 +185,20 @@ function CanvasDisplay (vm, opts) {
             .hide();
         con.append(canvas).append(textArea);
         D.canvas = canvas[0];
+        D.canvasCtx = D.canvas.getContext('2d');
         return con;
     }
 
     this.conDraw = function (img64, imgType, x, y, width, height, fullScreen) {
-        img.ready(function () {
+        var img = toImg(img64, imgType)[0];
+        img.onload = function () {
             if (height > D.canvas.height) D.canvas.height = height;
             if (width > D.canvas.width) {
-                D.canvas.width = D.win.width = width;
+                D.canvas.width = width;
                 D.win.width(width);
             }
-            console.log(x, y, width, height);
-            console.log(D.canvas.width, D.canvas.height);
-            D.canvas.getContext('2d').drawImage(img[0], x, y);
-        });
+            D.canvasCtx.drawImage(img, x, y, width, height);
+        }
     }
 
     this.resize = function (width, height) {
