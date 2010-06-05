@@ -176,7 +176,10 @@ function CanvasDisplay (vm, opts) {
     var D = this;
 
     this.createConsole = function () {
-        var con = $('<div>').addClass('canvasConsole');
+        var con = $('<div>')
+            .addClass('canvasConsole')
+            .width(D.width)
+            .height(D.height);
         var canvas = $('<canvas>')
             .attr('width', D.width)
             .attr('height', D.height);
@@ -192,7 +195,10 @@ function CanvasDisplay (vm, opts) {
     this.conDraw = function (img64, imgType, x, y, width, height, fullScreen) {
         var img = toImg(img64, imgType)[0];
         img.onload = function () {
-            if (height > D.canvas.height) D.canvas.height = height;
+            if (height > D.canvas.height) {
+                D.canvas.height = height;
+                D.con.height(height);
+            }
             if (width > D.canvas.width) {
                 D.canvas.width = width;
                 D.win.width(width);
@@ -205,6 +211,7 @@ function CanvasDisplay (vm, opts) {
         D.canvas.width = width;
         D.win.width(width);
         D.canvas.height = height;
+        D.con.height(height);
     }
 }
 
