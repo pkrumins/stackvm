@@ -52,7 +52,8 @@ function VmEventHandler (vm) {
     }
 
     this.copyRect = function (msg) {
-        alert('copyRect incoming');
+        vm.display.copyRect(msg.srcX, msg.srcY, msg.dstX, msg.dstY,
+            msg.width, msg.height);
     }
 }
 

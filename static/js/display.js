@@ -140,6 +140,10 @@ function Display(vm, opts) {
     this.conDraw = function (img64, imgType, x, y, width, height, fullScreen) {
         throw "override Display.conDraw";
     }
+
+    this.copyRect = function (srcX, srcY, dstX, dstY, width, height) {
+        throw "override Display.copyRect";
+    }
 }
 
 function StackedDisplay (vm, opts) {
@@ -168,6 +172,10 @@ function StackedDisplay (vm, opts) {
         $('img', D.con)
             .not(except)
             .remove();
+    }
+
+    this.copyRect = function (srcX, srcY, dstX, dstY, width, height) {
+        console.log('got copyrect for stacked display');
     }
 }
 
@@ -212,6 +220,12 @@ function CanvasDisplay (vm, opts) {
         D.win.width(width);
         D.canvas.height = height;
         D.con.height(height);
+    }
+
+    this.copyRect = function (srcX, srcY, dstX, dstY, width, height) {
+        D.canvasCtx.drawImage(D.canvas,
+            srcX, srcY, width, height,
+            dstX, dstY, width, height);
     }
 }
 
