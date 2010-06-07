@@ -201,8 +201,8 @@ function CanvasDisplay (vm, opts) {
     }
 
     this.conDraw = function (img64, imgType, x, y, width, height, fullScreen) {
-        var img = toImg(img64, imgType)[0];
-        img.onload = function () {
+        var img = toImg(img64, imgType);
+        img.load(function () {
             if (height > D.canvas.height) {
                 D.canvas.height = height;
                 D.con.height(height);
@@ -211,8 +211,8 @@ function CanvasDisplay (vm, opts) {
                 D.canvas.width = width;
                 D.win.width(width);
             }
-            D.canvasCtx.drawImage(img, x, y, width, height);
-        }
+            D.canvasCtx.drawImage(img[0], x, y, width, height);
+        });
     }
 
     this.resize = function (width, height) {
