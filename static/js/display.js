@@ -35,39 +35,46 @@ function Display(vm, opts) {
         win.append(title).append(con);
 
         win.mouseover(function(ev) {
-             vm.focus(win);
+            vm.focus(win);
         });
         
         win.mouseout(function(ev) {
-             vm.unfocus(win);
+            vm.unfocus(win);
         });
         
         win.keydown(function(ev) {
-             vm.eventEmitter.sendKeyDown(ev.keyCode);
-             ev.preventDefault();
+            vm.eventEmitter.sendKeyDown(ev.keyCode);
+            ev.preventDefault();
         });
         
         win.keyup(function(ev) {
-             vm.eventEmitter.sendKeyUp(ev.keyCode);
-             ev.preventDefault();
+            vm.eventEmitter.sendKeyUp(ev.keyCode);
+            ev.preventDefault();
         });
 
         var mouseMask = 0;
+
+        function calcMousePos (ev) {
+            var x = ev.pageX - con.offset().left;
+            var y = ev.pageY - con.offset().top;
+            return {x:x, y:y};
+        }
         
         con.mousemove(function(ev) {
-             var x = ev.pageX - con.offset().left;
-             var y = ev.pageY - con.offset().top;
-             vm.eventEmitter.sendPointer(x, y, mouseMask);
+            var pos = calcMousePos(ev);
+            vm.eventEmitter.sendPointer(pos.x, pos.y, mouseMask);
         });
         
         con.mousedown(function(ev) {
-             mouseMask = 1;
-             vm.eventEmitter.sendPointer(ev.pageX, ev.pageY, mouseMask);
+            mouseMask = 1;
+            var pos = calcMousePos(ev);
+            vm.eventEmitter.sendPointer(pos.x, pos.y, mouseMask);
         });
         
         con.mouseup(function(ev) {
-             mouseMask = 0;
-             vm.eventEmitter.sendPointer(ev.pageX, ev.pageY, mouseMask);
+            mouseMask = 0;
+            var pos = calcMousePos(ev);
+            vm.eventEmitter.sendPointer(pos.x, pos.y, mouseMask);
         });
 
         return win;
