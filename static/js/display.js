@@ -23,10 +23,14 @@ function Display(vm, opts) {
             .addClass('window')
             .attr('tabindex', 0)
             .width(D.width)
-            .draggable();
 
         var title = D.createTitle();
         var con = D.createConsole();
+
+        win.draggable({
+                handle : title,
+                stack : '.window'
+        });
 
         D.win = win;
         D.title = title;
