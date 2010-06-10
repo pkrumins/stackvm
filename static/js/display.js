@@ -81,6 +81,18 @@ function Display(vm, opts) {
             vm.eventEmitter.sendPointer(pos.x, pos.y, mouseMask);
         });
 
+        con.mousewheel(function (ev, delta) {
+            var pos = calcMousePos(ev);
+            if (delta > 0) { // mouse up
+                vm.eventEmitter.sendPointer(pos.x, pos.y, 1<<4);
+                vm.eventEmitter.sendPointer(pos.x, pos.y, 0);
+            }
+            else {
+                vm.eventEmitter.sendPointer(pos.x, pos.y, 1<<5);
+                vm.eventEmitter.sendPointer(pos.x, pos.y, 0);
+            }
+        });
+
         return win;
     }
 

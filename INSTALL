@@ -7,8 +7,13 @@ You'll need the following node.js modules:
     * http://github.com/pkrumins/node-png
     * http://github.com/pkrumins/node-jpeg
     * http://github.com/pkrumins/node-base64
+    * http://github.com/brandonaaron/jquery-mousewheel
 
 Copy (or symlink) these into your $NODE_PATH.
 
 Create a symlink static/js/Socket.IO pointing to the Socket.IO project
 directory.
+
+Create a symlink static/js/jquery-mousewheel to point to the jquery-mousewheel
+project directory.
+
