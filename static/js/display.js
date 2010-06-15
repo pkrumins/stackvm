@@ -100,23 +100,59 @@ function Display(vm, opts) {
         var title = $('<div>').addClass('title');
         title.append($('<div>').addClass('text').text(vm.vmId));
         title.append(
-            $('<div>').addClass('buttons').append(
-                $('<span>').addClass('refresh').append(
-                    $('<img>').attr('src', '/img/refresh.png').click(
-                        function (ev) {
-                            vm.eventEmitter.redrawScreen();
-                        }
-                    )
+            $('<div>')
+            .addClass('buttons')
+            .append(
+                $('<span>').addClass('screenshot').append(
+                    $('<img>')
+                    .attr('src', '/img/screenshot.png')
+                    .attr('title', 'Take a screenshot')
+                    .click(function (ev) {
+                        vm.eventEmitter.takeScreenshot();
+                    })
                 )
-            ).append(
-                $('<span>').addClass('close').append(
-                    $('<img>').attr('src', '/img/close.png').click(
-                        function (ev) {
-                            vm.eventEmitter.detachVm();
-                            VM.Manager.del(vm.vmId);
-                            D.win.remove();
+            )
+            .append(
+                $('<span>').addClass('screencast').append(
+                    $('<img>')
+                    .attr('src', '/img/screencast_start.png')
+                    .attr('title', 'Record a screencast')
+                    .click(function (ev) {
+                        if (/start/.test($(this).attr('src'))) {
+                            $(this)
+                                .attr('src', '/img/screencast_stop.png')
+                                .attr('title', 'Stop recording');
+                            vm.eventEmitter.startScreencast();
                         }
-                    )
+                        else {
+                            $(this)
+                                .attr('src', '/img/screencast_start.png')
+                                .attr('title', 'Record a screencast');
+                            vm.eventEmitter.stopScreencast();
+                        }
+                    })
+                )
+            )
+            .append(
+                $('<span>').addClass('refresh').append(
+                    $('<img>')
+                    .attr('src', '/img/refresh.png')
+                    .attr('title', 'Refresh screen')
+                    .click(function (ev) {
+                        vm.eventEmitter.redrawScreen();
+                    })
+                )
+            )
+            .append(
+                $('<span>').addClass('close').append(
+                    $('<img>')
+                    .attr('src', '/img/close.png')
+                    .attr('title', 'Disconnect')
+                    .click(function (ev) {
+                        vm.eventEmitter.detachVm();
+                        VM.Manager.del(vm.vmId);
+                        D.win.remove();
+                    })
                 )
             )
         ).append(

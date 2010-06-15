@@ -37,6 +37,18 @@
   margin-right: 2px;
 }
 
+.window .title .buttons .screenshot {
+  height: 16px;
+  width: 16px;
+  margin-right: 2px;
+}
+
+.window .title .buttons .screencast {
+  height: 16px;
+  width: 16px;
+  margin-right: 2px;
+}
+
 .window .title .buttons .refresh {
   height: 16px;
   width: 16px;
