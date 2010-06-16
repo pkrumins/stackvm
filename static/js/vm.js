@@ -55,6 +55,18 @@ function VmEventHandler (vm) {
         vm.display.copyRect(msg.srcX, msg.srcY, msg.dstX, msg.dstY,
             msg.width, msg.height);
     }
+
+    this.screenshot = function (msg) {
+        console.log(msg.screenshotUrl);
+    }
+
+    this.screencastStarted = function (msg) {
+        console.log('screencast started');
+    }
+
+    this.screencastEnded = function (msg) {
+        console.log(msg.screencastUrl);
+    }
 }
 
 function VmEventEmitter (vm) {
@@ -102,6 +114,27 @@ function VmEventEmitter (vm) {
              x : String(x),
              y : String(y),
              mask : String(mask)
+        });
+    }
+
+    this.takeScreenshot = function () {
+        Connection.sendMsg({
+            vmId : vm.vmId,
+            action : 'takeScreenshot'
+        });
+    }
+
+    this.startScreencast = function () {
+        Connection.sendMsg({
+            vmId : vm.vmId,
+            action : 'startScreencast'
+        });
+    }
+
+    this.stopScreencast = function () {
+        Connection.sendMsg({
+            vmId : vm.vmId,
+            action : 'stopScreencast'
         });
     }
 }
