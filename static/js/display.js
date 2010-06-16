@@ -14,7 +14,7 @@ function toImg (img64, imgType) {
 function Display(vm, opts) {
     var D = this;
 
-    D.win = D.title = D.con = null;
+    D.win = D.title = D.con = D.infoStrip = null;
     D.width = opts.width || 400;
     D.height = opts.height || 200;
 
@@ -25,6 +25,7 @@ function Display(vm, opts) {
             .width(D.width)
 
         var title = D.createTitle();
+        var infoStrip = D.createInfoStrip();
         var con = D.createConsole();
 
         win.draggable({
@@ -34,9 +35,10 @@ function Display(vm, opts) {
 
         D.win = win;
         D.title = title;
+        D.infoStrip = infoStrip;
         D.con = con;
 
-        win.append(title).append(con);
+        win.append(title).append(infoStrip).append(con);
 
         win.mouseover(function(ev) {
             vm.focus(win);
@@ -159,6 +161,30 @@ function Display(vm, opts) {
             $('<div>').addClass('clear')
         );
         return title;
+    }
+
+    this.createInfoStrip = function () {
+        var strip = $('<div>')
+            .addClass('infoStrip')
+            .hide();
+        strip.append(
+            $('<div>').addClass('text')
+        ).append(
+            $('<div>').addClass('menu').append(
+                $('<img>')
+                .attr('src', '/img/close-infostrip.gif')
+                .click(function (ev) {
+                    strip.slideUp();
+                })
+            )
+        ).append(
+            $('<div>').addClass('clear')
+        );
+        return strip;
+    }
+
+    this.infoMessage = function (msg) {
+        D.infoStrip.slideDown().html(msg);
     }
 
     this.createConsole = function () {

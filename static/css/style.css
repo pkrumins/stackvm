@@ -64,6 +64,27 @@
   background-color: rgb(130,50,50);
 }
 
+.window .infoStrip {
+  background-color: #ffffe1;
+  border: 1px solid gray;
+  height: 10px;
+  font-size: 8px;
+  font-family: Verdana;
+  margin-bottom: 2px;
+}
+
+.window .infoStrip .text {
+  float: left;
+}
+
+.window .infoStrip .menu {
+  float: right;
+}
+
+.window .infoStrip .menu img {
+  border: 1px solid #d5d5d5;
+}
+
 .window .stackedConsole {
   position: relative;
   width: 100%;

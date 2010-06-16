@@ -37,7 +37,6 @@ socketio.listen(webserver, {
     
     onClientMessage : function(msg, client) {
         var vm = vms[msg.vmId];
-        sys.log('action: ' + msg.action);
         var f = {
             list : function () {
                 var acc = [];
@@ -46,23 +45,26 @@ socketio.listen(webserver, {
             },
             attach : function () {
                 vm.attach(client);
-                vm.requestRedrawScreen(client);
+                vm.requestRedrawScreen();
             },
             detach : function () {
                 vm.detach(client);
             },
             keyDown : function () {
-                vm.keyDown(client, parseInt(msg.key, 10));
+                vm.keyDown(parseInt(msg.key, 10));
             },
             keyUp : function () {
-                vm.keyUp(client, parseInt(msg.key, 10));
+                vm.keyUp(parseInt(msg.key, 10));
             },
             pointer : function () {
                 vm.sendPointer(parseInt(msg.x, 10), parseInt(msg.y, 10),
                     parseInt(msg.mask, 10));
             },
             redrawScreen : function () {
-                vm.requestRedrawScreen(client);
+                vm.requestRedrawScreen();
+            },
+            takeScreenshot : function () {
+                vm.takeScreenshot();
             }
         }[msg.action];
         if (f) f();

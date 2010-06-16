@@ -57,7 +57,11 @@ function VmEventHandler (vm) {
     }
 
     this.screenshot = function (msg) {
-        console.log(msg.screenshotUrl);
+        var link = '<a href="' + msg.screenshotUrl + '" target="_blank">' +
+            'screenshot</a>';
+        vm.display.infoMessage(
+            'Download ' + link
+        );
     }
 
     this.screencastStarted = function (msg) {
