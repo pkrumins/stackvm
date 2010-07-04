@@ -65,6 +65,12 @@ socketio.listen(webserver, {
             },
             takeScreenshot : function () {
                 vm.takeScreenshot();
+            },
+            startScreencast : function () {
+                vm.startScreencast();
+            },
+            stopScreencast : function () {
+                vm.stopScreencast();
             }
         }[msg.action];
         if (f) f();

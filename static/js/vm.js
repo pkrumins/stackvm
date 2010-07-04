@@ -69,7 +69,11 @@ function VmEventHandler (vm) {
     }
 
     this.screencastEnded = function (msg) {
-        console.log(msg.screencastUrl);
+        var link = '<a href="' + msg.screencastUrl + '" target="_blank">' +
+            'screencast</a>';
+        vm.display.infoMessage(
+            'Download ' + link
+        );
     }
 }
 
