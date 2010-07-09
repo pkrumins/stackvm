@@ -26,6 +26,7 @@ DNode({
         var fullPath = screencastDir + '/' + fileName;
         var video = new StackedVideo(width, height);
         video.setOutputFile(fullPath);
+        video.setKeyFrameInterval(1024);
         activeRecordings[fileName] = video;
         f(fileName);
     }),
@@ -39,12 +40,12 @@ DNode({
             fileName : fileName
         });
     }),
-    newFrame : function (fileName, frame) {
+    newFrame : function (fileName, frame, timeStamp) {
         sys.log('new frame: ' + fileName);
         var video = activeRecordings[fileName];
         var buf = new Buffer(frame.length);
         buf.write(frame, 'binary');
-        video.newFrame(buf);
+        video.newFrame(buf, timeStamp);
     },
     pushUpdate : function (fileName, frame, x, y, w, h) {
         sys.log('push update');
@@ -53,10 +54,10 @@ DNode({
         buf.write(frame, 'binary');
         video.push(buf, x, y, w, h);
     },
-    endPush : function (fileName) {
+    endPush : function (fileName, timeStamp) {
         sys.log('end push');
         var video = activeRecordings[fileName];
-        video.endPush();
+        video.endPush(timeStamp);
     }
 }).listen(9300);
 
