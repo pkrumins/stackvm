@@ -20,7 +20,7 @@ function randomFileName () {
 var activeRecordings = {};
 
 DNode({
-    startScreencast : DNode.async(function (width, height, f) {
+    startScreencast : function (width, height, f) {
         sys.log('start screencast');
         var fileName = randomFileName() + '.ogv';
         var fullPath = screencastDir + '/' + fileName;
@@ -29,8 +29,8 @@ DNode({
         video.setKeyFrameInterval(1024);
         activeRecordings[fileName] = video;
         f(fileName);
-    }),
-    stopScreencast : DNode.async(function (fileName, f) {
+    },
+    stopScreencast : function (fileName, f) {
         sys.log('stop screencast');
         var video = activeRecordings[fileName];
         video.end();
@@ -39,7 +39,7 @@ DNode({
             status : 'success',
             fileName : fileName
         });
-    }),
+    },
     newFrame : function (fileName, frame, timeStamp) {
         sys.log('new frame: ' + fileName);
         var video = activeRecordings[fileName];

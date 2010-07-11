@@ -16,7 +16,7 @@ function randomFileName () {
 }
 
 DNode({
-    screenshot : DNode.async(function (png, f) {
+    screenshot : function (png, f) {
         var fileName = randomFileName() + '.png';
         var fullPath = screenshotDir + '/' + fileName;
         fs.writeFile(fullPath, png, 'binary', function (err) {
@@ -32,7 +32,7 @@ DNode({
                 fileName : fileName
             });
         });
-    })
+    }
 }).listen(9200);
 
 http.createServer(function (req, res) {
