@@ -111,11 +111,20 @@ div#left-pane {
     left: 0px;
     background-color: rgb(50,50,50);
     color: white;
+    overflow-y: scroll;
 }
 
 div.vm-desc {
-    padding: 2em;
+    padding: 1em;
     border-color: white;
     border-style: solid;
     border-width: 2px;
+    background-color: rgb(70,70,70);
 }
+
+div.vm-desc:hover {
+    background-color: white;
+    color: black;
+    cursor: pointer;
+}
+

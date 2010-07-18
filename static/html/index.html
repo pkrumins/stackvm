@@ -6,13 +6,12 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="StyleSheet" href="/css/style.css" type="text/css">
 
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
-<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.0/jquery-ui.min.js"></script>
+<script src="/js/jquery.min.js"></script>
+<script src="/js/jquery-ui.min.js"></script>
 <script src="/js/jquery-mousewheel/jquery.mousewheel.js"></script>
 
 <script type="text/javascript" src="/js/dnode.js"></script>
 <script type="text/javascript" src="/js/workspace.js"></script>
-<script type="text/javascript" src="/js/session.js"></script>
 <script type="text/javascript">
     $(window).load(function () {
         $("form#login").submit(function (ev) {
@@ -28,8 +27,7 @@
                 remote.authenticate(user, pass, function (account) {
                     var div = $('div#workspace');
                     if (account) {
-                        var workspace = new Workspace(div);
-                        Session(workspace, account);
+                        Workspace(div, account);
                     }
                     else {
                         div.append($('<div>')
