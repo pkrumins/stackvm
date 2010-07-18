@@ -17,7 +17,7 @@ sys.log("Webserver running at 0.0.0.0:" + port + ".");
 
 DNode(function (client,conn) {
     this.authenticate = function (user,pass,cb) {
-        if (user.match(/[^\w-]/)) {
+        if (/[^\w-]/.test(user)) {
             cb(null);
             return;
         }

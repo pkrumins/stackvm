@@ -1,46 +1,55 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
     "http://www.w3.org/TR/html4/strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en-US" xml:lang="en-US">
-  <head>
-    <title>StackVM</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <link rel="StyleSheet" href="/css/style.css" type="text/css">
-    <script
-      src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"
-    ></script>
-    <script
-      src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.0/jquery-ui.min.js"
-    ></script>
-    <script
-      src="/js/jquery-mousewheel/jquery.mousewheel.js"
-    ></script>
+<head>
+<title>StackVM</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="StyleSheet" href="/css/style.css" type="text/css">
 
-    <script src="/js/require.js"></script>
-    <script src="/js/Socket.IO/socket.io.js"></script>
-    <script>io.setPath('/js/Socket.IO/')</script>
-  </head>
-  <body>
-    <div id="content">
-      <div class="focusremover" tabindex="0" style="width:0;height:0"></div>
-      <p class="vmlist">
-        Your VMs: <a href="#" id="linux">linux</a> | <a href="#" id="dos1">dos</a>
-      </p>
-      <script>
-        var VM = require('vm');
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.0/jquery-ui.min.js"></script>
+<script src="/js/jquery-mousewheel/jquery.mousewheel.js"></script>
 
-        $('.vmlist a').click(function(ev) {
-          ev.preventDefault();
-          vm = VM.Manager.get(this.id);
-          if (!vm) {
-            var vm = new VM.VM(this.id);
-            VM.Manager.add(vm);
-            vm.run();
-          } else {
-            vm.focus();
-          }
+<script type="text/javascript" src="/js/dnode.js"></script>
+<script type="text/javascript" src="/js/workspace.js"></script>
+<script type="text/javascript" src="/js/session.js"></script>
+<script type="text/javascript">
+    $(window).load(function () {
+        $("form#login").submit(function (ev) {
+            ev.preventDefault();
         });
-      </script>
+        
+        DNode().connect(function (remote) {
+            $("form#login").submit(function (ev) {
+                ev.preventDefault();
+                
+                var user = this.elements.user.value;
+                var pass = this.elements.pass.value;
+                remote.authenticate(user, pass, function (account) {
+                    var div = $('div#workspace');
+                    if (account) {
+                        var workspace = new Workspace(div);
+                        Session(workspace, account);
+                    }
+                    else {
+                        div.append($('<div>')
+                            .text('sign-in failed')
+                        );
+                    }
+                });
+            });
+        });
+    });
+</script>
+</head>
+<body>
+    <div id="workspace">
+        <form id="login">
+        <input type="text" name="user">
+        <input type="password" name="pass">
+        <input type="submit" value="sign in">
+        </form>
     </div>
-  </body>
+</body>
 </html>
 
