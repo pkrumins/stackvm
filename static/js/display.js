@@ -283,8 +283,8 @@ function CanvasDisplay () {
     var context = canvasHTML.getContext('2d');
     
     self.resize = function (dims) {
-        canvas.width(dims.width);
-        canvas.height(dims.height);
+        canvas.attr('width', dims.width);
+        canvas.attr('height', dims.height);
         self.element.width(dims.width);
         self.element.height(dims.height);
     };
