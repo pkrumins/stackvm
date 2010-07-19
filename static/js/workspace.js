@@ -3,16 +3,24 @@ function Workspace (rootElem, account) {
         return new Workspace(rootElem, account);
     var self = this;
     
-    var leftPane = $('<div>')
-        .attr('id','left-pane')
+    $('form#login').fadeOut(400);
+    
+    var selectPane = $('<div>')
+        .attr('id','select-pane')
         .hide()
         .fadeIn(400);
     ;
-    rootElem.append(leftPane);
-    $('form#login').fadeOut(400);
+    rootElem.append(selectPane);
+    
+    var windowPane = $('<div>')
+        .attr('id','window-pane')
+        .hide()
+        .fadeIn(400)
+    ;
+    rootElem.append(windowPane);
     
     this.useVM = function (vmName) {
-        leftPane.append($('<div>')
+        selectPane.append($('<div>')
             .addClass('vm-desc')
             .click(function () {
                 self.attach(vmName);
@@ -21,8 +29,17 @@ function Workspace (rootElem, account) {
         );
     };
     
-    this.attach = function () {
-        // 
+    this.attach = function (vmName) {
+        //var vm = account.attach(vmName);
+        var fb = new FB({});
+        windowPane.append($('<div>')
+            .css({
+                position : 'absolute',
+                top : '100px',
+                left : '100px'
+            })
+            .append(fb.element)
+        );
     };
     
     account.vmList(function (vmList) {
