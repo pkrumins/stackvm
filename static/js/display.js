@@ -290,7 +290,7 @@ function CanvasDisplay () {
     };
     
     self.rawRect = function (rect) {
-        var img = toImg(img.base64, img.type);
+        var img = toImg(rect.base64, rect.type);
         img.load(function () {
             context.drawImage(img[0], rect.x, rect.y, rect.width, rect.height);
         });
