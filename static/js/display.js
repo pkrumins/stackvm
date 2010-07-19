@@ -264,56 +264,44 @@ function StackedDisplay (vm, opts) {
     }
 }
 
-function CanvasDisplay (vm, opts) {
-    Display.call(this, vm, opts);
-    var D = this;
-
-    this.createConsole = function () {
-        var con = $('<div>')
-            .addClass('canvasConsole')
-            .width(D.width)
-            .height(D.height);
-        var canvas = $('<canvas>')
-            .attr('width', D.width)
-            .attr('height', D.height);
-        var textArea = $('<div>')
-            .addClass('centerMessage')
-            .hide();
-        con.append(canvas).append(textArea);
-        D.canvas = canvas[0];
-        D.canvasCtx = D.canvas.getContext('2d');
-        return con;
-    }
-
-    this.conDraw = function (img64, imgType, x, y, width, height, fullScreen) {
-        var img = toImg(img64, imgType);
+function CanvasDisplay () {
+    // only this display is updated for the dnode stuff so far
+    var self = this;
+    
+    self.element = $('<div>').addClass('canvasConsole');
+    
+    var canvas = $('<canvas>');
+    
+    var textArea = $('<div>')
+        .addClass('centerMessage')
+        .hide()
+    ;
+    
+    self.element.append(canvas).append(textArea);
+    
+    var canvasHTML = canvas.get(0);
+    var context = canvasHTML.getContext('2d');
+    
+    self.resize = function (dims) {
+        canvas.width(dims.width);
+        canvas.height(dims.height);
+        self.element.width(dims.width);
+        self.element.height(dims.height);
+    };
+    
+    self.rawRect = function (rect) {
+        var img = toImg(img.base64, img.type);
         img.load(function () {
-            if (height > D.canvas.height) {
-                D.canvas.height = height;
-                D.con.height(height);
-            }
-            if (width > D.canvas.width) {
-                D.canvas.width = width;
-                D.win.width(width);
-            }
-            D.canvasCtx.drawImage(img[0], x, y, width, height);
+            context.drawImage(img[0], rect.x, rect.y, rect.width, rect.height);
         });
-    }
-
-    this.resize = function (width, height) {
-        D.canvas.width = width;
-        D.win.width(width);
-        D.canvas.height = height;
-        D.con.height(height);
-    }
-
-    this.copyRect = function (srcX, srcY, dstX, dstY, width, height) {
-        D.canvasCtx.drawImage(D.canvas,
-            srcX, srcY, width, height,
-            dstX, dstY, width, height);
-    }
+    };
+    
+    self.copyRect = function (rect) {
+        context.drawImage(
+            canvasHTML,
+            rect.srcX, rect.srcY, rect.width, rect.height,
+            rect.x, rect.y, rect.width, rect.height
+        );
+    };
 }
-
-exports.StackedDisplay = StackedDisplay;
-exports.CanvasDisplay = CanvasDisplay;
 
