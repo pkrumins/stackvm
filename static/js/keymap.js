@@ -234,6 +234,3 @@ var KeyMapper = (function() {
     };
 
 })();
-
-exports.KeyMapper = KeyMapper;
-

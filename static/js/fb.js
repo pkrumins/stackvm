@@ -6,15 +6,23 @@ function FB (params) {
     var vm = params.vm; // the remote fb object served via dnode
     var mouseCoords = null;
     
-    var focus = true;
-    self.focus = function () { focus = true };
-    self.unfocus = function () { focus = false };
+    var focus = false;
+    self.focus = function () {
+        focus = true;
+        self.element.focus();
+    };
+    self.unfocus = function () {
+        focus = false;
+        $(window).focus();
+    };
     
     var mouseMask = 0;
     
     self.element = $('<div>')
         .addClass('fb')
+        .attr('tabindex', 0) // so the div can receive focus
         .mousemove(function (ev) {
+            self.focus();
             if (focus) {
                 var pos = calcMousePos(ev);
                 vm.sendPointer(pos.x, pos.y, mouseMask);
@@ -35,6 +43,20 @@ function FB (params) {
             else {
                 vm.sendPointer(pos.x, pos.y, 1 << 5);
                 vm.sendPointer(pos.x, pos.y, 0);
+            }
+        })
+        // Other events should just call this element's key events when key
+        // events occur elsewhere but this vm has focus
+        .keydown(function (ev) {
+            if (focus) {
+                vm.sendKeyDown(KeyMapper.getKeySym(ev.keyCode));
+                ev.preventDefault();
+            }
+        })
+        .keyup(function (ev) {
+            if (focus) {
+                vm.sendKeyUp(KeyMapper.getKeySym(ev.keyCode));
+                ev.preventDefault();
             }
         })
     ;
