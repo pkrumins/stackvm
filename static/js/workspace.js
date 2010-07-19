@@ -30,16 +30,17 @@ function Workspace (rootElem, account) {
     };
     
     this.attach = function (vmName) {
-        //var vm = account.attach(vmName);
-        var fb = new FB({});
-        windowPane.append($('<div>')
-            .css({
-                position : 'absolute',
-                top : '100px',
-                left : '100px'
-            })
-            .append(fb.element)
-        );
+        account.attach(vmName, function (vm) {
+            var fb = new FB({ vm : vm });
+            windowPane.append($('<div>')
+                .css({
+                    position : 'absolute',
+                    top : '100px',
+                    left : '100px'
+                })
+                .append(fb.element)
+            );
+        });
     };
     
     account.vmList(function (vmList) {
