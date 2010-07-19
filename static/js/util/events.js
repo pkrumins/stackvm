@@ -50,5 +50,3 @@ function EventEmitter () {
     };
 };
 
-exports.EventEmitter = EventEmitter;
-

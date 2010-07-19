@@ -87,3 +87,24 @@ div#window-pane {
     overflow: hidden;
 }
 
+div.vm-window {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background-color: rgb(100,100,100);
+    border-color: rgb(200,200,200);
+    border-style: solid;
+    border-width: 2px;
+    display: table-cell;
+    vertical-align: middle;
+}
+
+div.vm-window div {
+    margin: auto;
+}
+
+div.vm-window-focused {
+    border-color: rgb(250,200,200);
+    padding: 10px;
+    border-color:
+}

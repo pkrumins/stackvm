@@ -1,6 +1,7 @@
 // A no-frills graphical container for the remote VM framebuffer
 // Renders the framebuffer and handles the keyboard and mouse
 
+FB.prototype = new EventEmitter;
 function FB (params) {
     var self = this;
     var vm = params.vm; // the remote fb object served via dnode
@@ -76,6 +77,7 @@ function FB (params) {
             .height(dims.height)
         ;
         display.resize(dims);
+        self.emit('resize', dims);
     }
     vm.dimensions(desktopSize);
     vm.addListener('desktopSize', desktopSize);

@@ -32,14 +32,9 @@ function Workspace (rootElem, account) {
     this.attach = function (vmName) {
         account.attach(vmName, function (vm) {
             var fb = new FB({ vm : vm });
-            windowPane.append($('<div>')
-                .css({
-                    position : 'absolute',
-                    top : '100px',
-                    left : '100px'
-                })
-                .append(fb.element)
-            );
+            var win = new VmWindow({ fb : fb });
+            win.focus();
+            windowPane.append(win.element);
         });
     };
     
