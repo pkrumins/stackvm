@@ -3,9 +3,13 @@ function Workspace (rootElem, account) {
         return new Workspace(rootElem, account);
     var self = this;
     
-    rootElem.empty();
-    var leftPane = $('<div>').attr('id','left-pane');
+    var leftPane = $('<div>')
+        .attr('id','left-pane')
+        .hide()
+        .fadeIn(400);
+    ;
     rootElem.append(leftPane);
+    $('form#login').fadeOut(400);
     
     this.useVM = function (vmName) {
         leftPane.append($('<div>')
