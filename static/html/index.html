@@ -19,19 +19,28 @@
         });
         
         DNode().connect(function (remote) {
-            $("form#login").submit(function (ev) {
+            var form = $('form#login');
+            form.submit(function (ev) {
                 ev.preventDefault();
                 
                 var user = this.elements.user.value;
                 var pass = this.elements.pass.value;
                 remote.authenticate(user, pass, function (account) {
-                    var div = $('div#workspace');
                     if (account) {
+                        var div = $('div#workspace');
                         Workspace(div, account);
                     }
                     else {
-                        div.append($('<div>')
+                        $('.sign-in-failed').remove();
+                        form.append($('<div>')
+                            .addClass('sign-in-failed')
                             .text('sign-in failed')
+                            .fadeIn(400, function () {
+                                var elem = $(this);
+                                setTimeout(function () {
+                                    elem.fadeOut(2000);
+                                }, 5000);
+                            })
                         );
                     }
                 });
@@ -42,12 +51,18 @@
 </head>
 <body>
     <div id="workspace">
-        <form id="login">
-        <input type="text" name="user">
-        <input type="password" name="pass">
-        <input type="submit" value="sign in">
+        <form id="login" method="post">
+            <img
+                src="http://stackvm.com/stackvm.png"
+                width="417" height="100"
+            >
+            <input type="text" name="user">
+            <br>
+            <input type="password" name="pass">
+            <br>
+            <input type="submit" value="sign in">
+            <br>
         </form>
     </div>
 </body>
 </html>
-

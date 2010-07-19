@@ -10,10 +10,10 @@ function Workspace (rootElem, account) {
     this.useVM = function (vmName) {
         leftPane.append($('<div>')
             .addClass('vm-desc')
-            .text(vmName)
             .click(function () {
                 self.attach(vmName);
             })
+            .append($('<div>').text(vmName))
         );
     };
     
