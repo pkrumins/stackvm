@@ -33,7 +33,6 @@ function Workspace (rootElem, account) {
         account.attach(vmName, function (vm) {
             var fb = new FB({ vm : vm });
             win = new Window({ fb : fb, name : vmName });
-            win.focus();
             windowPane.append(win.element);
         });
     };

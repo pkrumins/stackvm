@@ -89,13 +89,24 @@ div#window-pane {
 
 div.vm-window {
     background-color: rgb(100,100,100);
+    padding: 1px;
+    border-width: 2px;
+    border-style: solid;
+    border-color: rgb(150,150,150);
 }
 
 div.vm-window-focused {
 }
 
+div.vm-window-focused div.tab-bar {
+    margin-bottom: 2px;
+}
+
 div.tab-bar {
-    margin-top: -30px;
+    position: float;
+    margin-top: -32px;
+    margin-left: -3px;
+    margin-bottom: 0px;
     height: 30px;
     background-color: white;
     padding-left: 0.5em;
