@@ -29,11 +29,17 @@ function Workspace (rootElem, account) {
         );
     };
     
+    var windows = {};
     this.attach = function (vmName) {
         account.attach(vmName, function (vm) {
             var fb = new FB({ vm : vm });
-            win = new Window({ fb : fb, name : vmName });
+            var win = new Window({ fb : fb, name : vmName });
+            windows[vmName] = win;
             windowPane.append(win.element);
+            Object.keys(windows).forEach(function (w) {
+                windows[w].unfocus();
+            });
+            win.focus();
         });
     };
     
