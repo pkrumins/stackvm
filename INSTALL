@@ -1,4 +1,4 @@
-for pkg in socket.io dnode png jpeg video base64; do
+for pkg in dnode png jpeg video base64; do
     npm install $pkg;
 done
 
