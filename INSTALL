@@ -1,27 +1,7 @@
-You'll need the following node.js modules:
-    * http://github.com/visionmedia/js-oo/
-    * http://github.com/LearnBoost/Socket.IO
-    * http://github.com/LearnBoost/Socket.IO-node
-    * http://github.com/substack/node-bufferlist
-    * http://github.com/substack/node-rfb
-    * http://github.com/pkrumins/node-png
-    * http://github.com/pkrumins/node-jpeg
-    * http://github.com/pkrumins/node-base64
-    * http://github.com/pkrumins/node-video
-    * http://github.com/brandonaaron/jquery-mousewheel
+for pkg in socket.io dnode png jpeg video base64; do
+    npm install $pkg;
+done
 
-Copy (or symlink) these into your $NODE_PATH.
+Also add jquery.js, jquery.ui.js, and jquery.mousewheel.js to static/js/vendor/
 
-Besides these libraries you'll also need:
-
-    * libpng
-    * libjpeg
-    * libogg
-    * libtheora
-
-Create a symlink static/js/Socket.IO pointing to the Socket.IO project
-directory.
-
-Create a symlink static/js/jquery-mousewheel to point to the jquery-mousewheel
-project directory.
-
+TODO: proper package.json
