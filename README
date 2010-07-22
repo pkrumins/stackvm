@@ -5,14 +5,11 @@ StackVM is a web-based virtual machine manager where users will
 * create, duplicate, snapshot, and share virtual machine images
 * integrate non-virtual servers into the virtual network
 
-After compiling:
-1) start nodejs webstack:
-    sudo node ./nodejs/webstack.js
-    # or if you have privbind installed:
-    sudo privbind -u $(id -u) -g $(id -g) $(which node) nodejs/webstack.js
-
-2) start qemu and stackvm
-    qemu -vnc :0.0 linux-0.2.img &
-    ./stackvm
-
-Then go to http://localhost:9000/
+Running:
+    
+    1) Fire up qemu (or whichever) like this:
+       qemu -vnc :0.0 linux-0.2.img &
+    
+    2) ./bin/webstack.js
+    
+    3) Go to http://localhost:9000/
