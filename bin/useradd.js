@@ -26,6 +26,7 @@ var passHash = new crypto.Hash('sha512').update(pass).digest('hex');
 
 fs.mkdirSync(userDir, 0700);
 fs.writeFileSync(userDir + '/passwd', passHash);
+fs.mkdirSync(userDir + '/vms', 0700);
 
 console.log("User " + user + " successfully created.");
 
