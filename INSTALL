@@ -2,7 +2,7 @@ First you'll need these modules on npm (http://npmjs.org):
     npm install dnode png jpeg video base64
 
 SQLite isn't in npm yet, annoyingly. Anyways, you can get it here:
-    http://github.com/orlandov/node-sqlite.git
+    http://github.com/grumdrig/node-sqlite.git
 
 Also add jquery.js, jquery.ui.js, and jquery.mousewheel.js to static/js/vendor/
 
