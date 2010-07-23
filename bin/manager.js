@@ -7,24 +7,23 @@ var DNode = require('dnode');
 var sqlite = require('sqlite');
 var db = sqlite.openDatabaseSync(__dirname + '/../data/vm.db');
 
-db.query('select port from vms', function (rows) {
-    var ports = rows
-        .filter(function (row) {
-            if (!row.port) return false;
-            var alive = false;
-            try {
-                process.kill(row.pid,0);
-                alive = true;
-            } catch (e) { }
-            return alive;
-        })
-        .map(function (row) { return row.port })
-    ;
+db.query('select * from processes', function (rows) {
+    var procs = {};
+    rows.forEach(function (row) {
+        try {
+            process.kill(row.pid,0);
+            if (!(row.vm in procs)) procs[row.vm] = {};
+            procs[row.vm][row.port] = row;
+        } catch (e) {
+            db.query('delete from processes where pid = ?', [row.pid]);
+        }
+    });
+    
     DNode(function (client,conn) {
         return new Manager({
             client : client,
             connection : conn,
-            ports : ports,
+            processes : procs,
         });
     }).listen(9077);
 });
@@ -35,13 +34,17 @@ function Manager(params) {
     var self = this;
     var client = params.client;
     var conn = params.connection;
-    var ports = params.ports;
+    var procs = params.processes;
     
-    self.vmList = function (userId, f) {
+    self.vms = function (uId, f) {
         db.query(
-            'select * from vms where owner = ?', [userId],
+            'select id, name, filename from vms where owner = ? ', [uId],
             function (rows) { f([].slice.apply(rows)) }
         );
+    };
+    
+    self.processes = function (vmId, f) {
+        f(processes[vmId]);
     };
     
     self.spawn = function (params, f) {
@@ -51,7 +54,10 @@ function Manager(params) {
         var filename = params.filename;
         
         var port = 5900;
-        for (; ports.indexOf(port) >= 0; port++);
+        for (; Object.keys(procs).some(function (key) {
+            return port in procs[key]
+        }); port++);
+        
         sys.puts('firing up ' + engine + ' on port ' + port);
         
         if (engine == 'qemu') {
@@ -61,18 +67,23 @@ function Manager(params) {
             ]);
             
             qemu.on('exit', function () {
-                db.query('update vms set pid = ? where id = ?', [null,vmId]);
-                var i = ports.indexOf(port);
-                if (i >= 0) ports.splice(i,1);
+                db.query('delete from processes where port = ?', [port]);
+                delete procs[vmId][port];
                 sys.puts('qemu on port ' + port + ' died');
             });
             
             db.query(
-                'update vms set port = ?, pid = ?, engine = ? where id = ?',
-                [ port, qemu.pid, engine, vmId ],
+                'insert into processes (vm,engine,port,pid) values (?,?,?,?)',
+                [ vmId, engine, port, qemu.pid ],
                 function (r) {
                     if (r.rowsAffected == 1) {
-                        ports.push(port);
+                        if (!(vmId in procs)) procs[vmId] = {};
+                        procs[vmId][port] = {
+                            vm : vmId,
+                            engine : engine,
+                            port : port,
+                            pid : qemu.pid,
+                        };
                         f(port);
                     }
                     else { f(null) }
@@ -82,7 +93,14 @@ function Manager(params) {
         else { f(null) }
     };
     
-    self.kill = function (params, f) {
+    self.kill = function (vmId, port) {
+        sys.puts(sys.inspect(procs));
+        process.kill(procs[vmId][port].pid);
+        delete procs[vmId][port];
+        db.query(
+            'delete from processes where vm = ? and port = ?',
+            [vmId,port]
+        );
     };
     
     self.restart = function (params, f) {
