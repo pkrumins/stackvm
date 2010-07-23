@@ -8,8 +8,10 @@ create table vms (
     id integer primary key,
     name text,
     filename text,
+    engine text,
     owner integer,
-    port integer
+    port integer,
+    pid integer
 );
 
 create table permissions (
