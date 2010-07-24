@@ -17,23 +17,14 @@ sys.log("Webserver running at 0.0.0.0:" + port + ".");
 
 DNode.connect(9077, function (manager) {
     DNode(function (client,conn) {
-        this.authenticate = function (user,pass,cb) {
-            if (/[^\w-]/.test(user)) {
-                cb(null);
-                return;
-            }
-            var passFile = __dirname + '/../users/' + user + '/passwd';
-            var hash = new crypto.Hash('sha512').update(pass).digest('hex');
-            fs.readFile(passFile, function (err,fileHash) {
-                cb(hash == fileHash
-                    ? new Session({
-                        client : client,
-                        connection : conn,
-                        user : user,
-                        manager : manager,
-                    })
-                    : null
-                );
+        this.authenticate = function (name,pass,cb) {
+            manager.authenticate(name, pass, function (user) {
+                cb(!user ? null : new Session({
+                    client : client,
+                    connection : conn,
+                    user : user,
+                    manager : manager,
+                }));
             });
         };
     }).listen({

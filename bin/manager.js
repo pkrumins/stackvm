@@ -8,6 +8,8 @@ var DNode = require('dnode');
 var sqlite = require('sqlite');
 var db = sqlite.openDatabaseSync(__dirname + '/../data/vm.db');
 
+var crypto = require('crypto');
+
 db.query('select processes.*, vms.owner from processes, vms '
 + 'where processes.vm = vms.id', function (rows) {
     var procs = {};
@@ -115,4 +117,16 @@ function Manager(params) {
             self.spawn(params, f);
         });
     };
+    
+    // Authentication will get its own DNode server eventually.
+    // For now:
+    self.authenticate = function (name, pass, f) {
+        var hash = new crypto.Hash('sha512').update(pass).digest('hex');
+        db.query(
+            'select id, name from users where name = ? and hash = ?', 
+            [ name, hash ],
+            function (rows) { f(rows[0]) }
+        );
+    };
 }
+
