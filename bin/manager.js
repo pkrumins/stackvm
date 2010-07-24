@@ -41,14 +41,18 @@ function Manager(params) {
     var conn = params.connection;
     var procs = params.processes;
     
-    self.vmList = function (user, f) {
+    self.virtualMachines = function (user, f) {
         db.query(
             'select id, name, filename from vms where owner = ? ', [user.id],
-            function (rows) { f([].slice.apply(rows)) }
+            function (rows) {
+                var vms = {};
+                rows.forEach(function (row) { vms[row.id] = row });
+                f(vms);
+            }
         );
     };
     
-    self.processList = function (user, f) {
+    self.processes = function (user, f) {
         f(procs[user.id]);
     };
     
@@ -87,8 +91,7 @@ function Manager(params) {
                             vm : vm.id,
                             engine : engine,
                             port : port,
-                            pid : qemu.pid,
-                            owner : user.id,
+                            pid : qemu.pid
                         };
                         f(port);
                     }
@@ -102,7 +105,9 @@ function Manager(params) {
     self.kill = function (user, port, f) {
         process.kill(procs[user.id][port].pid);
         delete procs[user.id][port];
-        db.query('delete from processes where port = ?', [port], f);
+        db.query('delete from processes where port = ?', [port], function (r) {
+            f(r.rowsAffected == 1);
+        });
     };
     
     self.restart = function (params, f) {
