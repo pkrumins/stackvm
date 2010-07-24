@@ -25,7 +25,7 @@ function Workspace (rootElem, account) {
             .click(function () {
                 self.attach(vm.name);
             })
-            .append($('<div>').text(vmName))
+            .append($('<div>').text(vm.name))
             .append($('<p>').text(vm.processes.length))
         );
     };

@@ -55,7 +55,7 @@ function Manager(params) {
     };
     
     self.processes = function (user, f) {
-        f(procs[user.id]);
+        f(procs[user.id] || {});
     };
     
     self.spawn = function (params, f) {
