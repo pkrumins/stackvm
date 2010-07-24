@@ -8,9 +8,13 @@ create table vms (
     id integer primary key,
     name text,
     filename text,
+    owner integer
+);
+
+create table processes (
+    port integer primary key,
+    vm integer,
     engine text,
-    owner integer,
-    port integer,
     pid integer
 );
 
