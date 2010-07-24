@@ -19,18 +19,19 @@ function Workspace (rootElem, account) {
     ;
     rootElem.append(windowPane);
     
-    this.useVM = function (vmName) {
+    self.useVM = function (vm) {
         selectPane.append($('<div>')
             .addClass('vm-desc')
             .click(function () {
-                self.attach(vmName);
+                self.attach(vm.name);
             })
             .append($('<div>').text(vmName))
+            .append($('<p>').text(vm.processes.length))
         );
     };
     
     var windows = {};
-    this.attach = function (vmName) {
+    self.attach = function (vmName) {
         account.attach(vmName, function (vm) {
             var fb = new FB({ vm : vm });
             var win = new Window({ fb : fb, name : vmName });
@@ -43,8 +44,23 @@ function Workspace (rootElem, account) {
         });
     };
     
-    account.vmList(function (vmList) {
-        vmList.forEach(self.useVM);
+    account.virtualMachines(function (vms) {
+        // vms maps vm ids to { vm id, name, filename }
+        account.processes(function (procs) {
+            // procs maps ports to { pid, vm id, port, engine }
+            Object.keys(vms).forEach(function (vmId) {
+                var vm = vms[vmId];
+                self.useVM({
+                    id : vm.id,
+                    name : vm.name,
+                    filename : vm.filename,
+                    processes : Object.keys(procs)
+                        .map(function (port) { return procs[port] })
+                        .filter(function (p) { return vm.id == p.vm })
+                    ,
+                });
+            });
+        });
     });
 }
 
