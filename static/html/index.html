@@ -22,7 +22,9 @@
 <script type="text/javascript" src="/js/tabbar.js"></script>
 <script type="text/javascript">
     $(window).load(function () {
-        $("form#login").submit(function (ev) {
+        $('form#login')[0].elements['user'].focus();
+        
+        $('form#login').submit(function (ev) {
             ev.preventDefault();
         });
         
