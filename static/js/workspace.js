@@ -6,6 +6,7 @@ function Workspace (rootElem, account) {
     $('form#login').fadeOut(400);
     
     var selectPane = $('<div>')
+        .addClass('left-pane')
         .attr('id','select-pane')
         .hide()
         .fadeIn(400);
@@ -19,28 +20,66 @@ function Workspace (rootElem, account) {
     ;
     rootElem.append(windowPane);
     
+    var infoPanes = {};
+    self.addInfoPane = function (vm) {
+        var elem = $('<div>')
+            .hide()
+            .addClass('left-pane')
+            .attr('id','info-pane')
+            .click(function () {
+                selectPane.fadeIn(400);
+                elem.fadeOut(400);
+            })
+            .append(
+                $('<p>').text(vm.name),
+                $('<a>')
+                    .text('spawn in qemu')
+                    .click(function () {
+                        account.spawn(
+                            { vm : vm.id, engine : 'qemu' },
+                            function (port) {
+                                vm.processes.push({
+                                    port : port,
+                                    engine : 'qemu',
+                                    vm : vm.id
+                                });
+                            }
+                        );
+                    })
+            )
+        ;
+        infoPanes[vm.id] = elem;
+        rootElem.append(elem);
+    };
+    
     self.useVM = function (vm) {
         selectPane.append($('<div>')
             .addClass('vm-desc')
             .click(function () {
-                self.attach(vm.name);
+                selectPane.fadeOut(400);
+                infoPanes[vm.id].fadeIn(400);
             })
             .append($('<div>').text(vm.name))
-            .append($('<p>').text(vm.processes.length))
         );
+        self.addInfoPane(vm);
     };
     
     var windows = {};
-    self.attach = function (vmName) {
-        account.attach(vmName, function (vm) {
-            var fb = new FB({ vm : vm });
-            var win = new Window({ fb : fb, name : vmName });
-            windows[vmName] = win;
-            windowPane.append(win.element);
-            Object.keys(windows).forEach(function (w) {
-                windows[w].unfocus();
-            });
-            win.focus();
+    self.attach = function (port) {
+        account.attach(port, function (vm) {
+            if (!vm) {
+                console.log('vm == null');
+            }
+            else {
+                var fb = new FB({ vm : vm });
+                var win = new Window({ fb : fb, name : vmName });
+                windows[vmName] = win;
+                windowPane.append(win.element);
+                Object.keys(windows).forEach(function (w) {
+                    windows[w].unfocus();
+                });
+                win.focus();
+            }
         });
     };
     

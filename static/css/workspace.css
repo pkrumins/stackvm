@@ -47,16 +47,32 @@ div.sign-in-failed {
     margin: auto;
 }
 
-div#select-pane {
+div.left-pane {
     position: absolute;
     width: 200px;
     top: 0px;
     bottom: 0px;
     left: 0px;
-    background-color: rgb(50,50,50);
     color: white;
     overflow-y: auto;
 }
+
+div.left-pane a {
+    text-decoration: underline;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+div#select-pane {
+    background-color: rgb(50,50,50);
+}
+
+div#info-pane {
+    background-color: rgb(75,75,75);
+}
+
+div#info-pane p { margin-left: 1em; }
+div#info-pane a { margin-left: 1em; }
 
 div.vm-desc {
     padding: 1em;
