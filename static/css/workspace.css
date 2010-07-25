@@ -47,15 +47,22 @@ div.sign-in-failed {
     margin: auto;
 }
 
-div#select-pane {
+div.left-pane {
     position: absolute;
     width: 200px;
     top: 0px;
     bottom: 0px;
     left: 0px;
-    background-color: rgb(50,50,50);
     color: white;
     overflow-y: auto;
+}
+
+div#select-pane {
+    background-color: rgb(50,50,50);
+}
+
+div#info-pane {
+    background-color: rgb(75,75,75);
 }
 
 div.vm-desc {

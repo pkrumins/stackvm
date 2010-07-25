@@ -6,11 +6,19 @@ function Workspace (rootElem, account) {
     $('form#login').fadeOut(400);
     
     var selectPane = $('<div>')
+        .addClass('left-pane')
         .attr('id','select-pane')
         .hide()
         .fadeIn(400);
     ;
     rootElem.append(selectPane);
+    
+    var infoPane = $('<div>')
+        .addClass('left-pane')
+        .attr('id','info-pane')
+        .hide()
+    ;
+    rootElem.append(infoPane);
     
     var windowPane = $('<div>')
         .attr('id','window-pane')
@@ -23,24 +31,35 @@ function Workspace (rootElem, account) {
         selectPane.append($('<div>')
             .addClass('vm-desc')
             .click(function () {
-                self.attach(vm.name);
+                selectPane.fadeOut(400);
+                infoPane.fadeIn(400);
+                
+                infoPane.click(function () {
+                    selectPane.fadeIn(400);
+                    infoPane.fadeOut(400);
+                });
+                // self.attach(vm.port);
             })
             .append($('<div>').text(vm.name))
-            .append($('<p>').text(vm.processes.length))
         );
     };
     
     var windows = {};
-    self.attach = function (vmName) {
-        account.attach(vmName, function (vm) {
-            var fb = new FB({ vm : vm });
-            var win = new Window({ fb : fb, name : vmName });
-            windows[vmName] = win;
-            windowPane.append(win.element);
-            Object.keys(windows).forEach(function (w) {
-                windows[w].unfocus();
-            });
-            win.focus();
+    self.attach = function (port) {
+        account.attach(port, function (vm) {
+            if (!vm) {
+                console.log('vm == null');
+            }
+            else {
+                var fb = new FB({ vm : vm });
+                var win = new Window({ fb : fb, name : vmName });
+                windows[vmName] = win;
+                windowPane.append(win.element);
+                Object.keys(windows).forEach(function (w) {
+                    windows[w].unfocus();
+                });
+                win.focus();
+            }
         });
     };
     
