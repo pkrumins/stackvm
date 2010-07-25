@@ -13,13 +13,6 @@ function Workspace (rootElem, account) {
     ;
     rootElem.append(selectPane);
     
-    var infoPane = $('<div>')
-        .addClass('left-pane')
-        .attr('id','info-pane')
-        .hide()
-    ;
-    rootElem.append(infoPane);
-    
     var windowPane = $('<div>')
         .attr('id','window-pane')
         .hide()
@@ -27,21 +20,32 @@ function Workspace (rootElem, account) {
     ;
     rootElem.append(windowPane);
     
+    var infoPanes = {};
+    self.addInfoPane = function (vm) {
+        var elem = $('<div>')
+            .hide()
+            .addClass('left-pane')
+            .attr('id','info-pane')
+            .text(vm.name)
+            .click(function () {
+                selectPane.fadeIn(400);
+                elem.fadeOut(400);
+            })
+        ;
+        infoPanes[vm.name] = elem;
+        rootElem.append(elem);
+    };
+    
     self.useVM = function (vm) {
         selectPane.append($('<div>')
             .addClass('vm-desc')
             .click(function () {
                 selectPane.fadeOut(400);
-                infoPane.fadeIn(400);
-                
-                infoPane.click(function () {
-                    selectPane.fadeIn(400);
-                    infoPane.fadeOut(400);
-                });
-                // self.attach(vm.port);
+                infoPanes[vm.name].fadeIn(400);
             })
             .append($('<div>').text(vm.name))
         );
+        self.addInfoPane(vm);
     };
     
     var windows = {};
