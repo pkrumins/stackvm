@@ -57,6 +57,12 @@ div.left-pane {
     overflow-y: auto;
 }
 
+div.left-pane a {
+    text-decoration: underline;
+    font-weight: bold;
+    cursor: pointer;
+}
+
 div#select-pane {
     background-color: rgb(50,50,50);
 }
@@ -64,6 +70,9 @@ div#select-pane {
 div#info-pane {
     background-color: rgb(75,75,75);
 }
+
+div#info-pane p { margin-left: 1em; }
+div#info-pane a { margin-left: 1em; }
 
 div.vm-desc {
     padding: 1em;

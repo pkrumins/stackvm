@@ -26,13 +26,29 @@ function Workspace (rootElem, account) {
             .hide()
             .addClass('left-pane')
             .attr('id','info-pane')
-            .text(vm.name)
             .click(function () {
                 selectPane.fadeIn(400);
                 elem.fadeOut(400);
             })
+            .append(
+                $('<p>').text(vm.name),
+                $('<a>')
+                    .text('spawn in qemu')
+                    .click(function () {
+                        account.spawn(
+                            { vm : vm.id, engine : 'qemu' },
+                            function (port) {
+                                vm.processes.push({
+                                    port : port,
+                                    engine : 'qemu',
+                                    vm : vm.id
+                                });
+                            }
+                        );
+                    })
+            )
         ;
-        infoPanes[vm.name] = elem;
+        infoPanes[vm.id] = elem;
         rootElem.append(elem);
     };
     
@@ -41,7 +57,7 @@ function Workspace (rootElem, account) {
             .addClass('vm-desc')
             .click(function () {
                 selectPane.fadeOut(400);
-                infoPanes[vm.name].fadeIn(400);
+                infoPanes[vm.id].fadeIn(400);
             })
             .append($('<div>').text(vm.name))
         );
