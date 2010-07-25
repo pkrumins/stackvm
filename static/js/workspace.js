@@ -26,11 +26,15 @@ function Workspace (rootElem, account) {
             .hide()
             .addClass('left-pane')
             .attr('id','info-pane')
-            .click(function () {
-                selectPane.fadeIn(400);
-                elem.fadeOut(400);
-            })
             .append(
+                $('<div>')
+                    .addClass('back')
+                    .text('back')
+                    .click(function () {
+                        selectPane.fadeIn(400);
+                        elem.fadeOut(400);
+                    })
+                ,
                 $('<p>').text(vm.name),
                 $('<a>')
                     .text('spawn in qemu')
