@@ -89,13 +89,14 @@ function Manager(params) {
                 [ vm.id, engine, port, qemu.pid ],
                 function (r) {
                     if (r.rowsAffected == 1) {
-                        procs[user.id][port] = {
+                        var proc = {
                             vm : vm.id,
                             engine : engine,
                             port : port,
-                            pid : qemu.pid
+                            pid : qemu.pid,
                         };
-                        f(port);
+                        procs[user.id][port] = proc;
+                        f(proc);
                     }
                     else { f(null) }
                 }

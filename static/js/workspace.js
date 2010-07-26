@@ -72,18 +72,18 @@ function Workspace (rootElem, account) {
     };
     
     self.spawn = function (vm, engine) {
-        account.spawn({ vm : vm.id, engine : engine }, function (port) {
+        account.spawn({ vm : vm.id, engine : engine }, function (proc) {
             vm.processes.push({
-                port : port,
+                port : proc.port,
                 engine : 'qemu',
                 vm : vm.id
             });
             
             $('#instance-list').append(
                 $('<p>').append($('<a>')
-                    .text(engine + '[' + port + ']')
+                    .text(engine + '[' + proc.port + ']')
                     .click(function () {
-                        self.attach(port);
+                        self.attach(proc.port);
                     })
                 )
             );
