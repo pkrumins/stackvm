@@ -63,6 +63,28 @@ div.left-pane a {
     cursor: pointer;
 }
 
+div.left-pane div.back {
+    border-color: white;
+    border-style: solid;
+    border-width: 2px;
+    background-color: rgb(100,100,100);
+    color: white;
+    height: 3em;
+    text-align: center;
+    cursor: pointer;
+    display: table-cell;
+    vertical-align: middle;
+    width: 200px;
+}
+
+div.left-pane div.back:hover {
+    background-color: rgb(200,200,200);
+    color: rgb(50,50,50);
+}
+
+div.left-pane div#instance-list {
+}
+
 div#select-pane {
     background-color: rgb(50,50,50);
 }

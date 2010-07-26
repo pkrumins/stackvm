@@ -26,25 +26,32 @@ function Workspace (rootElem, account) {
             .hide()
             .addClass('left-pane')
             .attr('id','info-pane')
-            .click(function () {
-                selectPane.fadeIn(400);
-                elem.fadeOut(400);
-            })
             .append(
+                $('<div>')
+                    .addClass('back')
+                    .text('back')
+                    .click(function () {
+                        selectPane.fadeIn(400);
+                        elem.fadeOut(400);
+                    })
+                ,
                 $('<p>').text(vm.name),
+                $('<p>').text('Instances:'),
+                $('<p>').append.apply(
+                    $('<p>').attr('id','instance-list'),
+                    vm.processes.map(function (proc) {
+                        return $('<p>').append($('<a>')
+                            .text(proc.engine + '[' + proc.port + ']')
+                            .click(function () {
+                                self.attach(proc.port);
+                            })
+                        );
+                    })
+                ),
                 $('<a>')
                     .text('spawn in qemu')
                     .click(function () {
-                        account.spawn(
-                            { vm : vm.id, engine : 'qemu' },
-                            function (port) {
-                                vm.processes.push({
-                                    port : port,
-                                    engine : 'qemu',
-                                    vm : vm.id
-                                });
-                            }
-                        );
+                        self.spawn(vm, 'qemu');
                     })
             )
         ;
@@ -64,6 +71,25 @@ function Workspace (rootElem, account) {
         self.addInfoPane(vm);
     };
     
+    self.spawn = function (vm, engine) {
+        account.spawn({ vm : vm.id, engine : engine }, function (proc) {
+            vm.processes.push({
+                port : proc.port,
+                engine : 'qemu',
+                vm : vm.id
+            });
+            
+            $('#instance-list').append(
+                $('<p>').append($('<a>')
+                    .text(engine + '[' + proc.port + ']')
+                    .click(function () {
+                        self.attach(proc.port);
+                    })
+                )
+            );
+        });
+    };
+    
     var windows = {};
     self.attach = function (port) {
         account.attach(port, function (vm) {
@@ -72,8 +98,8 @@ function Workspace (rootElem, account) {
             }
             else {
                 var fb = new FB({ vm : vm });
-                var win = new Window({ fb : fb, name : vmName });
-                windows[vmName] = win;
+                var win = new Window({ fb : fb, name : vm.name });
+                windows[vm.name] = win;
                 windowPane.append(win.element);
                 Object.keys(windows).forEach(function (w) {
                     windows[w].unfocus();
