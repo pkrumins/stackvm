@@ -82,6 +82,9 @@ div.left-pane div.back:hover {
     color: rgb(50,50,50);
 }
 
+div.left-pane div#instance-list {
+}
+
 div#select-pane {
     background-color: rgb(50,50,50);
 }
