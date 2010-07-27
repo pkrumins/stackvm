@@ -102,7 +102,7 @@ function Workspace (rootElem, account) {
                     fb : fb,
                     name : vm.name
                 });
-                win.on('detach', function () {
+                win.on('close', function () {
                     win.element.remove();
                     delete windows[w];
                     account.detach(port);

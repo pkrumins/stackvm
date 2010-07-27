@@ -6,7 +6,7 @@ function Window (params) {
         name : params.name,
         window : self
     });
-    tabBar.on('detach', function () { self.emit('detach') });
+    tabBar.on('close', function () { self.emit('close') });
     
     var focused = true;
     
