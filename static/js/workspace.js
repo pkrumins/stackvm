@@ -43,7 +43,7 @@ function Workspace (rootElem, account) {
                         return $('<p>').append($('<a>')
                             .text(proc.engine + '[' + proc.port + ']')
                             .click(function () {
-                                self.attach(proc.port);
+                                self.attach(vm, proc.port);
                             })
                         );
                     })
@@ -83,7 +83,7 @@ function Workspace (rootElem, account) {
                 $('<p>').append($('<a>')
                     .text(engine + '[' + proc.port + ']')
                     .click(function () {
-                        self.attach(proc.port);
+                        self.attach(vm, proc.port);
                     })
                 )
             );
@@ -91,20 +91,22 @@ function Workspace (rootElem, account) {
     };
     
     var windows = {};
-    self.attach = function (port) {
-        account.attach(port, function (vm) {
-            if (!vm) {
-                console.log('vm == null');
+    self.attach = function (vm, port) {
+        account.attach(port, function (remoteVM) {
+            if (!remoteVM) {
+                console.log('remoteVM == null');
             }
             else {
-                var fb = new FB({ vm : vm });
+                var fb = new FB({ vm : remoteVM });
                 var win = new Window({ fb : fb, name : vm.name });
                 windows[vm.name] = win;
+                
                 windowPane.append(win.element);
                 Object.keys(windows).forEach(function (w) {
                     windows[w].unfocus();
                 });
-                win.focus();
+                
+                //win.focus();
             }
         });
     };

@@ -19,7 +19,7 @@ function Window (params) {
         .draggable()
     ;
     
-    fb.addListener('resize', function (dims) {
+    fb.on('resize', function (dims) {
         self.element.width(dims.width);
         self.element.height(dims.height);
         tabBar.element.width(dims.width - 1);
@@ -35,6 +35,7 @@ function Window (params) {
             tabBar.element.width(fb.element.width() - 1);
             self.element.height(fb.element.height());
         }
+        return self;
     };
     
     self.unfocus = function () {
@@ -48,6 +49,7 @@ function Window (params) {
                 self.element.height(fb.element.height());
             });
         }
+        return self;
     };
     
     self.unfocus();

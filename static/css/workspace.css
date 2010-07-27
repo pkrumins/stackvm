@@ -133,8 +133,7 @@ div.vm-window {
     border-color: rgb(150,150,150);
 }
 
-div.vm-window-focused {
-}
+div.vm-window-focused { }
 
 div.vm-window-focused div.tab-bar {
     margin-bottom: 2px;
@@ -147,6 +146,7 @@ div.tab-bar {
     margin-bottom: 0px;
     height: 30px;
     background-color: white;
+    color: black;
     padding-left: 0.5em;
 }
 
@@ -154,4 +154,16 @@ div.tab-bar div {
     display: table-cell;
     vertical-align: middle;
     height: 30px;
+}
+
+div.tab-bar img#menu-button {
+    float: left;
+}
+
+div.tab-bar img.window-button {
+    float: right;
+    margin-right: 10px;
+    margin-top: 5px;
+    width: 20px;
+    height: 20px;
 }
