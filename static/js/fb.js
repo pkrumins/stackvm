@@ -79,18 +79,24 @@ function FB (params) {
         display.resize(dims);
         self.emit('resize', dims);
     }
+    vm.on('desktopSize', desktopSize);
     vm.dimensions(desktopSize);
-    vm.addListener('desktopSize', desktopSize);
     
-    vm.addListener('png', function (png) {
+    var firstRect; firstRect = function () {
+        vm.requestRedrawScreen();
+        firstRect = function () {};
+    };
+    setTimeout(firstRect, 500);
+    
+    vm.on('png', function (png) {
+        firstRect();
         png.type = 'png';
         display.rawRect(png);
     });
     
-    vm.addListener('copyRect', function (rect) {
+    vm.on('copyRect', function (rect) {
+        firstRect();
         display.copyRect(rect);
     });
-    
-    vm.requestRedrawScreen();
 }
 

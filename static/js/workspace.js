@@ -43,7 +43,7 @@ function Workspace (rootElem, account) {
                         return $('<p>').append($('<a>')
                             .text(proc.engine + '[' + proc.port + ']')
                             .click(function () {
-                                self.attach(proc.port);
+                                self.attach(vm, proc.port);
                             })
                         );
                     })
@@ -83,27 +83,36 @@ function Workspace (rootElem, account) {
                 $('<p>').append($('<a>')
                     .text(engine + '[' + proc.port + ']')
                     .click(function () {
-                        self.attach(proc.port);
+                        self.attach(vm, proc.port);
                     })
                 )
             );
         });
     };
     
-    var windows = {};
-    self.attach = function (port) {
-        account.attach(port, function (vm) {
-            if (!vm) {
-                console.log('vm == null');
+    var windows = [];
+    self.attach = function (vm, port) {
+        account.attach(port, function (remoteVM) {
+            if (!remoteVM) {
+                console.log('remoteVM == null');
             }
             else {
-                var fb = new FB({ vm : vm });
-                var win = new Window({ fb : fb, name : vm.name });
-                windows[vm.name] = win;
-                windowPane.append(win.element);
-                Object.keys(windows).forEach(function (w) {
-                    windows[w].unfocus();
+                var fb = new FB({ vm : remoteVM });
+                var win = new Window({
+                    fb : fb,
+                    name : vm.name
                 });
+                var i = windows.length;
+                win.on('close', function () {
+                    win.element.remove();
+                    delete windows[i];
+                    account.detch(port);
+                });
+                windows[i] = win;
+                
+                windowPane.append(win.element);
+                windows.forEach(function (w) { w.unfocus() });
+                
                 win.focus();
             }
         });

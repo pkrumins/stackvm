@@ -37,6 +37,7 @@ function EventEmitter () {
         this.listeners(name).push(listener);
         return this;
     };
+    this.on = this.addListener;
     
     this.removeListener = function (name, listener) {
         var i = this.listeners(name).find(listener);
