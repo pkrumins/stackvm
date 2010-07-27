@@ -2,7 +2,11 @@ Window.prototype = new EventEmitter;
 function Window (params) {
     var self = this;
     var fb = params.fb;
-    var tabBar = new TabBar({ name : params.name });
+    var tabBar = new TabBar({
+        name : params.name,
+        window : self
+    });
+    tabBar.on('detach', function () { self.emit('detach') });
     
     var focused = true;
     

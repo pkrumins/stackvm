@@ -98,7 +98,15 @@ function Workspace (rootElem, account) {
             }
             else {
                 var fb = new FB({ vm : remoteVM });
-                var win = new Window({ fb : fb, name : vm.name });
+                var win = new Window({
+                    fb : fb,
+                    name : vm.name
+                });
+                win.on('detach', function () {
+                    win.element.remove();
+                    delete windows[w];
+                    account.detach(port);
+                });
                 windows[vm.name] = win;
                 
                 windowPane.append(win.element);
@@ -106,7 +114,7 @@ function Workspace (rootElem, account) {
                     windows[w].unfocus();
                 });
                 
-                //win.focus();
+                win.focus();
             }
         });
     };
