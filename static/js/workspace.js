@@ -90,7 +90,7 @@ function Workspace (rootElem, account) {
         });
     };
     
-    var windows = {};
+    var windows = [];
     self.attach = function (vm, port) {
         account.attach(port, function (remoteVM) {
             if (!remoteVM) {
@@ -102,17 +102,16 @@ function Workspace (rootElem, account) {
                     fb : fb,
                     name : vm.name
                 });
+                var i = windows.length;
                 win.on('close', function () {
                     win.element.remove();
-                    delete windows[w];
-                    account.detach(port);
+                    delete windows[i];
+                    account.detch(port);
                 });
-                windows[vm.name] = win;
+                windows[i] = win;
                 
                 windowPane.append(win.element);
-                Object.keys(windows).forEach(function (w) {
-                    windows[w].unfocus();
-                });
+                windows.forEach(function (w) { w.unfocus() });
                 
                 win.focus();
             }
