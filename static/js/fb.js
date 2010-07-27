@@ -80,14 +80,14 @@ function FB (params) {
         self.emit('resize', dims);
     }
     vm.dimensions(desktopSize);
-    vm.addListener('desktopSize', desktopSize);
+    vm.on('desktopSize', desktopSize);
     
-    vm.addListener('png', function (png) {
+    vm.on('png', function (png) {
         png.type = 'png';
         display.rawRect(png);
     });
     
-    vm.addListener('copyRect', function (rect) {
+    vm.on('copyRect', function (rect) {
         display.copyRect(rect);
     });
     
