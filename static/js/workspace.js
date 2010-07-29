@@ -31,7 +31,11 @@ function Workspace (rootElem, account) {
         .hide()
         .click(function () {
             sheet.fadeOut(400);
-            $('.vm-window-fullscreen').removeClass('vm-window-fullscreen');
+            var win = $('.vm-window-fullscreen');
+            win.removeClass('vm-window-fullscreen');
+            var pos = win.offset();
+            pos.left -= 200;
+            win.offset(pos);
             windowPane.offset({ left : 200, top : 0 })
         })
     ;
