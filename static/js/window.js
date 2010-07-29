@@ -6,7 +6,10 @@ function Window (params) {
         name : params.name,
         window : self
     });
-    tabBar.on('close', function () { self.emit('close') });
+    tabBar.on('close', function () {
+        self.element.remove();
+        self.emit('close');
+    });
     
     var focused = true;
     

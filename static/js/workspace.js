@@ -103,12 +103,11 @@ function Workspace (rootElem, account) {
                     name : vm.name
                 });
                 var i = windows.length;
+                windows.push(win);
                 win.on('close', function () {
-                    win.element.remove();
                     delete windows[i];
-                    account.detch(port);
+                    account.detach(port);
                 });
-                windows[i] = win;
                 
                 windowPane.append(win.element);
                 windows.forEach(function (w) { w.unfocus() });
