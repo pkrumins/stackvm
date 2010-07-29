@@ -5,6 +5,7 @@ div#workspace {
     left: 0px;
     width: 100%;
     height: 100%;
+    overflow: hidden;
 }
 
 form#login {
@@ -139,6 +140,14 @@ div.vm-window-focused div.tab-bar {
     margin-bottom: 2px;
 }
 
+div.vm-window-fullscreen {
+    z-index: 101;
+}
+
+div.vm-window-fullscreen div.tab-bar {
+    display: none;
+}
+
 div.tab-bar {
     position: float;
     margin-top: -32px;
@@ -166,4 +175,30 @@ div.tab-bar img.window-button {
     margin-top: 5px;
     width: 20px;
     height: 20px;
+}
+
+div#quick-bar {
+    position: absolute;
+    bottom: 0px;
+    left: 200px;
+    right: 0px;
+    height: 100px;
+}
+
+div#quick-bar div {
+    float: left;
+    width: 120px;
+    height: 95px;
+    color: white;
+    text-align: center;
+}
+
+div#sheet {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 100%;
+    background-color: rgb(50,50,50);
+    z-index: 100;
 }

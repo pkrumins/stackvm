@@ -20,6 +20,23 @@ function Workspace (rootElem, account) {
     ;
     rootElem.append(windowPane);
     
+    var quickBar = new QuickBar;
+    rootElem.append(quickBar.element);
+    quickBar.on('restore', function (vm, port) {
+        self.attach(vm, port);
+    });
+    
+    var sheet = $('<div>')
+        .attr('id','sheet')
+        .hide()
+        .click(function () {
+            sheet.fadeOut(400);
+            $('.vm-window-fullscreen').removeClass('vm-window-fullscreen');
+            windowPane.offset({ left : 200, top : 0 })
+        })
+    ;
+    rootElem.append(sheet);
+    
     var infoPanes = {};
     self.addInfoPane = function (vm) {
         var elem = $('<div>')
@@ -104,6 +121,18 @@ function Workspace (rootElem, account) {
                 });
                 var i = windows.length;
                 windows.push(win);
+                
+                win.on('minimize', function () {
+                    delete windows[i];
+                    account.detach(port);
+                    quickBar.push(vm, port);
+                });
+                
+                win.on('fullscreen', function () {
+                    sheet.fadeIn(400);
+                    windowPane.offset({ left : 0, top : 0 })
+                });
+                
                 win.on('close', function () {
                     delete windows[i];
                     account.detach(port);
