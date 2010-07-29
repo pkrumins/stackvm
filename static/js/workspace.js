@@ -22,6 +22,9 @@ function Workspace (rootElem, account) {
     
     var quickBar = new QuickBar;
     rootElem.append(quickBar.element);
+    quickBar.on('restore', function (vm, port) {
+        self.attach(vm, port);
+    });
     
     var infoPanes = {};
     self.addInfoPane = function (vm) {
@@ -111,7 +114,7 @@ function Workspace (rootElem, account) {
                 win.on('minimize', function () {
                     delete windows[i];
                     account.detach(port);
-                    quickBar.push(vm);
+                    quickBar.push(vm, port);
                 });
                 
                 win.on('close', function () {
