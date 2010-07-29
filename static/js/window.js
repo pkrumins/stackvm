@@ -6,6 +6,17 @@ function Window (params) {
         name : params.name,
         window : self
     });
+    
+    tabBar.on('minimize', function () {
+        self.element.remove();
+        self.emit('minimize');
+    });
+    
+    tabBar.on('fullscreen', function () {
+        // ...
+        self.emit('fullscreen');
+    });
+    
     tabBar.on('close', function () {
         self.element.remove();
         self.emit('close');

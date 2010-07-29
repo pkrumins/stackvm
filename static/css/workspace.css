@@ -167,3 +167,15 @@ div.tab-bar img.window-button {
     width: 20px;
     height: 20px;
 }
+
+div#quick-bar {
+    position: absolute;
+    bottom: 0px;
+    left: 200px;
+    right: 0px;
+    height: 100px;
+    border-color: red;
+    border-style: solid;
+    border-width: 2px;
+}
+

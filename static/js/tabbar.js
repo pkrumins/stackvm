@@ -1,4 +1,4 @@
-TabBar.prototype = new EventEmitter();
+TabBar.prototype = new EventEmitter;
 function TabBar (params) {
     
     var self = this;
@@ -10,17 +10,17 @@ function TabBar (params) {
             $('<img>')
                 .attr('src','/img/buttons/close.png')
                 .addClass('window-button')
-                .click(function () {
-                    self.emit('close');
-                })
+                .click(function () { self.emit('close') })
             ,
             $('<img>')
                 .attr('src','/img/buttons/fullscreen.png')
                 .addClass('window-button')
+                .click(function () { self.emit('fullscreen') })
             ,
             $('<img>')
                 .attr('src','/img/buttons/minimize.png')
                 .addClass('window-button')
+                .click(function () { self.emit('minimize') })
             ,
             $('<img>')
                 .attr('src','/img/buttons/menu.png')

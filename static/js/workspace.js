@@ -20,6 +20,9 @@ function Workspace (rootElem, account) {
     ;
     rootElem.append(windowPane);
     
+    var quickBar = new QuickBar;
+    rootElem.append(quickBar.element);
+    
     var infoPanes = {};
     self.addInfoPane = function (vm) {
         var elem = $('<div>')
@@ -104,6 +107,13 @@ function Workspace (rootElem, account) {
                 });
                 var i = windows.length;
                 windows.push(win);
+                
+                win.on('minimize', function () {
+                    delete windows[i];
+                    account.detach(port);
+                    quickBar.push(vm);
+                });
+                
                 win.on('close', function () {
                     delete windows[i];
                     account.detach(port);
