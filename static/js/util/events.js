@@ -1,53 +1,51 @@
 // node.js-style EventEmitters for client-side javascript
-/* Usage:
-    require('events.js');
-    Constructor.prototype = new EventEmitter;
-    function Constructor () { ... }
-*/
 
 function EventEmitter () {
+    if (!(this instanceof EventEmitter)) return new EventEmitter;
+}
+
+EventEmitter.prototype.listeners = function (name) {
+    if (!this._events) this._events = {};
+    if (!(name in this._events)) this._events[name] = [];
+    return this._events[name];
+};
+    
+EventEmitter.prototype.emit = function (name) {
     var self = this;
     
-    var listeners = {};
-    this.listeners = function (name) {
-        if (!listeners[name]) listeners[name] = [];
-        return listeners[name];
-    };
-    
-    this.emit = function (name) {
-        var args = [].concat.apply([],arguments).slice(1);
-        this.listeners(name).forEach(function (f) {
-            try {
-                f.apply(self,args);
+    var args = [].slice.call(arguments,1);
+    this.listeners(name).forEach(function (f) {
+        try {
+            f.apply(self,args);
+        }
+        catch (error) {
+            if (self.listeners('error').length) {
+                self.emit('error', error);
             }
-            catch (error) {
-                if (self.listeners('error')) {
-                    self.emit('error', error);
-                }
-                else {
-                    throw error;
-                }
+            else {
+                throw error;
             }
-        });
-        return this;
-    };
-    
-    this.addListener = function (name, listener) {
-        self.emit('newListener', name, listener);
-        this.listeners(name).push(listener);
-        return this;
-    };
-    this.on = this.addListener;
-    
-    this.removeListener = function (name, listener) {
+        }
+    });
+    return this;
+};
+
+EventEmitter.prototype.addListener = function (name, listener) {
+    this.emit('newListener', name, listener);
+    this.listeners(name).push(listener);
+    return this;
+};
+
+EventEmitter.prototype.on = EventEmitter.prototype.addListener;
+
+EventEmitter.prototype.removeListener = function (name, listener) {
         var i = this.listeners(name).find(listener);
         if (i >= 0) this.listeners(name).splice(i,1);
         return this;
     };
     
-    this.removeAllListeners = function (name) {
-        this.listeners(name) = [];
-        return this;
-    };
+EventEmitter.prototype.removeAllListeners = function (name) {
+    this.listeners(name) = [];
+    return this;
 };
 

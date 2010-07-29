@@ -8,7 +8,7 @@ var DNode = require('dnode').DNode;
 var crypto = require('crypto');
 
 var webserver = require('lib/webserver').webserver;
-var Session = require('lib/session').Session;
+var Session = require('lib/session');
 
 var port = Number(process.argv[2]) || 9000;
 
@@ -19,12 +19,15 @@ DNode.connect(9077, function (manager) {
     DNode(function (client,conn) {
         this.authenticate = function (name,pass,cb) {
             manager.authenticate(name, pass, function (user) {
-                cb(!user ? null : new Session({
-                    client : client,
-                    connection : conn,
-                    user : user,
-                    manager : manager,
-                }));
+                if (user) {
+                    cb(new Session({
+                        client : client,
+                        connection : conn,
+                        user : user,
+                        manager : manager,
+                    }));
+                }
+                else cb(null);
             });
         };
     }).listen({
