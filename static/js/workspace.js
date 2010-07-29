@@ -26,6 +26,17 @@ function Workspace (rootElem, account) {
         self.attach(vm, port);
     });
     
+    var sheet = $('<div>')
+        .attr('id','sheet')
+        .hide()
+        .click(function () {
+            sheet.fadeOut(400);
+            $('.vm-window-fullscreen').removeClass('vm-window-fullscreen');
+            windowPane.offset({ left : 200, top : 0 })
+        })
+    ;
+    rootElem.append(sheet);
+    
     var infoPanes = {};
     self.addInfoPane = function (vm) {
         var elem = $('<div>')
@@ -115,6 +126,11 @@ function Workspace (rootElem, account) {
                     delete windows[i];
                     account.detach(port);
                     quickBar.push(vm, port);
+                });
+                
+                win.on('fullscreen', function () {
+                    sheet.fadeIn(400);
+                    windowPane.offset({ left : 0, top : 0 })
                 });
                 
                 win.on('close', function () {
