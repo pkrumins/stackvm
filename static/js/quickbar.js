@@ -19,10 +19,8 @@ function QuickBar (params) {
                 $('<div>').text(vm.name)
             )
             .click(function () {
-                div.fadeOut(400, function () {
-                    div.remove();
-                });
                 self.emit('restore', vm, port);
+                div.fadeOut(400, function () { div.remove() });
             })
         ;
         self.element.append(div);

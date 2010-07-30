@@ -5,13 +5,15 @@ function Workspace (rootElem, account) {
     
     $('form#login').fadeOut(400);
     
-    var selectPane = $('<div>')
+    var leftPane = $('<div>')
         .addClass('left-pane')
-        .attr('id','select-pane')
+        .attr('id','left-pane')
         .hide()
-        .fadeIn(400);
     ;
-    rootElem.append(selectPane);
+    rootElem.append(leftPane);
+    
+    var vmPane = $('<div>').addClass('info-pane');
+    leftPane.append(vmPane);
     
     var windowPane = $('<div>')
         .attr('id','window-pane')
@@ -19,6 +21,18 @@ function Workspace (rootElem, account) {
         .fadeIn(400)
     ;
     rootElem.append(windowPane);
+    
+    var logo = $('<img>')
+        .attr('src','/img/stackvm-200x48.png')
+        .attr('id','logo')
+        .hide()
+        .fadeIn(400)
+        .toggle(
+            function () { leftPane.fadeIn(400) },
+            function () { leftPane.fadeOut(400) }
+        )
+    ;
+    rootElem.append(logo);
     
     var quickBar = new QuickBar;
     rootElem.append(quickBar.element);
@@ -29,15 +43,6 @@ function Workspace (rootElem, account) {
     var sheet = $('<div>')
         .attr('id','sheet')
         .hide()
-        .click(function () {
-            sheet.fadeOut(400);
-            var win = $('.vm-window-fullscreen');
-            win.removeClass('vm-window-fullscreen');
-            var pos = win.offset();
-            pos.left -= 200;
-            win.offset(pos);
-            windowPane.offset({ left : 200, top : 0 })
-        })
     ;
     rootElem.append(sheet);
     
@@ -45,21 +50,20 @@ function Workspace (rootElem, account) {
     self.addInfoPane = function (vm) {
         var elem = $('<div>')
             .hide()
-            .addClass('left-pane')
-            .attr('id','info-pane')
+            .addClass('info-pane')
             .append(
                 $('<div>')
                     .addClass('back')
                     .text('back')
                     .click(function () {
-                        selectPane.fadeIn(400);
+                        vmPane.fadeIn(400);
                         elem.fadeOut(400);
                     })
                 ,
                 $('<p>').text(vm.name),
                 $('<p>').text('Instances:'),
                 $('<p>').append.apply(
-                    $('<p>').attr('id','instance-list'),
+                    $('<p>').addClass('instance-list'),
                     vm.processes.map(function (proc) {
                         return $('<p>').append($('<a>')
                             .text(proc.engine + '[' + proc.port + ']')
@@ -77,14 +81,14 @@ function Workspace (rootElem, account) {
             )
         ;
         infoPanes[vm.id] = elem;
-        rootElem.append(elem);
+        leftPane.append(elem);
     };
     
     self.useVM = function (vm) {
-        selectPane.append($('<div>')
+        vmPane.append($('<div>')
             .addClass('vm-desc')
             .click(function () {
-                selectPane.fadeOut(400);
+                vmPane.fadeOut(400);
                 infoPanes[vm.id].fadeIn(400);
             })
             .append($('<div>').text(vm.name))
@@ -100,7 +104,7 @@ function Workspace (rootElem, account) {
                 vm : vm.id
             });
             
-            $('#instance-list').append(
+            infoPanes[vm.id].children('.instance-list').append(
                 $('<p>').append($('<a>')
                     .text(engine + '[' + proc.port + ']')
                     .click(function () {
@@ -111,39 +115,57 @@ function Workspace (rootElem, account) {
         });
     };
     
-    var windows = [];
+    var windows = {};
     self.attach = function (vm, port) {
-        account.attach(port, function (remoteVM) {
-            if (!remoteVM) {
-                console.log('remoteVM == null');
+        account.attach(port, function (desktop) {
+            if (!desktop) {
+                console.log('desktop == null');
             }
             else {
-                var fb = new FB({ vm : remoteVM });
                 var win = new Window({
-                    fb : fb,
+                    fb : new FB({ desktop : desktop }),
                     name : vm.name
                 });
-                var i = windows.length;
-                windows.push(win);
+                var i = Object.keys(windows).length;
+                windows[i] = win;
                 
                 win.on('minimize', function () {
-                    delete windows[i];
-                    account.detach(port);
-                    quickBar.push(vm, port);
+                    if (i in windows) {
+                        delete windows[i];
+                        account.detach(port);
+                        quickBar.push(vm, port);
+                    }
                 });
                 
                 win.on('fullscreen', function () {
                     sheet.fadeIn(400);
-                    windowPane.offset({ left : 0, top : 0 })
+                    win.element.css('z-index',1000);
+                    
+                    sheet.click(function () {
+                        sheet.fadeOut(400);
+                        win.element.css('z-index',100);
+                        win.restore();
+                    });
                 });
                 
                 win.on('close', function () {
-                    delete windows[i];
-                    account.detach(port);
+                    if (i in windows) {
+                        delete windows[i];
+                        account.detach(port);
+                    }
+                });
+                
+                win.on('kill', function () {
+                    $('#instance-list p a').filter(function () {
+                        return $(this).text().match(/\[(\d+)\]$/)[1] == port;
+                    }).remove();
+                    account.kill(port, function () {});
                 });
                 
                 windowPane.append(win.element);
-                windows.forEach(function (w) { w.unfocus() });
+                Object.keys(windows).forEach(function (k) {
+                    windows[k].unfocus();
+                });
                 
                 win.focus();
             }

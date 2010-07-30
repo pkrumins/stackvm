@@ -51,11 +51,12 @@ div.sign-in-failed {
 div.left-pane {
     position: absolute;
     width: 200px;
-    top: 0px;
-    bottom: 0px;
+    top: 50px;
+    bottom: 100px;
     left: 0px;
     color: white;
     overflow-y: auto;
+    z-index: 5;
 }
 
 div.left-pane a {
@@ -83,19 +84,21 @@ div.left-pane div.back:hover {
     color: rgb(50,50,50);
 }
 
-div.left-pane div#instance-list {
+div.info-pane div.instance-list {
 }
 
-div#select-pane {
-    background-color: rgb(50,50,50);
-}
-
-div#info-pane {
+div.info-pane {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    bottom: 0px;
+    width: 200px;
     background-color: rgb(75,75,75);
+    z-index: 1;
 }
 
-div#info-pane p { margin-left: 1em; }
-div#info-pane a { margin-left: 1em; }
+div.info-pane p { margin-left: 1em; }
+div.info-pane a { margin-left: 1em; }
 
 div.vm-desc {
     padding: 1em;
@@ -121,9 +124,18 @@ div#window-pane {
     position: absolute;
     top: 0px;
     bottom: 0px;
-    left: 200px;
+    left: 0px;
     right: 0px;
     overflow: hidden;
+    z-index: 1;
+}
+
+img#logo {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    cursor: pointer;
+    z-index: 10;
 }
 
 div.vm-window {
@@ -132,11 +144,12 @@ div.vm-window {
     border-width: 2px;
     border-style: solid;
     border-color: rgb(150,150,150);
+    z-index: 100;
 }
 
 div.vm-window-focused { }
 
-div.vm-window-focused div.tab-bar {
+div.vm-window-focused div.title-bar {
     margin-bottom: 2px;
 }
 
@@ -144,11 +157,11 @@ div.vm-window-fullscreen {
     z-index: 101;
 }
 
-div.vm-window-fullscreen div.tab-bar {
+div.vm-window-fullscreen div.title-bar {
     display: none;
 }
 
-div.tab-bar {
+div.title-bar {
     position: float;
     margin-top: -32px;
     margin-left: -3px;
@@ -159,17 +172,13 @@ div.tab-bar {
     padding-left: 0.5em;
 }
 
-div.tab-bar div {
+div.title-bar div {
     display: table-cell;
     vertical-align: middle;
     height: 30px;
 }
 
-div.tab-bar img#menu-button {
-    float: left;
-}
-
-div.tab-bar img.window-button {
+div.title-bar img.window-button {
     float: right;
     margin-right: 10px;
     margin-top: 5px;
@@ -177,12 +186,42 @@ div.tab-bar img.window-button {
     height: 20px;
 }
 
+div.title-bar img.menu-button {
+    float: left;
+}
+
+div.window-menu {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+}
+
+div.window-menu div.menu-item {
+    width: 10em;
+    height: 1em;
+    font-weight: bold;
+    padding: 4px;
+    background-color: white;
+    color: black;
+    border-width: 2px;
+    border-style: solid;
+    border-color: black;
+}
+
+div.window-menu div.menu-item:hover {
+    background-color: rgb(150,30,30);
+    color: white;
+    border-color: white;
+    cursor: pointer;
+}
+
 div#quick-bar {
     position: absolute;
     bottom: 0px;
-    left: 200px;
+    left: 0px;
     right: 0px;
     height: 100px;
+    z-index: 20;
 }
 
 div#quick-bar div {
@@ -200,5 +239,6 @@ div#sheet {
     width: 100%;
     height: 100%;
     background-color: rgb(50,50,50);
-    z-index: 100;
+    z-index: 75;
 }
+
