@@ -5,13 +5,15 @@ function Workspace (rootElem, account) {
     
     $('form#login').fadeOut(400);
     
-    var selectPane = $('<div>')
+    var leftPane = $('<div>')
         .addClass('left-pane')
-        .attr('id','select-pane')
+        .attr('id','left-pane')
         .hide()
-        .fadeIn(400);
     ;
-    rootElem.append(selectPane);
+    rootElem.append(leftPane);
+    
+    var vmPane = $('<div>').addClass('info-pane');
+    leftPane.append(vmPane);
     
     var windowPane = $('<div>')
         .attr('id','window-pane')
@@ -19,6 +21,18 @@ function Workspace (rootElem, account) {
         .fadeIn(400)
     ;
     rootElem.append(windowPane);
+    
+    var logo = $('<img>')
+        .attr('src','/img/stackvm-200x48.png')
+        .attr('id','logo')
+        .hide()
+        .fadeIn(400)
+        .toggle(
+            function () { leftPane.fadeOut(400) },
+            function () { leftPane.fadeIn(400) }
+        )
+    ;
+    rootElem.append(logo);
     
     var quickBar = new QuickBar;
     rootElem.append(quickBar.element);
@@ -45,21 +59,20 @@ function Workspace (rootElem, account) {
     self.addInfoPane = function (vm) {
         var elem = $('<div>')
             .hide()
-            .addClass('left-pane')
-            .attr('id','info-pane')
+            .addClass('info-pane')
             .append(
                 $('<div>')
                     .addClass('back')
                     .text('back')
                     .click(function () {
-                        selectPane.fadeIn(400);
+                        vmPane.fadeIn(400);
                         elem.fadeOut(400);
                     })
                 ,
                 $('<p>').text(vm.name),
                 $('<p>').text('Instances:'),
                 $('<p>').append.apply(
-                    $('<p>').attr('id','instance-list'),
+                    $('<p>').addClass('instance-list'),
                     vm.processes.map(function (proc) {
                         return $('<p>').append($('<a>')
                             .text(proc.engine + '[' + proc.port + ']')
@@ -77,14 +90,14 @@ function Workspace (rootElem, account) {
             )
         ;
         infoPanes[vm.id] = elem;
-        rootElem.append(elem);
+        leftPane.append(elem);
     };
     
     self.useVM = function (vm) {
-        selectPane.append($('<div>')
+        vmPane.append($('<div>')
             .addClass('vm-desc')
             .click(function () {
-                selectPane.fadeOut(400);
+                vmPane.fadeOut(400);
                 infoPanes[vm.id].fadeIn(400);
             })
             .append($('<div>').text(vm.name))
@@ -100,7 +113,7 @@ function Workspace (rootElem, account) {
                 vm : vm.id
             });
             
-            $('#instance-list').append(
+            infoPanes[vm.id].children('.instance-list').append(
                 $('<p>').append($('<a>')
                     .text(engine + '[' + proc.port + ']')
                     .click(function () {
