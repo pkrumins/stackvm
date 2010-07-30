@@ -106,11 +106,20 @@ function Manager(params) {
     };
     
     self.kill = function (user, port, f) {
-        process.kill(procs[user.id][port].pid);
-        delete procs[user.id][port];
-        db.query('delete from processes where port = ?', [port], function (r) {
-            f(r.rowsAffected == 1);
-        });
+        if (port in procs[user.id]) {
+            process.kill(procs[user.id][port].pid);
+            delete procs[user.id][port];
+            db.query(
+                'delete from processes where port = ?', [port],
+                function (r) { f(r.rowsAffected == 1) }
+            );
+        }
+        else {
+            console.log(
+                user.id + '/' + port + ' not in procs: '
+                + sys.inspect(procs)
+            );
+        }
     };
     
     self.restart = function (params, f) {

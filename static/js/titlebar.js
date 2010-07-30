@@ -4,6 +4,17 @@ function TitleBar (params) {
     var self = this;
     var name = params.name;
     
+    var menu = $('<div>')
+        .addClass('window-menu')
+        .hide()
+        .append(
+            $('<div>')
+                .addClass('menu-item')
+                .text('kill')
+                .click(function () { self.emit('kill') })
+        )
+    ;
+    
     self.element = $('<div>')
         .addClass('title-bar')
         .append(
@@ -23,11 +34,22 @@ function TitleBar (params) {
                 .click(function () { self.emit('minimize') })
             ,
             $('<img>')
-                .attr('src','/img/buttons/menu.png')
+                .attr('src','/img/buttons/menu-down.png')
                 .addClass('window-button')
-                .attr('id','menu-button')
+                .addClass('menu-button')
+                .toggle(
+                    function () {
+                        $(this).attr('src','/img/buttons/menu-up.png');
+                        menu.fadeTo(250,0.95);
+                    },
+                    function () {
+                        $(this).attr('src','/img/buttons/menu-down.png');
+                        menu.fadeOut(250);
+                    }
+                )
             ,
-            $('<div>').text(name)
+            $('<div>').text(name),
+            menu
         )
     ;
 }

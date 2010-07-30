@@ -111,25 +111,26 @@ function Workspace (rootElem, account) {
         });
     };
     
-    var windows = [];
+    var windows = {};
     self.attach = function (vm, port) {
         account.attach(port, function (desktop) {
             if (!desktop) {
                 console.log('desktop == null');
             }
             else {
-                var fb = new FB({ desktop : desktop });
                 var win = new Window({
-                    fb : fb,
+                    fb : new FB({ desktop : desktop }),
                     name : vm.name
                 });
-                var i = windows.length;
-                windows.push(win);
+                var i = Object.keys(windows).length;
+                windows[i] = win;
                 
                 win.on('minimize', function () {
-                    delete windows[i];
-                    account.detach(port);
-                    quickBar.push(vm, port);
+                    if (i in windows) {
+                        delete windows[i];
+                        account.detach(port);
+                        quickBar.push(vm, port);
+                    }
                 });
                 
                 win.on('fullscreen', function () {
@@ -138,12 +139,23 @@ function Workspace (rootElem, account) {
                 });
                 
                 win.on('close', function () {
-                    delete windows[i];
-                    account.detach(port);
+                    if (i in windows) {
+                        delete windows[i];
+                        account.detach(port);
+                    }
+                });
+                
+                win.on('kill', function () {
+                    $('#instance-list p a').filter(function () {
+                        return $(this).text().match(/\[(\d+)\]$/)[1] == port;
+                    }).remove();
+                    account.kill(port, function () {});
                 });
                 
                 windowPane.append(win.element);
-                windows.forEach(function (w) { w.unfocus() });
+                Object.keys(windows).forEach(function (k) {
+                    windows[k].unfocus();
+                });
                 
                 win.focus();
             }

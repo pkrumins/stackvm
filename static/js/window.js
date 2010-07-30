@@ -26,6 +26,11 @@ function Window (params) {
         self.emit('close');
     });
     
+    titleBar.on('kill', function () {
+        self.element.remove();
+        self.emit('kill');
+    });
+    
     var focused = true;
     
     self.element = $('<div>')
@@ -49,6 +54,10 @@ function Window (params) {
             .fadeIn(400)
         ;
         titleBar.element.width(dims.width - 1);
+    });
+    
+    fb.on('detach', function () {
+        self.emit('close');
     });
     
     self.focus = function () {

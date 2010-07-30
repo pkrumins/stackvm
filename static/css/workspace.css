@@ -165,16 +165,41 @@ div.title-bar div {
     height: 30px;
 }
 
-div.title-bar img#menu-button {
-    float: left;
-}
-
 div.title-bar img.window-button {
     float: right;
     margin-right: 10px;
     margin-top: 5px;
     width: 20px;
     height: 20px;
+}
+
+div.title-bar img.menu-button {
+    float: left;
+}
+
+div.window-menu {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+}
+
+div.window-menu div.menu-item {
+    width: 10em;
+    height: 1em;
+    font-weight: bold;
+    padding: 4px;
+    background-color: white;
+    color: black;
+    border-width: 2px;
+    border-style: solid;
+    border-color: black;
+}
+
+div.window-menu div.menu-item:hover {
+    background-color: rgb(150,30,30);
+    color: white;
+    border-color: white;
+    cursor: pointer;
 }
 
 div#quick-bar {
@@ -202,3 +227,4 @@ div#sheet {
     background-color: rgb(50,50,50);
     z-index: 100;
 }
+
