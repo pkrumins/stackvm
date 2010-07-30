@@ -12,12 +12,14 @@ function Window (params) {
         self.emit('minimize');
     });
     
+    var prevCoords = null;
     titleBar.on('fullscreen', function () {
         self.emit('fullscreen');
         self.element.addClass('vm-window-fullscreen');
+        prevCoords = self.element.offset();
         self.element.offset({
-            left : ($(window).width() - $(self.element).width()) / 2,
-            top : ($(window).height() - $(self.element).height()) / 2
+            left : ($(window).width() - self.element.width()) / 2,
+            top : ($(window).height() - self.element.height()) / 2
         });
     });
     
@@ -88,5 +90,10 @@ function Window (params) {
     };
     
     self.unfocus();
+    
+    self.restore = function () {
+        self.element.removeClass('vm-window-fullscreen');
+        self.element.offset(prevCoords);
+    };
 }
 

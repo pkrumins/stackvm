@@ -28,8 +28,8 @@ function Workspace (rootElem, account) {
         .hide()
         .fadeIn(400)
         .toggle(
-            function () { leftPane.fadeOut(400) },
-            function () { leftPane.fadeIn(400) }
+            function () { leftPane.fadeIn(400) },
+            function () { leftPane.fadeOut(400) }
         )
     ;
     rootElem.append(logo);
@@ -43,15 +43,6 @@ function Workspace (rootElem, account) {
     var sheet = $('<div>')
         .attr('id','sheet')
         .hide()
-        .click(function () {
-            sheet.fadeOut(400);
-            var win = $('.vm-window-fullscreen');
-            win.removeClass('vm-window-fullscreen');
-            var pos = win.offset();
-            pos.left -= 200;
-            win.offset(pos);
-            windowPane.offset({ left : 200, top : 0 })
-        })
     ;
     rootElem.append(sheet);
     
@@ -148,7 +139,13 @@ function Workspace (rootElem, account) {
                 
                 win.on('fullscreen', function () {
                     sheet.fadeIn(400);
-                    windowPane.offset({ left : 0, top : 0 })
+                    win.element.css('z-index',1000);
+                    
+                    sheet.click(function () {
+                        sheet.fadeOut(400);
+                        win.element.css('z-index',100);
+                        win.restore();
+                    });
                 });
                 
                 win.on('close', function () {
