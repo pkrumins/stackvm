@@ -4,7 +4,7 @@
 FB.prototype = new EventEmitter;
 function FB (params) {
     var self = this;
-    var vm = params.vm; // the remote fb object served via dnode
+    var desktop = params.desktop; // with keys: fb, clients, size
     var mouseCoords = null;
     
     var focus = false;
@@ -26,7 +26,7 @@ function FB (params) {
             self.focus();
             if (focus) {
                 var pos = calcMousePos(ev);
-                vm.sendPointer(pos.x, pos.y, mouseMask);
+                desktop.fb.sendPointer(pos.x, pos.y, mouseMask);
             }
         })
         .mousedown(function (ev) {
@@ -38,25 +38,25 @@ function FB (params) {
         .mousewheel(function (ev, delta) {
             var pos = calcMousePos(ev);
             if (delta > 0) { // mouse up
-                vm.sendPointer(pos.x, pos.y, 1 << 4);
-                vm.sendPointer(pos.x, pos.y, 0);
+                desktop.fb.sendPointer(pos.x, pos.y, 1 << 4);
+                desktop.fb.sendPointer(pos.x, pos.y, 0);
             }
             else {
-                vm.sendPointer(pos.x, pos.y, 1 << 5);
-                vm.sendPointer(pos.x, pos.y, 0);
+                desktop.fb.sendPointer(pos.x, pos.y, 1 << 5);
+                desktop.fb.sendPointer(pos.x, pos.y, 0);
             }
         })
         // Other events should just call this element's key events when key
         // events occur elsewhere but this vm has focus
         .keydown(function (ev) {
             if (focus) {
-                vm.sendKeyDown(KeyMapper.getKeySym(ev.keyCode));
+                desktop.fb.sendKeyDown(KeyMapper.getKeySym(ev.keyCode));
                 ev.preventDefault();
             }
         })
         .keyup(function (ev) {
             if (focus) {
-                vm.sendKeyUp(KeyMapper.getKeySym(ev.keyCode));
+                desktop.fb.sendKeyUp(KeyMapper.getKeySym(ev.keyCode));
                 ev.preventDefault();
             }
         })
@@ -78,23 +78,24 @@ function FB (params) {
         ;
         display.resize(dims);
         self.emit('resize', dims);
+        desktop.size = dims;
     }
-    vm.on('desktopSize', desktopSize);
-    vm.dimensions(desktopSize);
+    desktop.fb.on('desktopSize', desktopSize);
     
     var firstRect; firstRect = function () {
-        vm.requestRedrawScreen();
+        desktopSize(desktop.size);
+        desktop.fb.requestRedrawScreen();
         firstRect = function () {};
     };
     setTimeout(firstRect, 500);
     
-    vm.on('png', function (png) {
+    desktop.fb.on('png', function (png) {
         firstRect();
         png.type = 'png';
         display.rawRect(png);
     });
     
-    vm.on('copyRect', function (rect) {
+    desktop.fb.on('copyRect', function (rect) {
         firstRect();
         display.copyRect(rect);
     });

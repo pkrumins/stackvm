@@ -29,6 +29,7 @@ function Window (params) {
     var focused = true;
     
     self.element = $('<div>')
+        .hide()
         .append(tabBar.element.hide())
         .append(fb.element)
         .addClass('vm-window')
@@ -42,8 +43,11 @@ function Window (params) {
     ;
     
     fb.on('resize', function (dims) {
-        self.element.width(dims.width);
-        self.element.height(dims.height);
+        self.element
+            .width(dims.width)
+            .height(dims.height)
+            .show()
+        ;
         tabBar.element.width(dims.width - 1);
     });
     

@@ -113,12 +113,12 @@ function Workspace (rootElem, account) {
     
     var windows = [];
     self.attach = function (vm, port) {
-        account.attach(port, function (remoteVM) {
-            if (!remoteVM) {
-                console.log('remoteVM == null');
+        account.attach(port, function (desktop) {
+            if (!desktop) {
+                console.log('desktop == null');
             }
             else {
-                var fb = new FB({ vm : remoteVM });
+                var fb = new FB({ desktop : desktop });
                 var win = new Window({
                     fb : fb,
                     name : vm.name
