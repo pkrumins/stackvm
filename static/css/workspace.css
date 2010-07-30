@@ -136,7 +136,7 @@ div.vm-window {
 
 div.vm-window-focused { }
 
-div.vm-window-focused div.tab-bar {
+div.vm-window-focused div.title-bar {
     margin-bottom: 2px;
 }
 
@@ -144,11 +144,11 @@ div.vm-window-fullscreen {
     z-index: 101;
 }
 
-div.vm-window-fullscreen div.tab-bar {
+div.vm-window-fullscreen div.title-bar {
     display: none;
 }
 
-div.tab-bar {
+div.title-bar {
     position: float;
     margin-top: -32px;
     margin-left: -3px;
@@ -159,17 +159,17 @@ div.tab-bar {
     padding-left: 0.5em;
 }
 
-div.tab-bar div {
+div.title-bar div {
     display: table-cell;
     vertical-align: middle;
     height: 30px;
 }
 
-div.tab-bar img#menu-button {
+div.title-bar img#menu-button {
     float: left;
 }
 
-div.tab-bar img.window-button {
+div.title-bar img.window-button {
     float: right;
     margin-right: 10px;
     margin-top: 5px;

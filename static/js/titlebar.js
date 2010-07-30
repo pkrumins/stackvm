@@ -1,11 +1,11 @@
-TabBar.prototype = new EventEmitter;
-function TabBar (params) {
+TitleBar.prototype = new EventEmitter;
+function TitleBar (params) {
     
     var self = this;
     var name = params.name;
     
     self.element = $('<div>')
-        .addClass('tab-bar')
+        .addClass('title-bar')
         .append(
             $('<img>')
                 .attr('src','/img/buttons/close.png')

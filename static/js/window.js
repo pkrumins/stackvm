@@ -2,17 +2,17 @@ Window.prototype = new EventEmitter;
 function Window (params) {
     var self = this;
     var fb = params.fb;
-    var tabBar = new TabBar({
+    var titleBar = new TitleBar({
         name : params.name,
         window : self
     });
     
-    tabBar.on('minimize', function () {
+    titleBar.on('minimize', function () {
         self.element.remove();
         self.emit('minimize');
     });
     
-    tabBar.on('fullscreen', function () {
+    titleBar.on('fullscreen', function () {
         self.emit('fullscreen');
         self.element.addClass('vm-window-fullscreen');
         self.element.offset({
@@ -21,7 +21,7 @@ function Window (params) {
         });
     });
     
-    tabBar.on('close', function () {
+    titleBar.on('close', function () {
         self.element.remove();
         self.emit('close');
     });
@@ -30,7 +30,7 @@ function Window (params) {
     
     self.element = $('<div>')
         .hide()
-        .append(tabBar.element.hide())
+        .append(titleBar.element.hide())
         .append(fb.element)
         .addClass('vm-window')
         .offset({ left : 100, top : 100 })
@@ -46,9 +46,9 @@ function Window (params) {
         self.element
             .width(dims.width)
             .height(dims.height)
-            .show()
+            .fadeIn(400)
         ;
-        tabBar.element.width(dims.width - 1);
+        titleBar.element.width(dims.width - 1);
     });
     
     self.focus = function () {
@@ -57,8 +57,8 @@ function Window (params) {
             self.emit('focus');
             fb.focus();
             self.element.addClass('vm-window-focused');
-            tabBar.element.fadeIn(300);
-            tabBar.element.width(fb.element.width() - 1);
+            titleBar.element.fadeIn(300);
+            titleBar.element.width(fb.element.width() - 1);
             self.element.height(fb.element.height());
         }
         return self;
@@ -70,8 +70,8 @@ function Window (params) {
             self.emit('unfocus');
             fb.unfocus();
             self.element.removeClass('vm-window-focused');
-            tabBar.element.width(fb.element.width() - 1);
-            tabBar.element.fadeOut(300, function () {
+            titleBar.element.width(fb.element.width() - 1);
+            titleBar.element.fadeOut(300, function () {
                 self.element.height(fb.element.height());
             });
         }
