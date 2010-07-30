@@ -156,7 +156,7 @@ function Workspace (rootElem, account) {
                 });
                 
                 win.on('kill', function () {
-                    $('#instance-list p a').filter(function () {
+                    $('.instance-list p a').filter(function () {
                         return $(this).text().match(/\[(\d+)\]$/)[1] == port;
                     }).remove();
                     account.kill(port, function () {});
