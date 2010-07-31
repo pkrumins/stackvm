@@ -140,7 +140,7 @@ db.query('select processes.*, vms.owner from processes, vms '
             + deadHosts.map(function () { return 'host=?' }).join(' or '),
             deadHosts,
             function (r) {
-                if (r.rowsAffected != deadhosts.length)
+                if (r.rowsAffected != deadHosts.length)
                     throw 'Not enough dead hosts culled'
             }
         )
