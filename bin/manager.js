@@ -106,7 +106,7 @@ var VMWareManager  = {
 
     kill : function (user, host, f) {
         db.query(
-            'delete from processes where host = ?', [vmProc.host],
+            'delete from processes where host = ?', [host],
             function (r) { f(r.rowsAffected == 1) }
         );
     },
