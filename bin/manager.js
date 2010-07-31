@@ -120,6 +120,7 @@ var managers = {
 db.query('select processes.*, vms.owner from processes, vms '
 + 'where processes.vm = vms.id', function (rows) {
     var procs = {};
+    var deadHosts = [];
     rows.forEach(function (row) {
         managers[row.engine].isAlive(row, function (alive) {
             if (alive) {
@@ -127,16 +128,34 @@ db.query('select processes.*, vms.owner from processes, vms '
                     procs[row.owner] = {};
                 procs[row.owner][row.host] = row;
             }
+            else {
+                deadHosts.push('host=' + row.host);
+            }
         });
     });
     
-    DNode(function (client,conn) {
-        return new Manager({
-            client : client,
-            connection : conn,
-            processes : procs,
-        });
-    }).listen(9077);
+    function cleanUpThen (f) {
+        if (deadHosts.length) db.query(
+            'delete from processes where '
+            + deadHosts.map(function () { return 'host=?' }).join(' or '),
+            deadHosts,
+            function (r) {
+                if (r.rowsAffected != deadhosts.length)
+                    throw 'Not enough dead hosts culled'
+            }
+        )
+        else f()
+    }
+    
+    cleanUpThen(function () {
+        DNode(function (client,conn) {
+            return new Manager({
+                client : client,
+                connection : conn,
+                processes : procs,
+            });
+        }).listen(9077);
+    });
 });
 
 function Manager(params) {
