@@ -137,12 +137,16 @@ db.query('select processes.*, vms.owner from processes, vms '
     if (deadHosts.length) {
         var sql = 'delete from processes where '
             + deadHosts.map(function () { return 'host=?' }).join(' or ');
-        console.dir(deadHosts);
-        console.log(sql);
+        var deadLen = deadHosts.length; // reference is clobbered by db.query
         db.query(sql, deadHosts, function (r) {
-            if (r.rowsAffected != deadHosts.length)
-                throw r.rowsAffected + " rows deleted. "
-                    + "Should've been " + deadHosts.length;
+            console.log('Rows deleted: ' + r.rowsAffected);
+            if (r.rowsAffected != deadLen) {
+                console.error(
+                    r.rowsAffected + " rows deleted. "
+                    + "Should've been " + deadLen
+                );
+                process.exit();
+            }
         });
     }
     
