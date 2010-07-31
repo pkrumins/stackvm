@@ -7,7 +7,7 @@ function QuickBar (params) {
         .attr('id','quick-bar')
     ;
     
-    self.push = function (vm, port) {
+    self.push = function (vm, host) {
         vms.push(vm);
         var div = $('<div>')
             .append(
@@ -19,7 +19,7 @@ function QuickBar (params) {
                 $('<div>').text(vm.name)
             )
             .click(function () {
-                self.emit('restore', vm, port);
+                self.emit('restore', vm, host);
                 div.fadeOut(400, function () { div.remove() });
             })
         ;
