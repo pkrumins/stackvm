@@ -99,5 +99,9 @@ function FB (params) {
         firstRect();
         display.copyRect(rect);
     });
+    
+    desktop.fb.on('close', function () {
+        self.emit('close');
+    });
 }
 

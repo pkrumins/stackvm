@@ -23,13 +23,14 @@ function Window (params) {
         });
     });
     
-    titleBar.on('close', function () {
+    function close () {
         self.element.remove();
         self.emit('close');
-    });
+    }
+    titleBar.on('close', close);
+    fb.on('close', close);
     
     titleBar.on('kill', function () {
-        self.element.remove();
         self.emit('kill');
     });
     
@@ -56,10 +57,6 @@ function Window (params) {
             .fadeIn(400)
         ;
         titleBar.element.width(dims.width - 1);
-    });
-    
-    fb.on('detach', function () {
-        self.emit('close');
     });
     
     self.focus = function () {
