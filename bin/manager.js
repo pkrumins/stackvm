@@ -129,33 +129,30 @@ db.query('select processes.*, vms.owner from processes, vms '
                 procs[row.owner][row.host] = row;
             }
             else {
-                deadHosts.push('host=' + row.host);
+                deadHosts.push(row.host);
             }
         });
     });
     
-    function cleanUpThen (f) {
-        if (deadHosts.length) db.query(
-            'delete from processes where '
-            + deadHosts.map(function () { return 'host=?' }).join(' or '),
-            deadHosts,
-            function (r) {
-                if (r.rowsAffected != deadHosts.length)
-                    throw 'Not enough dead hosts culled'
-            }
-        )
-        else f()
+    if (deadHosts.length) {
+        var sql = 'delete from processes where '
+            + deadHosts.map(function () { return 'host=?' }).join(' or ');
+        console.dir(deadHosts);
+        console.log(sql);
+        db.query(sql, deadHosts, function (r) {
+            if (r.rowsAffected != deadHosts.length)
+                throw r.rowsAffected + " rows deleted. "
+                    + "Should've been " + deadHosts.length;
+        });
     }
     
-    cleanUpThen(function () {
-        DNode(function (client,conn) {
-            return new Manager({
-                client : client,
-                connection : conn,
-                processes : procs,
-            });
-        }).listen(9077);
-    });
+    DNode(function (client,conn) {
+        return new Manager({
+            client : client,
+            connection : conn,
+            processes : procs,
+        });
+    }).listen(9077);
 });
 
 function Manager(params) {
