@@ -10,6 +10,11 @@ function TitleBar (params) {
         .append(
             $('<div>')
                 .addClass('menu-item')
+                .text('restart')
+                .click(function () { self.emit('restart') })
+            ,
+            $('<div>')
+                .addClass('menu-item')
                 .text('kill')
                 .click(function () { self.emit('kill') })
         )

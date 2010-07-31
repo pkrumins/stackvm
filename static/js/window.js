@@ -30,9 +30,8 @@ function Window (params) {
     titleBar.on('close', close);
     fb.on('close', close);
     
-    titleBar.on('kill', function () {
-        self.emit('kill');
-    });
+    titleBar.on('kill', function () { self.emit('kill') });
+    titleBar.on('restart', function () { self.emit('restart') });
     
     var focused = true;
     

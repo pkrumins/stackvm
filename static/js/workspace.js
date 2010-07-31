@@ -162,6 +162,10 @@ function Workspace (rootElem, account) {
                     account.kill(host, function () {});
                 });
                 
+                win.on('restart', function () {
+                    account.restart(host, function () {});
+                });
+                
                 windowPane.append(win.element);
                 Object.keys(windows).forEach(function (k) {
                     windows[k].unfocus();
