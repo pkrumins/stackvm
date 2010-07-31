@@ -9,6 +9,7 @@ create table vms (
     name text,
     engine text,
     filename text, -- filename for qemu
+    icon text, -- /user/image-name
     host text, -- host:port for vmware
     owner integer
 );
