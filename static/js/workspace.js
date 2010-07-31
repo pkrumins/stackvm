@@ -36,8 +36,8 @@ function Workspace (rootElem, account) {
     
     var quickBar = new QuickBar;
     rootElem.append(quickBar.element);
-    quickBar.on('restore', function (vm, port) {
-        self.attach(vm, port);
+    quickBar.on('restore', function (vm, host) {
+        self.attach(vm, host);
     });
     
     var sheet = $('<div>')
@@ -66,17 +66,17 @@ function Workspace (rootElem, account) {
                     $('<p>').addClass('instance-list'),
                     vm.processes.map(function (proc) {
                         return $('<p>').append($('<a>')
-                            .text(proc.engine + '[' + proc.port + ']')
+                            .text(proc.engine + '[' + proc.host + ']')
                             .click(function () {
-                                self.attach(vm, proc.port);
+                                self.attach(vm, proc.host);
                             })
                         );
                     })
                 ),
                 $('<a>')
-                    .text('spawn in qemu')
+                    .text('spawn in ' + vm.engine)
                     .click(function () {
-                        self.spawn(vm, 'qemu');
+                        self.spawn(vm, vm.engine);
                     })
             )
         ;
@@ -99,16 +99,16 @@ function Workspace (rootElem, account) {
     self.spawn = function (vm, engine) {
         account.spawn({ vm : vm.id, engine : engine }, function (proc) {
             vm.processes.push({
-                port : proc.port,
-                engine : 'qemu',
+                host : proc.host,
+                engine : engine,
                 vm : vm.id
             });
             
             infoPanes[vm.id].children('.instance-list').append(
                 $('<p>').append($('<a>')
-                    .text(engine + '[' + proc.port + ']')
+                    .text(engine + '[' + proc.host + ']')
                     .click(function () {
-                        self.attach(vm, proc.port);
+                        self.attach(vm, proc.host);
                     })
                 )
             );
@@ -116,8 +116,8 @@ function Workspace (rootElem, account) {
     };
     
     var windows = {};
-    self.attach = function (vm, port) {
-        account.attach(port, function (desktop) {
+    self.attach = function (vm, host) {
+        account.attach(host, function (desktop) {
             if (!desktop) {
                 console.log('desktop == null');
             }
@@ -132,8 +132,8 @@ function Workspace (rootElem, account) {
                 win.on('minimize', function () {
                     if (i in windows) {
                         delete windows[i];
-                        account.detach(port);
-                        quickBar.push(vm, port);
+                        account.detach(host);
+                        quickBar.push(vm, host);
                     }
                 });
                 
@@ -151,16 +151,15 @@ function Workspace (rootElem, account) {
                 win.on('close', function () {
                     if (i in windows) {
                         delete windows[i];
-                        account.detach(port);
+                        account.detach(host);
                     }
                 });
                 
                 win.on('kill', function () {
                     $('.instance-list p a').filter(function () {
-                        return $(this).text().match(/\[(\d+)\]$/)[1] == port;
+                        return $(this).text().match(/\[(.+)\]$/)[1] == host;
                     }).remove();
-                    
-                    account.kill(port, function () {});
+                    account.kill(host, function () {});
                 });
                 
                 windowPane.append(win.element);
@@ -176,15 +175,17 @@ function Workspace (rootElem, account) {
     account.virtualMachines(function (vms) {
         // vms maps vm ids to { vm id, name, filename }
         account.processes(function (procs) {
-            // procs maps ports to { pid, vm id, port, engine }
+            // procs maps hosts to { pid, vm id, host, engine }
             Object.keys(vms).forEach(function (vmId) {
                 var vm = vms[vmId];
                 self.useVM({
                     id : vm.id,
                     name : vm.name,
                     filename : vm.filename,
+                    engine : vm.engine, 
+                    host : vm.host,
                     processes : Object.keys(procs)
-                        .map(function (port) { return procs[port] })
+                        .map(function (host) { return procs[host] })
                         .filter(function (p) { return vm.id == p.vm })
                     ,
                 });

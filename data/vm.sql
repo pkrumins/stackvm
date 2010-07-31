@@ -7,12 +7,14 @@ create table users (
 create table vms (
     id integer primary key,
     name text,
-    filename text,
+    engine text,
+    filename text, -- filename for qemu
+    host text, -- host:port for vmware
     owner integer
 );
 
 create table processes (
-    port integer primary key,
+    host text primary key,
     vm integer,
     engine text,
     pid integer
@@ -24,3 +26,4 @@ create table permissions (
     user integer,
     access integer
 );
+
