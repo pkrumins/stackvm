@@ -1,22 +1,33 @@
-div.left-pane {
+div.sidebar {
+    background-color: rgb(100,100,100);
     position: absolute;
     width: 200px;
-    top: 50px;
+    top: 55px;
     bottom: 100px;
-    left: 0px;
+    left: 10px;
     color: white;
     overflow-x: hidden;
     overflow-y: auto;
     z-index: 5;
 }
 
-div.left-pane a {
+div.side-menu-title {
+    background-color: rgb(60,60,60);
+    font-weight: bold;
+    padding: 8px;
+    border-bottom-color: rgb(20,20,20);
+    border-bottom-style: solid;
+    border-bottom-width: 4px;
+    cursor: pointer;
+}
+
+div.sidebar a {
     text-decoration: underline;
     font-weight: bold;
     cursor: pointer;
 }
 
-div.left-pane div.back {
+div.sidebar div.back {
     border-color: white;
     border-style: solid;
     border-width: 2px;
@@ -30,7 +41,7 @@ div.left-pane div.back {
     width: 200px;
 }
 
-div.left-pane div.back:hover {
+div.sidebar div.back:hover {
     background-color: rgb(200,200,200);
     color: rgb(50,50,50);
 }

@@ -60,8 +60,8 @@ div#window-pane {
 
 img#logo {
     position: absolute;
-    top: 0px;
-    left: 0px;
+    top: 5px;
+    left: 10px;
     cursor: pointer;
     z-index: 10;
 }
