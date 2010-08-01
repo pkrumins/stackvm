@@ -76,7 +76,8 @@ function FB (params) {
     }
     
     var display = new CanvasDisplay;
-    //var display = new StackedDisplay;
+    if (!display.can)
+        display = new StackedDisplay;
     self.element.append(display.element);
     
     function desktopSize (dims) {

@@ -42,6 +42,8 @@ function CanvasDisplay () {
             rect.x, rect.y, rect.width, rect.height
         );
     };
+
+    self.can = !!context;
 }
 
 function StackedDisplay () {
@@ -77,5 +79,7 @@ function StackedDisplay () {
             .remove()
         ;
     }
+
+    self.can = true;
 }
 
