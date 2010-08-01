@@ -1,7 +1,6 @@
 function Workspace (rootElem, account) {
-    if (!(this instanceof Workspace))
-        return new Workspace(rootElem, account);
     var self = this;
+    if (!(this instanceof Workspace)) return new Workspace(rootElem, account);
     
     $('form#login').fadeOut(400);
     
@@ -64,12 +63,15 @@ function Workspace (rootElem, account) {
                 $('<p>').text('Instances:'),
                 $('<p>').append.apply(
                     $('<p>').addClass('instance-list'),
-                    vm.processes.map(function (proc) {
-                        return $('<p>').append($('<a>')
-                            .text(proc.engine + '[' + proc.host + ']')
-                            .click(function () {
-                                self.attach(vm, proc.host);
-                            })
+                    vm.processes.map(function (proc,i) {
+                        return $('<p>').append(
+                            $('<span>').text('[' + i + '] '),
+                            $('<a>')
+                                .data('host', proc.host)
+                                .text(proc.engine)
+                                .click(function () {
+                                    self.attach(vm, proc.host);
+                                })
                         );
                     })
                 ),
@@ -105,11 +107,14 @@ function Workspace (rootElem, account) {
             });
             
             infoPanes[vm.id].children('.instance-list').append(
-                $('<p>').append($('<a>')
-                    .text(engine + '[' + proc.host + ']')
-                    .click(function () {
-                        self.attach(vm, proc.host);
-                    })
+                $('<p>').append(
+                    $('<span>').text('[' + vm.processes.length + '] '),
+                    $('<a>')
+                        .data('host', proc.host)
+                        .text(engine)
+                        .click(function () {
+                            self.attach(vm, proc.host);
+                        })
                 )
             );
         });
@@ -156,9 +161,22 @@ function Workspace (rootElem, account) {
                 });
                 
                 win.on('kill', function () {
-                    $('.instance-list p a').filter(function () {
-                        return $(this).text().match(/\[(.+)\]$/)[1] == host;
-                    }).remove();
+                    var i = 0;
+                    $('.instance-list p').each(function () {
+                        var link = $(this).children('a');
+                        if (host == link.data('host')) {
+                            $(this).remove();
+                        }
+                        else {
+                            $(this).children('span').text('[' + i + '] ');
+                            i ++;
+                        }
+                    });
+                    
+                    vm.processes = vm.processes.filter(function (p) {
+                        return p.host == host;
+                    });
+                    
                     account.kill(host, function () {});
                 });
                 
