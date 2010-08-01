@@ -20,12 +20,14 @@ DNode.connect(9077, function (manager) {
         this.authenticate = function (name,pass,cb) {
             manager.authenticate(name, pass, function (user) {
                 if (user) {
-                    cb(new Session({
+                    var session = new Session({
                         client : client,
                         connection : conn,
                         user : user,
                         manager : manager,
-                    }));
+                    });
+                    DNode.expose(session, 'on');
+                    cb(session);
                 }
                 else cb(null);
             });

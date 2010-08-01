@@ -105,6 +105,7 @@ function SideBar (params) {
                 ol.append($('<li>')
                     .text(inst.engine)
                     .data('host',inst.host)
+                    .addClass('instance')
                     .click(function () { self.emit('attach', vm, inst.host) })
                 );
             });
@@ -112,11 +113,12 @@ function SideBar (params) {
     });
     
     instances.on('spawn', function (vm, proc) {
-        elements.instances.children('div ol').filter(function (ol) {
-            return ol.data('id') == vm.id;
+        elements.instances.children('div').children('ol').filter(function () {
+            return $(this).data('id') == vm.id;
         }).append($('<li>')
             .text(proc.engine)
             .data('host', proc.host)
+            .addClass('instance')
             .click(function () { self.emit('attach', proc.host) })
         );
     });

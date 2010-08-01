@@ -102,3 +102,7 @@ div.vm-desc:hover {
     cursor: pointer;
 }
 
+.instance {
+    cursor: pointer;
+    text-decoration: underline;
+}

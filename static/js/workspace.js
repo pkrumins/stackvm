@@ -6,16 +6,18 @@ function Workspace (params) {
     
     var root = params.root;
     var account = params.account;
+    
     var instances = new EventEmitter;
+    DNode.expose(instances, 'emit');
+    
     var contacts = new EventEmitter;
+    DNode.expose(contacts, 'emit');
     
     account.pass('spawn', instances);
     account.pass('kill', instances);
     
     self.spawn = function (vm, engine) {
-        account.spawn(vm, engine, function (proc) {
-            instances.emit('spawn', vm, proc);
-        });
+        account.spawn(vm, engine);
     };
     
     self.attach = function (vm, host) {
