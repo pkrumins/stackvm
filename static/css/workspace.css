@@ -84,9 +84,6 @@ div.left-pane div.back:hover {
     color: rgb(50,50,50);
 }
 
-div.info-pane div.instance-list {
-}
-
 div.info-pane {
     position: absolute;
     top: 0px;
@@ -99,6 +96,11 @@ div.info-pane {
 
 div.info-pane p { margin-left: 1em; }
 div.info-pane a { margin-left: 1em; }
+
+div.info-pane .instance-list p {
+  font-size: 14px;
+  margin-left: 0;
+}
 
 div.vm-desc {
     padding: 1em;
