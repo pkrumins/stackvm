@@ -4,15 +4,8 @@ function Workspace (rootElem, account) {
     
     $('form#login').fadeOut(400);
     
-    var leftPane = $('<div>')
-        .addClass('left-pane')
-        .attr('id','left-pane')
-        .hide()
-    ;
-    rootElem.append(leftPane);
-    
-    var vmPane = $('<div>').addClass('info-pane');
-    leftPane.append(vmPane);
+    var sideBar = new SideBar();
+    rootElem.append( sideBar.element.hide() );
     
     var windowPane = $('<div>')
         .attr('id','window-pane')
@@ -27,8 +20,8 @@ function Workspace (rootElem, account) {
         .hide()
         .fadeIn(400)
         .toggle(
-            function () { leftPane.fadeIn(400) },
-            function () { leftPane.fadeOut(400) }
+            function () { sideBar.element.fadeIn(400) },
+            function () { sideBar.element.fadeOut(400) }
         )
     ;
     rootElem.append(logo);
@@ -45,6 +38,7 @@ function Workspace (rootElem, account) {
     ;
     rootElem.append(sheet);
     
+    /*
     var infoPanes = {};
     self.addInfoPane = function (vm) {
         var elem = $('<div>')
@@ -55,6 +49,7 @@ function Workspace (rootElem, account) {
                     .addClass('back')
                     .text('back')
                     .click(function () {
+                        settingsBox.hide();
                         vmPane.fadeIn(400);
                         elem.fadeOut(400);
                     })
@@ -85,7 +80,9 @@ function Workspace (rootElem, account) {
         infoPanes[vm.id] = elem;
         leftPane.append(elem);
     };
+    */
     
+    /*
     self.useVM = function (vm) {
         vmPane.append($('<div>')
             .addClass('vm-desc')
@@ -97,6 +94,7 @@ function Workspace (rootElem, account) {
         );
         self.addInfoPane(vm);
     };
+    */
     
     self.spawn = function (vm, engine) {
         account.spawn({ vm : vm.id, engine : engine }, function (proc) {
@@ -108,7 +106,7 @@ function Workspace (rootElem, account) {
             
             infoPanes[vm.id].children('.instance-list').append(
                 $('<p>').append(
-                    $('<span>').text('[' + vm.processes.length + '] '),
+                    $('<span>').text('[' + (vm.processes.length - 1) + '] '),
                     $('<a>')
                         .data('host', proc.host)
                         .text(engine)
@@ -173,9 +171,9 @@ function Workspace (rootElem, account) {
                         }
                     });
                     
-                    vm.processes = vm.processes.filter(function (p) {
-                        return p.host == host;
-                    });
+                    vm.processes = vm.processes.filter(
+                        function (p) { return p.host != host }
+                    );
                     
                     account.kill(host, function () {});
                 });
@@ -200,6 +198,7 @@ function Workspace (rootElem, account) {
             // procs maps hosts to { pid, vm id, host, engine }
             Object.keys(vms).forEach(function (vmId) {
                 var vm = vms[vmId];
+                /*
                 self.useVM({
                     id : vm.id,
                     name : vm.name,
@@ -209,8 +208,8 @@ function Workspace (rootElem, account) {
                     processes : Object.keys(procs)
                         .map(function (host) { return procs[host] })
                         .filter(function (p) { return vm.id == p.vm })
-                    ,
                 });
+                */
             });
         });
     });
