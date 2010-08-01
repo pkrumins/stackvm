@@ -111,7 +111,7 @@ function SideBar (params) {
         });
     });
     
-    instances.on('spawn', function (vm,proc) {
+    instances.on('spawn', function (vm, proc) {
         elements.instances.children('div ol').filter(function (ol) {
             return ol.data('id') == vm.id;
         }).append($('<li>')

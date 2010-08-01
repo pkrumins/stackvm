@@ -9,8 +9,11 @@ function Workspace (params) {
     var instances = new EventEmitter;
     var contacts = new EventEmitter;
     
+    account.pass('spawn', instances);
+    account.pass('kill', instances);
+    
     self.spawn = function (vm, engine) {
-        account.spawn({ vm : vm.id, engine : engine }, function (proc) {
+        account.spawn(vm, engine, function (proc) {
             instances.emit('spawn', vm, proc);
         });
     };
@@ -41,7 +44,6 @@ function Workspace (params) {
             });
             
             win.on('kill', function () {
-                instances.emit('kill', host);
                 account.kill(host);
             });
             
@@ -58,12 +60,15 @@ function Workspace (params) {
         contacts : contacts,
         engines : ['qemu']
     });
+    
     sideBar.on('spawn', function (vm, engine) {
         self.spawn(vm, engine);
     });
+    
     sideBar.on('attach', function (vm, host) {
         self.attach(vm, host);
     });
+    
     root.append( sideBar.element.hide() );
     
     var windowPane = $('<div>')
