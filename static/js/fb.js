@@ -31,20 +31,27 @@ function FB (params) {
         })
         .mousedown(function (ev) {
             if (focus) mouseMask = 1;
+            var pos = calcMousePos(ev);
+            desktop.fb.sendPointer(pos.x, pos.y, mouseMask);
+            ev.preventDefault();
         })
         .mouseup(function (ev) {
             if (focus) mouseMask = 0;
+            var pos = calcMousePos(ev);
+            desktop.fb.sendPointer(pos.x, pos.y, mouseMask);
+            ev.preventDefault();
         })
         .mousewheel(function (ev, delta) {
             var pos = calcMousePos(ev);
             if (delta > 0) { // mouse up
-                desktop.fb.sendPointer(pos.x, pos.y, 1 << 4);
+                desktop.fb.sendPointer(pos.x, pos.y, 1 << 3);
                 desktop.fb.sendPointer(pos.x, pos.y, 0);
             }
             else {
-                desktop.fb.sendPointer(pos.x, pos.y, 1 << 5);
+                desktop.fb.sendPointer(pos.x, pos.y, 1 << 4);
                 desktop.fb.sendPointer(pos.x, pos.y, 0);
             }
+            ev.preventDefault();
         })
         // Other events should just call this element's key events when key
         // events occur elsewhere but this vm has focus
@@ -69,6 +76,8 @@ function FB (params) {
     }
     
     var display = new CanvasDisplay;
+    if (!display.can)
+        display = new StackedDisplay;
     self.element.append(display.element);
     
     function desktopSize (dims) {

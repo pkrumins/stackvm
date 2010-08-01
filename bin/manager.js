@@ -104,10 +104,10 @@ var VMWareManager  = {
         );
     },
 
-    kill : function (user, host, f) {
+    kill : function (vmProc, f) {
         db.query(
-            'delete from processes where host = ?', [host],
-            function (r) { if (f) f(r.rowsAffected == 1) }
+            'delete from processes where host = ?', [vmProc.host],
+            function (r) { f(r.rowsAffected == 1) }
         );
     },
 };
