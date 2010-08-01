@@ -45,6 +45,7 @@ function SideBar (params) {
     var self = this;
     var contacts = params.contacts;
     var instances = params.instances;
+    var engines = params.engines;
     
     var elements = {
         contacts : $('<div>'),
@@ -73,24 +74,46 @@ function SideBar (params) {
         elements.instances.empty();
         Object.keys(vmHash).forEach(function (id) {
             var vm = vmHash[id];
-            var div = $('<ol>')
-                .data('vm',vm.id)
-                .text(vm.name + ':')
+            var ol = $('<ol>')
+                .attr('start', 0)
+                .data('id',id)
             ;
-            elements.instances.append(div);
+            var select = $('<select>');
+            engines.forEach(function (engine) {
+                select.append(
+                    $('<option>').val(engine).text(engine)
+                );
+            });
+            
+            elements.instances.append($('<div>').append(
+                $('<div>').text(vm.name),
+                $('<form>').append(
+                    select,
+                    $('<input>')
+                        .attr('type','button')
+                        .val('spawn')
+                        .click(function () {
+                            self.emit('spawn', vm,
+                                select.children('option:selected').val()
+                            );
+                        })
+                ),
+                ol
+            ));
+            
             vm.instances.forEach(function (inst) {
-                div.append($('<li>')
+                ol.append($('<li>')
                     .text(inst.engine)
                     .data('host',inst.host)
-                    .click(function () { self.emit('attach', inst) })
+                    .click(function () { self.emit('attach', vm, inst.host) })
                 );
             });
         });
     });
     
     instances.on('spawn', function (vm,proc) {
-        elements.instances.children('ol').filter(function (ol) {
-            return ol.data('disk', vm.filename)
+        elements.instances.children('div ol').filter(function (ol) {
+            return ol.data('id') == vm.id;
         }).append($('<li>')
             .text(proc.engine)
             .data('host', proc.host)

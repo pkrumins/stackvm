@@ -55,7 +55,14 @@ function Workspace (params) {
     
     var sideBar = new SideBar({
         instances : instances,
-        contacts : contacts
+        contacts : contacts,
+        engines : ['qemu']
+    });
+    sideBar.on('spawn', function (vm, engine) {
+        self.spawn(vm, engine);
+    });
+    sideBar.on('attach', function (vm, host) {
+        self.attach(vm, host);
     });
     root.append( sideBar.element.hide() );
     
