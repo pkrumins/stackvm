@@ -31,9 +31,13 @@ function FB (params) {
         })
         .mousedown(function (ev) {
             if (focus) mouseMask = 1;
+            var pos = calcMousePos(ev);
+            desktop.fb.sendPointer(pos.x, pos.y, mouseMask);
         })
         .mouseup(function (ev) {
             if (focus) mouseMask = 0;
+            var pos = calcMousePos(ev);
+            desktop.fb.sendPointer(pos.x, pos.y, mouseMask);
         })
         .mousewheel(function (ev, delta) {
             var pos = calcMousePos(ev);
