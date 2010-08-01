@@ -1,0 +1,89 @@
+div.left-pane {
+    position: absolute;
+    width: 200px;
+    top: 50px;
+    bottom: 100px;
+    left: 0px;
+    color: white;
+    overflow-x: hidden;
+    overflow-y: auto;
+    z-index: 5;
+}
+
+div.left-pane a {
+    text-decoration: underline;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+div.left-pane div.back {
+    border-color: white;
+    border-style: solid;
+    border-width: 2px;
+    background-color: rgb(100,100,100);
+    color: white;
+    height: 3em;
+    text-align: center;
+    cursor: pointer;
+    display: table-cell;
+    vertical-align: middle;
+    width: 200px;
+}
+
+div.left-pane div.back:hover {
+    background-color: rgb(200,200,200);
+    color: rgb(50,50,50);
+}
+
+div#chat-box {
+    background-color: rgb(200,200,200);
+    color: black;
+    border-color: white;
+    border-style: solid;
+    border-width: 2px;
+    width: 200px;
+    height: 200px;
+}
+
+div#chat-box p {
+    margin-top: 2px;
+    margin-bottom: 2px;
+}
+
+div#chat-box div {
+    background-color: rgb(50,50,50);
+    color: white;
+    border-bottom-color: white;
+    border-bottom-style: solid;
+    border-bottom-width: 2px;
+}
+
+div.info-pane {
+    width: 200px;
+    overflow-y: scroll;
+    background-color: rgb(75,75,75);
+    z-index: 1;
+}
+
+div.info-pane p { margin-left: 1em; }
+div.info-pane a { margin-left: 1em; }
+div.vm-desc {
+    padding: 1em;
+    border-color: rgb(100,100,100);
+    border-style: solid;
+    border-width: 2px;
+    background-color: rgb(70,70,70);
+}
+
+div.vm-desc div {
+    height: 90px;
+    display: table-cell;
+    vertical-align: middle;
+}
+
+div.vm-desc:hover {
+    background-color: rgb(150,150,150);
+    color: black;
+    cursor: pointer;
+}
+
