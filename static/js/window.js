@@ -46,7 +46,10 @@ function Window (params) {
                 self.focus();
             }
         })
-        .draggable()
+        .draggable({
+            handle : titleBar.element,
+            stack : '.vm-window'
+        });
     ;
     
     fb.on('resize', function (dims) {
