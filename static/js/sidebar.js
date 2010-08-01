@@ -43,14 +43,81 @@ function SideMenu () {
 SideBar.prototype = new EventEmitter;
 function SideBar (params) {
     var self = this;
+    var contacts = params.contacts;
+    var instances = params.instances;
+    
+    var elements = {
+        contacts : $('<div>'),
+        instances : $('<div>')
+    };
+    
+    contacts.on('list', function (people) {
+        elements.contacts.empty();
+        people.forEach(function (who) {
+            elements.contacts.append($('<div>')
+                .data('name', who.name)
+                .text(who.name + ' [' + who.status + ']')
+            );
+        });
+    });
+    
+    contacts.on('status', function (who) {
+        elements.contacts.children('div').each(function () {
+            if ($(this).data('name') == who.name) {
+                $(this).text(who.name + ' [' + who.status + ']');
+            }
+        });
+    });
+    
+    instances.on('list', function (vmHash) {
+        elements.instances.empty();
+        Object.keys(vmHash).forEach(function (id) {
+            var vm = vmHash[id];
+            var div = $('<ol>')
+                .data('vm',vm.id)
+                .text(vm.name + ':')
+            ;
+            elements.instances.append(div);
+            vm.instances.forEach(function (inst) {
+                div.append($('<li>')
+                    .text(inst.engine)
+                    .data('host',inst.host)
+                    .click(function () { self.emit('attach', inst) })
+                );
+            });
+        });
+    });
+    
+    instances.on('spawn', function (vm,proc) {
+        elements.instances.children('ol').filter(function (ol) {
+            return ol.data('disk', vm.filename)
+        }).append($('<li>')
+            .text(proc.engine)
+            .data('host', proc.host)
+            .click(function () { self.emit('attach', proc.host) })
+        );
+    });
+    
+    instances.on('kill', function (host) {
+        elements.instances.children('ol li').filter(function (li) {
+            return li.data('host') == host
+        }).remove();
+    });
     
     var menu = new SideMenu;
     menu.push('main menu', $('<div>').append(
-        $('<p>').text('main stuff here!'),
-        $('<a>').text('contacts')
-            .click(function () {
-                menu.push('contacts', 'contacts stuff');
-            })
+        $('<p>').append(
+            $('<a>').text('contacts')
+                .click(function () {
+                    menu.push('contacts', elements.contacts);
+                })
+        ),
+        $('<p>').append(
+            $('<a>').text('disk images')
+                .click(function () {
+                    menu.push('disk images', elements.instances);
+                })
+        )
     ));
     
     self.element = $('<div>')
@@ -58,61 +125,5 @@ function SideBar (params) {
         .attr('id','sidebar')
         .append(menu.element)
     ;
-    
-    /*
-    var settingsBox = $('<div>').addClass('settings-box');
-    leftPane.append(settingsBox);
-    
-    var chatBox = $('<div>')
-        .attr('id','chat-box')
-        .append(
-            $('<div>').text('Contacts'),
-            $('<p>').text('meow')
-        )
-    ;
-    leftPane.append(chatBox);
-    
-    var infoPanes = {};
-    self.addInfoPane = function (vm) {
-        var elem = $('<div>')
-            .hide()
-            .addClass('info-pane')
-            .append(
-                $('<div>')
-                    .addClass('back')
-                    .text('back')
-                    .click(function () {
-                        settingsBox.hide();
-                        vmPane.fadeIn(400);
-                        elem.fadeOut(400);
-                    })
-                ,
-                $('<p>').text(vm.name),
-                $('<p>').text('Instances:'),
-                $('<p>').append.apply(
-                    $('<p>').addClass('instance-list'),
-                    vm.processes.map(function (proc,i) {
-                        return $('<p>').append(
-                            $('<span>').text('[' + i + '] '),
-                            $('<a>')
-                                .data('host', proc.host)
-                                .text(proc.engine)
-                                .click(function () {
-                                    self.attach(vm, proc.host);
-                                })
-                        );
-                    })
-                ),
-                $('<a>')
-                    .text('spawn in ' + vm.engine)
-                    .click(function () {
-                        self.spawn(vm, vm.engine);
-                    })
-            )
-        ;
-        infoPanes[vm.id] = elem;
-        leftPane.append(elem);
-    };
-    */
 }
 

@@ -21,6 +21,10 @@ div.side-menu-title {
     cursor: pointer;
 }
 
+div.side-menu-title:hover {
+    background-color: rgb(140,140,140);
+}
+
 div.sidebar a {
     text-decoration: underline;
     font-weight: bold;

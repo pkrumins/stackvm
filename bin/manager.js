@@ -65,7 +65,7 @@ var QemuManager = {
         process.kill(vmProc.pid);
         db.query(
             'delete from processes where host = ?', [vmProc.host],
-            function (r) { f(r.rowsAffected == 1) }
+            function (r) { if (f) f(r.rowsAffected == 1) }
         );
     },
 };
@@ -107,7 +107,7 @@ var VMWareManager  = {
     kill : function (user, host, f) {
         db.query(
             'delete from processes where host = ?', [host],
-            function (r) { f(r.rowsAffected == 1) }
+            function (r) { if (f) f(r.rowsAffected == 1) }
         );
     },
 };

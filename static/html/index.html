@@ -41,7 +41,7 @@
                 remote.authenticate(user, pass, function (account) {
                     if (account) {
                         var div = $('div#workspace');
-                        Workspace(div, account);
+                        Workspace({ root : div, account : account });
                     }
                     else {
                         $('.sign-in-failed').remove();
