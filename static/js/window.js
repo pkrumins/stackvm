@@ -7,6 +7,8 @@ function Window (params) {
         window : self
     });
     
+    Window[params.host] = self;
+    
     titleBar.on('minimize', function () {
         self.element.remove();
         self.emit('minimize');
@@ -26,6 +28,7 @@ function Window (params) {
     self.close = function () {
         self.element.remove();
         self.emit('close');
+        delete Window[self.id];
     }
     titleBar.on('close', self.close);
     fb.on('close', self.close);

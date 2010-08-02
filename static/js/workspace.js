@@ -16,6 +16,13 @@ function Workspace (params) {
     account.pass('spawn', instances);
     account.pass('kill', instances);
     
+    account.on('kill', function (host) {
+        Window[host].close();
+    });
+    account.on('detach', function (host) {
+        Window[host].close();
+    });
+    
     self.spawn = function (vm, engine) {
         account.spawn(vm, engine);
     };
@@ -29,7 +36,8 @@ function Workspace (params) {
             
             var win = new Window({
                 fb : new FB({ desktop : desktop }),
-                name : vm.name
+                name : vm.name,
+                host : host
             });
             
             win.on('minimize', function () {
@@ -54,15 +62,6 @@ function Workspace (params) {
             });
             
             windowPane.append(win.element);
-            
-            function close () {
-                win.close();
-                // wont' work since close gets wrapped again:
-                //account.removeListener('kill', close);
-                //account.removeListener('detach', close);
-            }
-            account.on('kill', close);
-            account.on('detach', close);
         });
     };
     
