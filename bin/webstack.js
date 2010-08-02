@@ -27,6 +27,7 @@ DNode.connect(9077, function (manager) {
                         manager : manager,
                     });
                     DNode.expose(session, 'on');
+                    DNode.expose(session, 'removeListener');
                     cb(session);
                 }
                 else cb(null);

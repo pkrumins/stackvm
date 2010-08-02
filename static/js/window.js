@@ -23,12 +23,12 @@ function Window (params) {
         });
     });
     
-    function close () {
+    self.close = function () {
         self.element.remove();
         self.emit('close');
     }
-    titleBar.on('close', close);
-    fb.on('close', close);
+    titleBar.on('close', self.close);
+    fb.on('close', self.close);
     
     titleBar.on('kill', function () { self.emit('kill') });
     titleBar.on('restart', function () { self.emit('restart') });

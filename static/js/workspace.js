@@ -54,6 +54,15 @@ function Workspace (params) {
             });
             
             windowPane.append(win.element);
+            
+            function close () {
+                win.close();
+                // wont' work since close gets wrapped again:
+                //account.removeListener('kill', close);
+                //account.removeListener('detach', close);
+            }
+            account.on('kill', close);
+            account.on('detach', close);
         });
     };
     

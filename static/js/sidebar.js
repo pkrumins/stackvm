@@ -119,7 +119,7 @@ function SideBar (params) {
             .text(proc.engine)
             .data('host', proc.host)
             .addClass('instance')
-            .click(function () { self.emit('attach', proc.host) })
+            .click(function () { self.emit('attach', vm, proc.host) })
         );
     });
     

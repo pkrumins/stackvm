@@ -191,8 +191,8 @@ function Manager(params) {
     
     self.kill = function (user, host, f) {
         if (host in procs[user.id]) {
-            var vmProc = procs[user.id][host]
-            managers[vmProc.engine].kill(vmProc, f)
+            var vmProc = procs[user.id][host];
+            managers[vmProc.engine].kill(vmProc, f);
             delete procs[user.id][host];
         }
         else {
