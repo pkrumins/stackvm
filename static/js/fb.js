@@ -98,10 +98,9 @@ function FB (params) {
     };
     setTimeout(firstRect, 500);
     
-    desktop.fb.on('png', function (png) {
+    desktop.fb.on('screenUpdate', function (update) {
         firstRect();
-        png.type = 'png';
-        display.rawRect(png);
+        display.rawRect(update);
     });
     
     desktop.fb.on('copyRect', function (rect) {
