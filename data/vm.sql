@@ -1,8 +1,7 @@
 create table users (
     id integer primary key,
     name text,
-    hash text,
-    status text
+    hash text
 );
 
 create table contacts (
