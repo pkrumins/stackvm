@@ -115,5 +115,9 @@ function Workspace (params) {
     account.instances(function (list) {
         instances.emit('list', list);
     });
+    
+    account.contacts(function (list) {
+        contacts.emit('list', list);
+    });
 }
 

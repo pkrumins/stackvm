@@ -1,7 +1,13 @@
 create table users (
     id integer primary key,
     name text,
-    hash text
+    hash text,
+    status text
+);
+
+create table contacts (
+    user1 integer,
+    user2 integer
 );
 
 create table vms (

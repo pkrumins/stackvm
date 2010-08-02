@@ -54,7 +54,9 @@ function SideBar (params) {
     
     contacts.on('list', function (people) {
         elements.contacts.empty();
-        people.forEach(function (who) {
+        Object.keys(people).forEach(function (uid) {
+            var who = people[uid];
+            console.log('who=' + Object.keys(who).join(','));
             elements.contacts.append($('<div>')
                 .data('name', who.name)
                 .text(who.name + ' [' + who.status + ']')

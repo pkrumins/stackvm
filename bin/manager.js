@@ -214,9 +214,24 @@ function Manager(params) {
     self.authenticate = function (name, pass, f) {
         var hash = new crypto.Hash('sha512').update(pass).digest('hex');
         db.query(
-            'select id, name from users where name = ? and hash = ?', 
+            'select id, name, status '
+            + 'from users where name = ? and hash = ?', 
             [ name, hash ],
             function (rows) { f(rows[0]) }
+        );
+    };
+    
+    self.contacts = function (uid, f) {
+        db.query(
+            'select u.id as id, u.name as name, u.status as status '
+                + 'from users as u, contacts as c '
+                + 'where c.user1 = ? and u.id = c.user2 '
+            + 'union select u.id as id, u.name as name, u.status as status '
+                + 'from users as u, contacts as c '
+                + 'where c.user2 = ? and u.id = c.user1'
+            ,
+            [uid,uid],
+            function (rows) { f(rows.slice()) }
         );
     };
 }
