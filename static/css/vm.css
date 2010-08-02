@@ -1,4 +1,5 @@
 .fb { /* framebuffer container */
     background-color: black;
+    cursor: url(/img/empty-cursor.cur), auto;
 }
 
