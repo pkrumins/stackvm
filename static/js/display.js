@@ -2,6 +2,7 @@ function toImg (img64, imgType) {
     var imgTypes = {
         png : 'data:image/png;base64,',
         jpeg : 'data:image/jpeg;base64,',
+        gif : 'data:image/gif;base64,'
     };
 
     if (!imgTypes[imgType])
