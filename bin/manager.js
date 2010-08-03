@@ -214,7 +214,7 @@ function Manager(params) {
     self.authenticate = function (name, pass, f) {
         var hash = new crypto.Hash('sha512').update(pass).digest('hex');
         db.query(
-            'select id, name, status '
+            'select id, name '
             + 'from users where name = ? and hash = ?', 
             [ name, hash ],
             function (rows) { f(rows[0]) }
@@ -223,10 +223,10 @@ function Manager(params) {
     
     self.contacts = function (uid, f) {
         db.query(
-            'select u.id as id, u.name as name, u.status as status '
+            'select u.id as id, u.name as name '
                 + 'from users as u, contacts as c '
                 + 'where c.user1 = ? and u.id = c.user2 '
-            + 'union select u.id as id, u.name as name, u.status as status '
+            + 'union select u.id as id, u.name as name '
                 + 'from users as u, contacts as c '
                 + 'where c.user2 = ? and u.id = c.user1'
             ,

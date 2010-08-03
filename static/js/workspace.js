@@ -15,6 +15,7 @@ function Workspace (params) {
     
     account.pass('spawn', instances);
     account.pass('kill', instances);
+    account.pass('status', contacts);
     
     account.on('kill', function (host) {
         Window[host].close();

@@ -52,14 +52,26 @@ function SideBar (params) {
         instances : $('<div>')
     };
     
-    contacts.on('list', function (people) {
+    contacts.on('list', function (list) {
         elements.contacts.empty();
-        Object.keys(people).forEach(function (uid) {
-            var who = people[uid];
-            elements.contacts.append($('<div>')
-                .data('name', who.name)
-                .text(who.name + ' [' + who.status + ']')
-            );
+        list.forEach(function (who) {
+            if (who.status == 'offline') {
+                elements.contacts.append($('<div>')
+                    .data('name', who.name)
+                    .text(who.name + ' [' + who.status + ']')
+                );
+            }
+            else {
+                elements.contacts.append($('<div>')
+                    .data('name', who.name)
+                    .append($('<a>')
+                        .text(who.name + ' [' + who.status + ']')
+                        .click(function () {
+                            new ChatWindow
+                        })
+                    )
+                );
+            }
         });
     });
     
