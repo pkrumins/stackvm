@@ -26,11 +26,8 @@ function Manager(params) {
     var conn = params.connection;
     
     self.spawn = function (params, f) {
-        var user = params.user;
-        var vm = params.vm;
         var engine = params.engine; // qemu, vmware, vbox
-        
-        managers[engine].spawn(user, vm, f);
+        managers[engine].spawn(params.user, params.disk, f);
     };
     
     self.kill = function (proc, f) {
@@ -49,7 +46,18 @@ function Manager(params) {
         var hash = new crypto.Hash('sha512').update(pass).digest('hex');
         var user = users[name.toLowerCase()];
         if (user && user.hash == hash) {
-            delete user.hash;
+            f({
+                contacts : user.contacts,
+                disks : user.disks,
+                processes : Object.keys(managers).reduce(
+                    function (acc,m) {
+                        (m.processes || []).forEach(function (p) {
+                            acc[p.addr] = p
+                        });
+                        return acc;
+                    }, {}
+                ),
+            });
             f(user);
         }
         else {

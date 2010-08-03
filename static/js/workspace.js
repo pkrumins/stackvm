@@ -7,29 +7,15 @@ function Workspace (params) {
     var root = params.root;
     var account = params.account;
     
-    var instances = new EventEmitter;
-    DNode.expose(instances, 'emit');
-    
-    var contacts = new EventEmitter;
-    DNode.expose(contacts, 'emit');
-    
-    account.pass('spawn', instances);
-    account.pass('kill', instances);
-    account.pass('status', contacts);
-    
-    account.on('kill', function (host) {
-        Window[host].close();
-    });
-    account.on('detach', function (host) {
-        Window[host].close();
-    });
-    
-    self.spawn = function (vm, engine) {
-        account.spawn(vm, engine);
+    self.spawn = function (disk, engine) {
+        account.spawn(disk, engine);
     };
     
-    self.attach = function (vm, host) {
-        account.attach(host, function (desktop) {
+    self.attach = function (params) {
+        var disk = params.disk;
+        var addr = params.addr;
+        
+        account.attach(addr, function (desktop) {
             if (!desktop) {
                 console.log('desktop == null');
                 return;
@@ -38,7 +24,7 @@ function Workspace (params) {
             var win = new Window({
                 fb : new FB({ desktop : desktop }),
                 name : vm.name,
-                host : host
+                addr : addr
             });
             
             win.on('minimize', function () {
@@ -67,18 +53,12 @@ function Workspace (params) {
     };
     
     var sideBar = new SideBar({
-        instances : instances,
-        contacts : contacts,
+        user : account.user,
         engines : ['qemu']
     });
     
-    sideBar.on('spawn', function (vm, engine) {
-        self.spawn(vm, engine);
-    });
-    
-    sideBar.on('attach', function (vm, host) {
-        self.attach(vm, host);
-    });
+    sideBar.on('spawn', function (params) { self.spawn(params) });
+    sideBar.on('attach', function (params) { self.attach(params) });
     
     root.append( sideBar.element.hide() );
     
@@ -112,13 +92,5 @@ function Workspace (params) {
         .hide()
     ;
     root.append(sheet);
-    
-    account.instances(function (list) {
-        instances.emit('list', list);
-    });
-    
-    account.contacts(function (list) {
-        contacts.emit('list', list);
-    });
 }
 

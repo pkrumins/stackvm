@@ -43,38 +43,29 @@ function SideMenu () {
 SideBar.prototype = new EventEmitter;
 function SideBar (params) {
     var self = this;
-    var contacts = params.contacts;
-    var instances = params.instances;
     var engines = params.engines;
+    var user = params.user;
     
     var elements = {
         contacts : $('<div>'),
         instances : $('<div>')
     };
     
-    contacts.on('list', function (list) {
-        elements.contacts.empty();
-        list.forEach(function (who) {
-            if (who.status == 'offline') {
-                elements.contacts.append($('<div>')
-                    .data('name', who.name)
-                    .text(who.name + ' [' + who.status + ']')
-                );
-            }
-            else {
-                elements.contacts.append($('<div>')
-                    .data('name', who.name)
-                    .append($('<a>')
-                        .text(who.name + ' [' + who.status + ']')
-                        .click(function () {
-                            new ChatWindow
-                        })
-                    )
-                );
-            }
-        });
+    user.contacts.forEach(function (who) {
+        elements.contacts.append($('<div>')
+            .data('name', who.name)
+            .append($('<a>')
+                .text(who.name + ' [' + who.status + ']')
+                .click(function () {
+                    if (who.status == 'online') {
+                        new ChatWindow
+                    }
+                })
+            )
+        );
     });
     
+    /*
     contacts.on('status', function (who) {
         elements.contacts.children('div').each(function () {
             if ($(this).data('name') == who.name) {
@@ -82,49 +73,54 @@ function SideBar (params) {
             }
         });
     });
+    */
     
-    instances.on('list', function (vmHash) {
-        elements.instances.empty();
-        Object.keys(vmHash).forEach(function (id) {
-            var vm = vmHash[id];
-            var ol = $('<ol>')
-                .attr('start', 0)
-                .data('id',id)
-            ;
-            var select = $('<select>');
-            engines.forEach(function (engine) {
-                select.append(
-                    $('<option>').val(engine).text(engine)
-                );
-            });
-            
-            elements.instances.append($('<div>').append(
-                $('<div>').text(vm.name),
-                $('<form>').append(
-                    select,
-                    $('<input>')
-                        .attr('type','button')
-                        .val('spawn')
-                        .click(function () {
-                            self.emit('spawn', vm,
-                                select.children('option:selected').val()
-                            );
-                        })
-                ),
-                ol
-            ));
-            
-            vm.instances.forEach(function (inst) {
+    Object.keys(user.disks).forEach(function (file) {
+        var disk = user.disks[file];
+        var ol = $('<ol>')
+            .attr('start', 0)
+            .data('file',file)
+        ;
+        
+        var select = $('<select>');
+        engines.forEach(function (engine) {
+            select.append(
+                $('<option>').val(engine).text(engine)
+            );
+        });
+        
+        elements.instances.append($('<div>').append(
+            $('<div>').text(disk.name),
+            $('<form>').append(
+                select,
+                $('<input>')
+                    .attr('type','button')
+                    .val('spawn')
+                    .click(function () {
+                        self.emit('spawn', {
+                            disk : file,
+                            engine : select.children('option:selected').val()
+                        });
+                    })
+            ),
+            ol
+        ));
+        
+        Object.keys(user.processes || []).forEach(function (addr) {
+            if (user.processes[addr].disk == file) {
                 ol.append($('<li>')
                     .text(inst.engine)
-                    .data('host',inst.host)
+                    .data('addr', addr)
                     .addClass('instance')
-                    .click(function () { self.emit('attach', vm, inst.host) })
+                    .click(function () {
+                        self.emit('attach', { disk : file, addr : addr })
+                    })
                 );
-            });
+            }
         });
     });
     
+    /*
     instances.on('spawn', function (vm, proc) {
         elements.instances.children('div').children('ol').filter(function () {
             return $(this).data('id') == vm.id;
@@ -141,6 +137,7 @@ function SideBar (params) {
             return li.data('host') == host
         }).remove();
     });
+    */
     
     var menu = new SideMenu;
     menu.push('main menu', $('<div>').append(
