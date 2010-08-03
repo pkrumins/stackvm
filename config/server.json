@@ -1,0 +1,20 @@
+{
+    "baseURIs" : {
+        "screenshots" : "http://10.1.1.2",
+        "screencasts" : "http://10.1.1.2"
+    },
+    "ports" : {
+        "screenshots" : {
+            "dnode" : 9200,
+            "http" : 9201
+        },
+        "screencasts" : {
+            "dnode" : 9300,
+            "http" : 9301
+        },
+        "manager" : {
+            "dnode" : 9077
+        }
+    }
+}
+
