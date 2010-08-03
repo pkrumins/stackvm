@@ -12,6 +12,12 @@ function Workspace (params) {
     
     var contacts = new EventEmitter;
     DNode.expose(contacts, 'emit');
+
+    var screenshots = new EventEmitter;
+    DNode.expose(screenshots, 'emit');
+
+    var screencasts = new EventEmitter;
+    DNode.expose(screencasts, 'emit');
     
     account.pass('spawn', instances);
     account.pass('kill', instances);
@@ -55,7 +61,7 @@ function Workspace (params) {
 
             win.on('screenshot', function () {
                 account.screenshot(host, function (url) {
-                    // ... add screenshot url to sidebar
+                    screenshots.emit('new', url);
                 });
             });
             
@@ -66,6 +72,8 @@ function Workspace (params) {
     var sideBar = new SideBar({
         instances : instances,
         contacts : contacts,
+        screenshots : screenshots,
+        screencasts : screencasts,
         engines : ['qemu', 'vmware']
     });
     

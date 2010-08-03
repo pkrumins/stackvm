@@ -45,11 +45,15 @@ function SideBar (params) {
     var self = this;
     var contacts = params.contacts;
     var instances = params.instances;
+    var screenshots = params.screenshots;
+    var screencasts = params.screencasts;
     var engines = params.engines;
     
     var elements = {
         contacts : $('<div>'),
-        instances : $('<div>')
+        instances : $('<div>'),
+        screenshots : $('<div>'),
+        screencasts : $('<div>')
     };
     
     contacts.on('list', function (people) {
@@ -128,6 +132,22 @@ function SideBar (params) {
             return li.data('host') == host
         }).remove();
     });
+
+    function newScreenShotCast (el, url) {
+        el.append(
+            $('<p>').append(
+                $('<a>').attr('href', url).text(url.split('/').slice(-1)[0])
+            )
+        );
+    }
+
+    screenshots.on('new', function (url) {
+        newScreenShotCast(elements.screenshots);
+    });
+
+    screencasts.on('new', function (url) {
+        newScreenShotCast(elements.screencasts);
+    });
     
     var menu = new SideMenu;
     menu.push('main menu', $('<div>').append(
@@ -142,9 +162,21 @@ function SideBar (params) {
                 .click(function () {
                     menu.push('disk images', elements.instances);
                 })
+        ),
+        $('<p>').append(
+            $('<a>').text('screenshots')
+                .click(function () {
+                    menu.push('screenshots', elements.screenshots);
+                })
+        ),
+        $('<p>').append(
+            $('<a>').text('screencasts')
+                .click(function () {
+                    menu.push('screencasts', elements.screenshots);
+                })
         )
     ));
-    
+
     self.element = $('<div>')
         .addClass('sidebar')
         .attr('id','sidebar')
