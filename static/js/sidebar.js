@@ -142,11 +142,12 @@ function SideBar (params) {
     }
 
     screenshots.on('new', function (url) {
-        newScreenShotCast(elements.screenshots);
+        newScreenShotCast(elements.screenshots, url);
     });
 
     screencasts.on('new', function (url) {
-        newScreenShotCast(elements.screencasts);
+            alert(url);
+        newScreenShotCast(elements.screencasts, url);
     });
     
     var menu = new SideMenu;
@@ -172,7 +173,7 @@ function SideBar (params) {
         $('<p>').append(
             $('<a>').text('screencasts')
                 .click(function () {
-                    menu.push('screencasts', elements.screenshots);
+                    menu.push('screencasts', elements.screencasts);
                 })
         )
     ));

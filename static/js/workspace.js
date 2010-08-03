@@ -64,6 +64,16 @@ function Workspace (params) {
                     screenshots.emit('new', url);
                 });
             });
+
+            win.on('startScreencast', function () {
+                account.startScreencast(host);
+            });
+
+            win.on('stopScreencast', function () {
+                account.stopScreencast(host, function (url) {
+                    screencasts.emit('new', url);
+                });
+            });
             
             windowPane.append(win.element);
         });

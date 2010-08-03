@@ -6,6 +6,7 @@ var fs = require('fs');
 var sys = require('sys');
 var StackedVideo = require('video').StackedVideo;
 var Buffer = require('buffer').Buffer;
+var config = require('lib/config');
 
 var screencastDir = "./static/screencasts";
 
@@ -21,9 +22,9 @@ var activeRecordings = {};
 
 DNode({
     startScreencast : function (width, height, f) {
-        sys.log('start screencast');
         var fileName = randomFileName() + '.ogv';
         var fullPath = screencastDir + '/' + fileName;
+        sys.log('start screencast: ' + fullPath);
         var video = new StackedVideo(width, height);
         video.setOutputFile(fullPath);
         video.setKeyFrameInterval(1024);
@@ -59,7 +60,7 @@ DNode({
         var video = activeRecordings[fileName];
         video.endPush(timeStamp);
     }
-}).listen(9300);
+}).listen(config.screencasts.dnodePort);
 
 http.createServer(function (req, res) {
     if (!/^\/[a-z]{32}\.ogv$/.test(req.url)) {

@@ -4,7 +4,9 @@
         "path" : "./static/screenshots"
     },  
     "screencasts" : {
-        "screencasts" : "http://10.1.1.2"
+        "baseURI" : "http://10.1.1.2",
+        "path" : "./static/screencasts",
+        "dnodePort" : 9300
     },
     "ports" : {
         "screenshots" : {

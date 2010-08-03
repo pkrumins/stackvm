@@ -26,7 +26,16 @@ function TitleBar (params) {
             $('<div>')
                 .addClass('menu-item')
                 .text('start screencast')
-                .click(function () { self.emit('startScreencast') })
+                .click(function () {
+                    if (/start/.test($(this).text())) {
+                        $(this).text('stop screencast');
+                        self.emit('startScreencast')
+                    }
+                    else {
+                        $(this).text('start screencast');
+                        self.emit('stopScreencast');
+                    }
+                })
         )
     ;
     
