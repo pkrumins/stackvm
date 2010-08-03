@@ -1,6 +1,9 @@
 {
-    "baseURIs" : {
-        "screenshots" : "http://10.1.1.2",
+    "screenshots" : {
+        "baseURI" : "http://10.1.1.2",
+        "path" : "./static/screenshots"
+    },  
+    "screencasts" : {
         "screencasts" : "http://10.1.1.2"
     },
     "ports" : {

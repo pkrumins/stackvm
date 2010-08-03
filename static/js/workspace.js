@@ -52,6 +52,12 @@ function Workspace (params) {
             win.on('restart', function () {
                 account.restart(host);
             });
+
+            win.on('screenshot', function () {
+                account.screenshot(host, function (url) {
+                    // ... add screenshot url to sidebar
+                });
+            });
             
             windowPane.append(win.element);
         });
@@ -60,7 +66,7 @@ function Workspace (params) {
     var sideBar = new SideBar({
         instances : instances,
         contacts : contacts,
-        engines : ['qemu']
+        engines : ['qemu', 'vmware']
     });
     
     sideBar.on('spawn', function (vm, engine) {

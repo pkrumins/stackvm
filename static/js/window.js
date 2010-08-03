@@ -32,6 +32,9 @@ function Window (params) {
     
     titleBar.on('kill', function () { self.emit('kill') });
     titleBar.on('restart', function () { self.emit('restart') });
+    titleBar.on('screenshot', function () { self.emit('screenshot') });
+    titleBar.on('screencastStart', function () { self.emit('screencastStart') });
+    titleBar.on('screencastStop', function () { self.emit('screencastStop') });
     
     var focused = true;
     

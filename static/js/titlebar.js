@@ -17,6 +17,16 @@ function TitleBar (params) {
                 .addClass('menu-item')
                 .text('kill')
                 .click(function () { self.emit('kill') })
+            ,
+            $('<div>')
+                .addClass('menu-item')
+                .text('screenshot')
+                .click(function () { self.emit('screenshot') })
+            ,
+            $('<div>')
+                .addClass('menu-item')
+                .text('start screencast')
+                .click(function () { self.emit('startScreencast') })
         )
     ;
     
