@@ -146,7 +146,6 @@ function SideBar (params) {
     });
 
     screencasts.on('new', function (url) {
-            alert(url);
         newScreenShotCast(elements.screencasts, url);
     });
     
