@@ -1,10 +1,10 @@
 {
     "screenshots" : {
-        "baseURI" : "http://10.1.1.2",
+        "baseURI" : "http://10.1.1.2:9000",
         "path" : "./static/screenshots"
     },  
     "screencasts" : {
-        "baseURI" : "http://10.1.1.2",
+        "baseURI" : "http://10.1.1.2:9000",
         "path" : "./static/screencasts",
         "dnodePort" : 9300
     },
