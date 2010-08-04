@@ -67,7 +67,6 @@ function Manager(params) {
                     }, {}
                 ),
             });
-            f(user);
         }
         else {
             f(null);
