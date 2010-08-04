@@ -30,13 +30,22 @@ function Manager(params) {
         managers[engine].spawn(params.user, params.disk, f);
     };
     
-    self.kill = function (proc, f) {
-        managers[proc.engine].kill(proc, f);
+    self.kill = function (addr, f) {
+        Object.keys(managers).forEach(function (engine) {
+            if (addr in managers[proc.engine].processes) {
+                managers[proc.engine].kill(proc, f);
+            }
+        });
     };
     
-    self.restart = function (proc, f) {
-        self.kill(proc, function () {
-            self.spawn(proc.user, proc.vm, f);
+    self.restart = function (addr, f) {
+        Object.keys(managers).forEach(function (engine) {
+            if (addr in managers[proc.engine].processes) {
+                var proc = managers[proc.engine].processes[addr];
+                self.kill(addr, function () {
+                    self.spawn(proc, f);
+                });
+            }
         });
     };
     
