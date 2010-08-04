@@ -1,12 +1,9 @@
 function Workspace (params) {
     var self = this;
-    if (!(this instanceof Workspace)) return new Workspace(params);
-    
-    $('form#login').fadeOut(400);
     
     var root = params.root;
-    var account = params.account;
     
+    /*
     self.spawn = function (disk, engine) {
         account.spawn(disk, engine);
     };
@@ -92,5 +89,6 @@ function Workspace (params) {
         .hide()
     ;
     root.append(sheet);
+    */
 }
 

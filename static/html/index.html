@@ -16,6 +16,7 @@
 <script type="text/javascript" src="/js/dnode.js"></script>
 <script type="text/javascript" src="/js/util/events.js"></script>
 <script type="text/javascript" src="/js/util/keymap.js"></script>
+<script type="text/javascript" src="/js/session.js"></script>
 <script type="text/javascript" src="/js/workspace.js"></script>
 <script type="text/javascript" src="/js/display.js"></script>
 <script type="text/javascript" src="/js/fb.js"></script>
@@ -32,7 +33,13 @@
             ev.preventDefault();
         });
         
-        DNode().connect(function (remote) {
+        var emitters = {
+            contacts : new EventEmitter,
+            processes : new EventEmitter
+        };
+        DNode(function () {
+            return { emitters : emitters }
+        }).connect(function (remote) {
             var form = $('form#login');
             form.submit(function (ev) {
                 ev.preventDefault();
@@ -40,9 +47,11 @@
                 var user = this.elements.user.value;
                 var pass = this.elements.pass.value;
                 remote.authenticate(user, pass, function (account) {
+                console.log('account');
                     if (account) {
-                        var div = $('div#workspace');
-                        Workspace({ root : div, account : account });
+                        $('form#login').fadeOut(400);
+                        console.dir(emitters);
+                        Session({ remote : account, emitters : emitters });
                     }
                     else {
                         $('.sign-in-failed').remove();
