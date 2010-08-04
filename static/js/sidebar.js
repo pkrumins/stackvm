@@ -106,7 +106,8 @@ function SideBar (params) {
             ol
         ));
         
-        Object.keys(user.processes || []).forEach(function (addr) {
+        console.log(user.processes);
+        Object.keys(user.processes).forEach(function (addr) {
             if (user.processes[addr].disk == file) {
                 ol.append($('<li>')
                     .text(inst.engine)
