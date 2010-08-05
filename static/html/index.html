@@ -37,8 +37,8 @@
             contacts : new EventEmitter,
             processes : new EventEmitter
         };
-        DNode(function () {
-            return { emitters : emitters }
+        DNode({
+            emitters : emitters
         }).connect(function (remote) {
             var form = $('form#login');
             form.submit(function (ev) {
