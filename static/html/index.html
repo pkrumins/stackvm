@@ -37,6 +37,8 @@
             contacts : new EventEmitter,
             processes : new EventEmitter
         };
+        DNode.expose(emitters.contacts, 'emit');
+        DNode.expose(emitters.processes, 'emit');
         DNode({
             emitters : emitters
         }).connect(function (remote) {
