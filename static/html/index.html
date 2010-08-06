@@ -4,8 +4,9 @@
 <head>
 <title>stackVM</title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="StyleSheet" href="/css/login.css" type="text/css">
 <link rel="StyleSheet" href="/css/workspace.css" type="text/css">
-<link rel="StyleSheet" href="/css/vm.css" type="text/css">
+<link rel="StyleSheet" href="/css/fb.css" type="text/css">
 <link rel="StyleSheet" href="/css/window.css" type="text/css">
 <link rel="StyleSheet" href="/css/sidebar.css" type="text/css">
 
@@ -17,14 +18,16 @@
 <script type="text/javascript" src="/js/util/events.js"></script>
 <script type="text/javascript" src="/js/util/keymap.js"></script>
 <script type="text/javascript" src="/js/session.js"></script>
+<script type="text/javascript" src="/js/ui.js"></script>
 <script type="text/javascript" src="/js/ui/workspace.js"></script>
-<script type="text/javascript" src="/js/ui/display.js"></script>
+<script type="text/javascript" src="/js/ui/fb/display.js"></script>
 <script type="text/javascript" src="/js/ui/fb.js"></script>
 <script type="text/javascript" src="/js/ui/chat.js"></script>
 <script type="text/javascript" src="/js/ui/window.js"></script>
+<script type="text/javascript" src="/js/ui/window/titlebar.js"></script>
 <script type="text/javascript" src="/js/ui/sidebar.js"></script>
-<script type="text/javascript" src="/js/ui/titlebar.js"></script>
-<script type="text/javascript" src="/js/ui/quickbar.js"></script>
+<script type="text/javascript" src="/js/ui/sidebar/menustack.js"></script>
+<script type="text/javascript" src="/js/ui/taskbar.js"></script>
 <script type="text/javascript">
     $(window).load(function () {
         $('form#login')[0].elements['user'].focus();
@@ -39,9 +42,14 @@
             
             var user = this.elements.user.value;
             var pass = this.elements.pass.value;
-            Session(user, pass, function (ok) {
-                if (ok) {
+            Session(user, pass, function (ui) {
+                if (ui) {
                     $('form#login').fadeOut(400);
+                    ui.element
+                        .hide()
+                        .fadeIn(400)
+                        .appendTo('#backdrop')
+                    ;
                 }
                 else {
                     $('.sign-in-failed').remove();
@@ -62,7 +70,7 @@
 </script>
 </head>
 <body>
-    <div id="workspace">
+    <div id="backdrop">
         <form id="login" method="post">
             <img
                 src="/img/stackvm.png"

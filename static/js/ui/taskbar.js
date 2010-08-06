@@ -1,5 +1,5 @@
-QuickBar.prototype = new EventEmitter;
-function QuickBar (params) {
+TaskBar.prototype = new EventEmitter;
+function TaskBar (params) {
     var self = this;
     var vms = [];
     

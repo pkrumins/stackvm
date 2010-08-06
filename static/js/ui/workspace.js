@@ -1,71 +1,44 @@
+Workspace.prototype = new EventEmitter;
 function Workspace (params) {
+    if (!(this instanceof Workspace)) return new Workspace(params);
     var self = this;
     
-    var root = params.root;
+    self.element = $('<div>')
+        .attr('id','workspace')
+    ;
+    
+    self.attachWindow = function (win) {
+        win.on('minimize', function () {
+            // ..
+        });
+        
+        win.on('fullscreen', function () {
+            // ..
+        });
+        
+        win.on('close', function () {
+            // ..
+            self.detachWindow(win);
+        });
+        
+        win.on('kill', function () {
+            // ..
+            self.detachWindow(win);
+        });
+        
+        win.on('restart', function () {
+            // ..
+        });
+        
+        self.element.append(win.element);
+    };
+    
+    self.detachWindow = function (win) {
+        win.removeAllListeners();
+        win.element.remove();
+    };
     
     /*
-    self.spawn = function (disk, engine) {
-        account.spawn(disk, engine);
-    };
-    
-    self.attach = function (params) {
-        var disk = params.disk;
-        var addr = params.addr;
-        
-        account.attach(addr, function (desktop) {
-            if (!desktop) {
-                console.log('desktop == null');
-                return;
-            }
-            
-            var win = new Window({
-                fb : new FB({ desktop : desktop }),
-                name : vm.name,
-                addr : addr
-            });
-            
-            win.on('minimize', function () {
-                account.detach(host);
-                quickBar.push(vm, host);
-            });
-            
-            win.on('fullscreen', function () {
-                // ...
-            });
-            
-            win.on('close', function () {
-                account.detach(host);
-            });
-            
-            win.on('kill', function () {
-                account.kill(host);
-            });
-            
-            win.on('restart', function () {
-                account.restart(host);
-            });
-            
-            windowPane.append(win.element);
-        });
-    };
-    
-    var sideBar = new SideBar({
-        user : account.user,
-        engines : ['qemu']
-    });
-    
-    sideBar.on('spawn', function (params) { self.spawn(params) });
-    sideBar.on('attach', function (params) { self.attach(params) });
-    
-    root.append( sideBar.element.hide() );
-    
-    var windowPane = $('<div>')
-        .attr('id','window-pane')
-        .hide()
-        .fadeIn(400)
-    ;
-    root.append(windowPane);
-    
     var logo = $('<img>')
         .attr('src','/img/stackvm-200x48.png')
         .attr('id','logo')
