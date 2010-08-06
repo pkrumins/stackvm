@@ -76,11 +76,37 @@ function SideBar (params) {
                     .addClass('disk-spawn')
                     .text('Spawn in ')
                     .append(engineLinks)
+                ,
+                $('<ol>')
+                    .addClass('instances')
+                    .data('disk', disk.filename)
+                    .attr('start',0)
             )
         ;
         console.dir(disk);
-        //console.dir(disk.processes);
         disks.append(div);
+        Object.keys(disk.processes).forEach(function (addr) {
+            self.addInstance(disk.processes[addr]);
+        });
+    };
+    
+    self.addInstance = function (proc) {
+        $('ol.instances').each(function () {
+            if ($(this).data('disk') == proc.disk) {
+                $(this).append($('<li>')
+                    .data('addr', proc.addr)
+                    .text(proc.engine + ':' + proc.pid)
+                );
+            }
+        });
+    };
+    
+    self.removeInstance = function (addr) {
+        $('ol.instances li').each(function () {
+            if ($(this).data('addr') == addr) {
+                $(this).remove();
+            }
+        });
     };
 }
 

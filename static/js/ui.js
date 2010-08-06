@@ -36,11 +36,12 @@ function UI (account) {
     
     processes.on('spawn', function (proc) {
         console.log('spawn!');
-        console.dir(proc);
+        sidebar.addInstance(proc);
     });
     
     processes.on('exit', function (addr) {
         console.log('exit: ' + addr);
+        sidebar.removeInstance(addr);
     });
     
     // fetch some lists:
