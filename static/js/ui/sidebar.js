@@ -26,6 +26,10 @@ function SideBar (params) {
             .attr('id', 'logo')
             .width(200).height(48)
             .attr('src', '/img/stackvm-200x48.png')
+            .toggle(
+                function () { $('.sidebar-menu').fadeOut(400) },
+                function () { $('.sidebar-menu').fadeIn(400) }
+            )
         ,
         $('<div>').addClass('sidebar-menu').append(menu.element)
     );
@@ -39,7 +43,6 @@ function SideBar (params) {
     };
     
     self.updateContact = function (name, status) {
-console.log('update ' + name + ' ' + status);
         contacts.children('div').each(function () {
             if ($(this).text() == name) {
                 $(this)
