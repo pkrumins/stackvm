@@ -2,9 +2,13 @@
 // Renders the framebuffer and handles the keyboard and mouse
 
 FB.prototype = new EventEmitter;
-function FB (params) {
+function FB (remote) {
     var self = this;
-    var desktop = params.desktop; // with keys: fb, clients, size
+    
+    var input = remote.input;
+    var encoder = remote.encoder;
+    var size = remote.size;
+    
     var mouseCoords = null;
     
     var focus = false;
@@ -12,6 +16,7 @@ function FB (params) {
         focus = true;
         self.element.focus();
     };
+    
     self.unfocus = function () {
         focus = false;
         $(window).focus();
@@ -22,48 +27,50 @@ function FB (params) {
     self.element = $('<div>')
         .addClass('fb')
         .attr('tabindex', 0) // so the div can receive focus
+        .width(size.width)
+        .height(size.height)
         .mousemove(function (ev) {
             self.focus();
             if (focus) {
                 var pos = calcMousePos(ev);
-                desktop.fb.sendPointer(pos.x, pos.y, mouseMask);
+                if (input) input.sendPointer(pos.x, pos.y, mouseMask);
             }
         })
         .mousedown(function (ev) {
             if (focus) mouseMask = 1;
             var pos = calcMousePos(ev);
-            desktop.fb.sendPointer(pos.x, pos.y, mouseMask);
+            if (input) input.sendPointer(pos.x, pos.y, mouseMask);
             ev.preventDefault();
         })
         .mouseup(function (ev) {
             if (focus) mouseMask = 0;
             var pos = calcMousePos(ev);
-            desktop.fb.sendPointer(pos.x, pos.y, mouseMask);
+            if (input) input.sendPointer(pos.x, pos.y, mouseMask);
             ev.preventDefault();
         })
         .mousewheel(function (ev, delta) {
             var pos = calcMousePos(ev);
-            if (delta > 0) { // mouse up
-                desktop.fb.sendPointer(pos.x, pos.y, 1 << 3);
-                desktop.fb.sendPointer(pos.x, pos.y, 0);
+            if (delta > 0 && input) { // mouse up
+                input.sendPointer(pos.x, pos.y, 1 << 3);
+                input.sendPointer(pos.x, pos.y, 0);
             }
-            else {
-                desktop.fb.sendPointer(pos.x, pos.y, 1 << 4);
-                desktop.fb.sendPointer(pos.x, pos.y, 0);
+            else if (input) {
+                input.sendPointer(pos.x, pos.y, 1 << 4);
+                input.sendPointer(pos.x, pos.y, 0);
             }
             ev.preventDefault();
         })
         // Other events should just call this element's key events when key
         // events occur elsewhere but this vm has focus
         .keydown(function (ev) {
-            if (focus) {
-                desktop.fb.sendKeyDown(KeyMapper.getKeySym(ev.keyCode));
+            if (focus && input) {
+                input.sendKeyDown(KeyMapper.getKeySym(ev.keyCode));
                 ev.preventDefault();
             }
         })
         .keyup(function (ev) {
-            if (focus) {
-                desktop.fb.sendKeyUp(KeyMapper.getKeySym(ev.keyCode));
+            if (focus && input) {
+                input.sendKeyUp(KeyMapper.getKeySym(ev.keyCode));
                 ev.preventDefault();
             }
         })
@@ -80,36 +87,24 @@ function FB (params) {
         display = new StackedDisplay;
     self.element.append(display.element);
     
-    function desktopSize (dims) {
+    encoder.on('desktopSize', function (dims) {
+        size = dims;
+        self.emit('resize', dims);
         self.element
             .width(dims.width)
             .height(dims.height)
         ;
         display.resize(dims);
-        self.emit('resize', dims);
-        desktop.size = dims;
-    }
-    desktop.fb.on('desktopSize', desktopSize);
+    });
     
-    var firstRect; firstRect = function () {
-        desktopSize(desktop.size);
-        desktop.fb.requestRedrawScreen();
-        firstRect = function () {};
-    };
-    setTimeout(firstRect, 500);
+    encoder.requestRedrawScreen();
     
-    desktop.fb.on('screenUpdate', function (update) {
-        firstRect();
+    encoder.on('screenUpdate', function (update) {
         display.rawRect(update);
     });
     
-    desktop.fb.on('copyRect', function (rect) {
-        firstRect();
+    encoder.on('copyRect', function (rect) {
         display.copyRect(rect);
-    });
-    
-    desktop.fb.on('close', function () {
-        self.emit('close');
     });
 }
 

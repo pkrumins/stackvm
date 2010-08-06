@@ -1,54 +1,26 @@
 Window.prototype = new EventEmitter;
 function Window (params) {
     var self = this;
-    var fb = params.fb;
+    var remoteFB = params.remoteFB;
+    var proc = params.proc;
+    
+    var fb = new FB(remoteFB);
+    
     var titleBar = new TitleBar({
-        name : params.name,
+        name : proc.disk,
         window : self
     });
     
     Window[params.host] = self;
     
-    titleBar.on('minimize', function () {
-        self.element.remove();
-        self.emit('minimize');
-    });
-    
-    var prevCoords = null;
-    titleBar.on('fullscreen', function () {
-        self.emit('fullscreen');
-        self.element.addClass('vm-window-fullscreen');
-        prevCoords = self.element.offset();
-        self.element.offset({
-            left : ($(window).width() - self.element.width()) / 2,
-            top : ($(window).height() - self.element.height()) / 2
-        });
-    });
-    
-    self.close = function () {
-        self.element.remove();
-        self.emit('close');
-        delete Window[self.id];
-    }
-    titleBar.on('close', self.close);
-    fb.on('close', self.close);
-    
-    titleBar.on('kill', function () { self.emit('kill') });
-    titleBar.on('restart', function () { self.emit('restart') });
-    
-    var focused = true;
-    
     self.element = $('<div>')
-        .hide()
         .append(titleBar.element.hide())
         .append(fb.element)
         .addClass('vm-window')
+        .width(remoteFB.size.width)
+        .height(remoteFB.size.height)
         .offset({ left : 100, top : 100 })
-        .click(function (ev) {
-            if (!focused) {
-                self.focus();
-            }
-        })
+        .click(function (ev) { if (!focused) self.focus() })
         .draggable({
             handle : titleBar.element,
             stack : '.vm-window'
@@ -59,17 +31,15 @@ function Window (params) {
         self.element
             .width(dims.width)
             .height(dims.height)
-            .fadeIn(400)
         ;
         titleBar.element.width(dims.width - 1);
     });
     
+    var focused = true;
+    
     self.focus = function () {
         if (!focused) {
             focused = true;
-            self.emit('focus');
-            fb.focus();
-            self.element.addClass('vm-window-focused');
             titleBar.element.fadeIn(300);
             titleBar.element.width(fb.element.width() - 1);
             self.element.height(fb.element.height());
@@ -92,10 +62,5 @@ function Window (params) {
     };
     
     self.unfocus();
-    
-    self.restore = function () {
-        self.element.removeClass('vm-window-fullscreen');
-        self.element.offset(prevCoords);
-    };
 }
 

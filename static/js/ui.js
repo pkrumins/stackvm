@@ -18,9 +18,10 @@ function UI (account) {
     });
     
     sidebar.on('attach', function (proc) {
-        console.log('proc:')
-        console.dir(proc);
-        // workspace.attachWindow(win);
+        proc.attach(function (fb) {
+            var win = new Window({ remoteFB : fb, proc : proc });
+            workspace.attachWindow(win);
+        });
     });
     
     taskbar.on('pop', function (win) {
