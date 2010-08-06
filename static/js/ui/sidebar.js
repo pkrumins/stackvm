@@ -23,5 +23,8 @@ function SideBar (params) {
         .attr('id','sidebar')
         .append(menu.element)
     ;
+    
+    self.addContact = function () {
+    };
 }
 
