@@ -32,9 +32,23 @@ function SideBar (params) {
     
     self.addContact = function (contact) {
         contacts.append($('<div>')
+            .addClass('contact')
             .addClass('contact-' + (contact.online ? 'online' : 'offline'))
             .text(contact.name)
         );
+    };
+    
+    self.updateContact = function (name, status) {
+console.log('update ' + name + ' ' + status);
+        contacts.children('div').each(function () {
+            if ($(this).text() == name) {
+                $(this)
+                    .removeClass('contact-online')
+                    .removeClass('contact-offline')
+                    .addClass('contact-' + status)
+                ;
+            }
+        });
     };
 }
 

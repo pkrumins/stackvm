@@ -71,13 +71,14 @@ div.sidebar div.back:hover {
     color: rgb(50,50,50);
 }
 
+.contact { font-weight: bold; }
+
 .contact-online {
     cursor: pointer;
     font-weight: bold;
-    color: rgb(200,255,200);
+    color: rgb(200,255,150);
 }
 
 .contact-offline {
-    font-weight: bold;
     color: rgb(200,200,200);
 }

@@ -26,6 +26,13 @@ function UI (account) {
     });
     
     // external resource hooks:
+    contacts.on('offline', function (who) {
+        sidebar.updateContact(who, 'offline');
+    });
+    
+    contacts.on('online', function (who) {
+        sidebar.updateContact(who, 'online');
+    });
     
     // fetch some lists:
     contacts.list(function (list) {
