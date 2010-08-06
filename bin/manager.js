@@ -56,6 +56,7 @@ function Manager(params) {
         var user = users[name.toLowerCase()];
         if (user && user.hash == hash) {
             f({
+                name : name.toLowerCase(),
                 contacts : user.contacts,
                 disks : user.disks,
                 processes : Object.keys(managers).reduce(

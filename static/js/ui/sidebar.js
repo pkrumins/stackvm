@@ -30,7 +30,11 @@ function SideBar (params) {
         $('<div>').addClass('sidebar-menu').append(menu.element)
     );
     
-    self.addContact = function () {
+    self.addContact = function (contact) {
+        contacts.append($('<div>')
+            .addClass('contact-' + (contact.online ? 'online' : 'offline'))
+            .text(contact.name)
+        );
     };
 }
 

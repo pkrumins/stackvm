@@ -17,7 +17,7 @@
     "moo" : {
         "hash" : "0224ebe0490f6917c2ab4a632367e42dd049bf89770f9be2ff69b77e8f8be9e67ee332dc22ce6d86e0f4218edb93dfe3d2775baa9c6378f88e7398c1d84d4309",
         "contacts" : ["substack"],
-        "images" : []
+        "disks" : {}
     }
 }
 

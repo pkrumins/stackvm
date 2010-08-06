@@ -29,12 +29,11 @@ function UI (account) {
     
     // fetch some lists:
     contacts.list(function (list) {
-        console.log('contact list:');
         console.dir(list);
+        list.forEach(sidebar.addContact);
     });
     
     processes.list(function (list) {
-        console.log('process list:');
         console.dir(list);
     });
     
