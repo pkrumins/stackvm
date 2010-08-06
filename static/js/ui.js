@@ -17,8 +17,10 @@ function UI (account) {
         taskbar.push(win);
     });
     
-    sidebar.on('attach', function (win) {
-        workspace.attachWindow(win);
+    sidebar.on('attach', function (proc) {
+        console.log('proc:')
+        console.dir(proc);
+        // workspace.attachWindow(win);
     });
     
     taskbar.on('pop', function (win) {

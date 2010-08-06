@@ -83,7 +83,6 @@ function SideBar (params) {
                     .attr('start',0)
             )
         ;
-        console.dir(disk);
         disks.append(div);
         Object.keys(disk.processes).forEach(function (addr) {
             self.addInstance(disk.processes[addr]);
@@ -91,11 +90,12 @@ function SideBar (params) {
     };
     
     self.addInstance = function (proc) {
-        $('ol.instances').each(function () {
+        disks.find('ol.instances').each(function () {
             if ($(this).data('disk') == proc.disk) {
                 $(this).append($('<li>')
                     .data('addr', proc.addr)
                     .text(proc.engine + ':' + proc.pid)
+                    .click(function () { self.emit('attach', proc) })
                 );
             }
         });

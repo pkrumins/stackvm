@@ -60,14 +60,13 @@ function Manager(params) {
                 name : name.toLowerCase(),
                 contacts : user.contacts,
                 disks : user.disks,
-                processes : Object.keys(managers).reduce(
-                    function (acc,m) {
-                        (m.processes || []).forEach(function (p) {
-                            acc[p.addr] = p
-                        });
-                        return acc;
-                    }, {}
-                ),
+                processes : Object.keys(managers).reduce(function (acc,engine) {
+                    var ps = managers[engine].processes;
+                    Object.keys(ps).forEach(function (addr) {
+                        acc[addr] = ps[addr];
+                    });
+                    return acc;
+                }, {}),
             });
         }
         else {

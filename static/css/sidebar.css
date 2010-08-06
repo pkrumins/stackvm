@@ -112,3 +112,7 @@ div.sidebar div.back:hover {
     text-decoration: underline;
 }
 
+ol.instances li {
+    cursor: pointer;
+}
+
