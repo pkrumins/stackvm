@@ -31,9 +31,9 @@ function FB (remote) {
         .height(size.height)
         .mousemove(function (ev) {
             self.focus();
-            if (focus) {
+            if (focus && input) {
                 var pos = calcMousePos(ev);
-                if (input) input.sendPointer(pos.x, pos.y, mouseMask);
+                input.sendPointer(pos.x, pos.y, mouseMask);
             }
         })
         .mousedown(function (ev) {
@@ -83,6 +83,7 @@ function FB (remote) {
     }
     
     var display = new CanvasDisplay;
+    display.resize(size);
     if (!display.can)
         display = new StackedDisplay;
     self.element.append(display.element);
