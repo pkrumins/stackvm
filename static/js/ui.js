@@ -36,12 +36,11 @@ function UI (account) {
     
     // fetch some lists:
     contacts.list(function (list) {
-        console.dir(list);
         list.forEach(sidebar.addContact);
     });
     
     processes.list(function (list) {
-        console.dir(list);
+        list.forEach(sidebar.addDisk);
     });
     
     // --

@@ -82,3 +82,11 @@ div.sidebar div.back:hover {
 .contact-offline {
     color: rgb(200,200,200);
 }
+
+.disk { font-weight: bold; }
+
+.disk-filename {
+    font-weight: normal;
+    font-size: 0.8em;
+    color: rgb(200,200,200);
+}

@@ -2,7 +2,7 @@ SideBar.prototype = new EventEmitter;
 function SideBar (params) {
     var self = this;
     
-    var processes = $('<div>');
+    var disks = $('<div>');
     var contacts = $('<div>');
     
     var menu = new MenuStack;
@@ -16,7 +16,7 @@ function SideBar (params) {
         $('<p>').append(
             $('<a>').text('disk images')
                 .click(function () {
-                    menu.push('disk images', processes);
+                    menu.push('disk images', disks);
                 })
         )
     ));
@@ -43,7 +43,7 @@ function SideBar (params) {
     };
     
     self.updateContact = function (name, status) {
-        contacts.children('div').each(function () {
+        $('.contact').each(function () {
             if ($(this).text() == name) {
                 $(this)
                     .removeClass('contact-online')
@@ -52,6 +52,17 @@ function SideBar (params) {
                 ;
             }
         });
+    };
+    
+    self.addDisk = function (disk) {
+        disks.append($('<div>')
+            .addClass('disk')
+            .text(disk.name)
+            .append($('<div>')
+                .addClass('disk-filename')
+                .text(disk.filename)
+            )
+        );
     };
 }
 

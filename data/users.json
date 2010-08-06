@@ -10,7 +10,7 @@
                 "name" : "android"
             },
             "ReactOS-LiveCD.iso" : {
-                "name" : "ReactOS-LiveCD.iso"
+                "name" : "ReactOS"
             }
         }
     },
