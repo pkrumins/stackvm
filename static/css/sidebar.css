@@ -1,22 +1,35 @@
 img#logo {
-    position: absolute;
-    top: 5px;
-    left: 10px;
     cursor: pointer;
-    z-index: 10;
 }
 
 div.sidebar {
-    background-color: rgb(100,100,100);
     position: absolute;
     width: 200px;
-    top: 55px;
+    top: 5px;
     bottom: 100px;
     left: 10px;
     color: white;
     overflow-x: hidden;
     overflow-y: auto;
-    z-index: 5;
+}
+
+div.sidebar-menu {
+    background-color: rgb(100,100,100);
+    position: absolute;
+    width: 200px;
+    top: 55px;
+    bottom: 0px;
+    left: 0px;
+    color: white;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+div.side-menu { }
+
+div.side-menu-body {
+    padding-left: 0.5em;
+    padding-right: 0.5em;
 }
 
 div.side-menu-title {
@@ -58,59 +71,3 @@ div.sidebar div.back:hover {
     color: rgb(50,50,50);
 }
 
-div#chat-box {
-    background-color: rgb(200,200,200);
-    color: black;
-    border-color: white;
-    border-style: solid;
-    border-width: 2px;
-    width: 200px;
-    height: 200px;
-}
-
-div#chat-box p {
-    margin-top: 2px;
-    margin-bottom: 2px;
-}
-
-div#chat-box div {
-    background-color: rgb(50,50,50);
-    color: white;
-    border-bottom-color: white;
-    border-bottom-style: solid;
-    border-bottom-width: 2px;
-}
-
-div.info-pane {
-    width: 200px;
-    overflow-y: scroll;
-    background-color: rgb(75,75,75);
-    z-index: 1;
-}
-
-div.info-pane p { margin-left: 1em; }
-div.info-pane a { margin-left: 1em; }
-div.vm-desc {
-    padding: 1em;
-    border-color: rgb(100,100,100);
-    border-style: solid;
-    border-width: 2px;
-    background-color: rgb(70,70,70);
-}
-
-div.vm-desc div {
-    height: 90px;
-    display: table-cell;
-    vertical-align: middle;
-}
-
-div.vm-desc:hover {
-    background-color: rgb(150,150,150);
-    color: black;
-    cursor: pointer;
-}
-
-.instance {
-    cursor: pointer;
-    text-decoration: underline;
-}

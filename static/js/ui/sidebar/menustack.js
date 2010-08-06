@@ -12,6 +12,7 @@ function MenuStack () {
         var index = menuStack.length;
         var elem = $('<div>')
             .addClass('side-menu')
+            .height($(window).height - 55 - 100)
             .append(
                 $('<div>')
                     .addClass('side-menu-title')

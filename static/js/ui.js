@@ -7,6 +7,11 @@ function UI (account) {
     var sidebar = new SideBar;
     var taskbar = new TaskBar;
     
+    workspace.element.append(
+        sidebar.element,
+        taskbar.element
+    );
+    
     // inter-dependent ui hooks:
     workspace.on('minimize', function (win) {
         taskbar.push(win);
@@ -21,8 +26,15 @@ function UI (account) {
     });
     
     // external resource hooks:
+    
+    // fetch some lists:
     contacts.list(function (list) {
         console.log('contact list:');
+        console.dir(list);
+    });
+    
+    processes.list(function (list) {
+        console.log('process list:');
         console.dir(list);
     });
     
