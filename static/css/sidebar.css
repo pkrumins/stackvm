@@ -83,10 +83,31 @@ div.sidebar div.back:hover {
     color: rgb(200,200,200);
 }
 
-.disk { font-weight: bold; }
+.disk {
+    font-weight: bold;
+    margin-bottom: 1em;
+}
 
 .disk-filename {
     font-weight: normal;
-    font-size: 0.8em;
+    font-size: 0.85em;
     color: rgb(200,200,200);
+}
+
+.disk-spawn {
+    font-size: 0.85em;
+    color: rgb(250,220,130);
+    font-weight: normal;
+}
+
+.disk-spawn span a {
+    font-size: 0.9em;
+    font-weight: bold;
+    text-decoration: none;
+    color: rgb(255,150,100);
+    cursor: pointer;
+}
+
+.disk-spawn span a:hover {
+    text-decoration: underline;
 }

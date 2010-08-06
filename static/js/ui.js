@@ -4,7 +4,7 @@ function UI (account) {
     var processes = account.processes;
     
     var workspace = new Workspace;
-    var sidebar = new SideBar;
+    var sidebar = new SideBar({ engines : ['qemu','vmware'] });
     var taskbar = new TaskBar;
     
     workspace.element.append(

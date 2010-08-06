@@ -1,6 +1,7 @@
 SideBar.prototype = new EventEmitter;
 function SideBar (params) {
     var self = this;
+    var engines = params.engines;
     
     var disks = $('<div>');
     var contacts = $('<div>');
@@ -55,14 +56,31 @@ function SideBar (params) {
     };
     
     self.addDisk = function (disk) {
-        disks.append($('<div>')
+        var engineLinks = $('<span>');
+        engines.forEach(function (engine) {
+            engineLinks.append($('<a>')
+                .text(engine)
+                .click(function () { disk.spawn(engine) })
+            , $('<span>').text(' '));
+        });
+        
+        var div = $('<div>')
             .addClass('disk')
             .text(disk.name)
-            .append($('<div>')
-                .addClass('disk-filename')
-                .text(disk.filename)
+            .append(
+                $('<div>')
+                    .addClass('disk-filename')
+                    .text(disk.filename)
+                ,
+                $('<div>')
+                    .addClass('disk-spawn')
+                    .text('Spawn in ')
+                    .append(engineLinks)
             )
-        );
+        ;
+        console.dir(disk);
+        //console.dir(disk.processes);
+        disks.append(div);
     };
 }
 
