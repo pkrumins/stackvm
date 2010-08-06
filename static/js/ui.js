@@ -34,6 +34,15 @@ function UI (account) {
         sidebar.updateContact(who, 'online');
     });
     
+    processes.on('spawn', function (proc) {
+        console.log('spawn!');
+        console.dir(proc);
+    });
+    
+    processes.on('exit', function (addr) {
+        console.log('exit: ' + addr);
+    });
+    
     // fetch some lists:
     contacts.list(function (list) {
         list.forEach(sidebar.addContact);

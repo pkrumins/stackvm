@@ -4,9 +4,7 @@
 var sys = require('sys');
 var fs = require('fs');
 var crypto = require('crypto');
-
 var DNode = require('dnode');
-
 var managers = require('../lib/managers');
 
 var users = JSON.parse(
@@ -25,9 +23,12 @@ function Manager(params) {
     var client = params.client;
     var conn = params.connection;
     
-    self.spawn = function (params, f) {
+    self.spawn = function (params, cb) {
         var engine = params.engine; // qemu, vmware, vbox
-        managers[engine].spawn(params.user, params.disk, f);
+        managers[engine].spawn(params.user, params.disk, function (proc) {
+            DNode.expose(proc, 'on');
+            cb(proc);
+        });
     };
     
     self.kill = function (addr, f) {
