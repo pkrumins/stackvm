@@ -32,10 +32,18 @@ div.title-bar {
     padding-left: 0.5em;
 }
 
-div.title-bar div {
+div.title-bar div.title-text {
     display: table-cell;
     vertical-align: middle;
     height: 30px;
+    cursor: pointer;
+}
+
+.title-text-drag {
+    background-color: white;
+    color: black;
+    width: 10em;
+    z-index: 1000000;
 }
 
 div.title-bar img.window-button {

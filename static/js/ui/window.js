@@ -8,12 +8,12 @@ function Window (params) {
     
     self.titleBar = new TitleBar({
         name : proc.disk,
-        window : self
+        share : remoteFB
     });
     
     self.titleBar.on('kill', function () { proc.kill() });
     
-    Window[params.host] = self;
+    Window[proc.addr] = self;
     
     self.element = $('<div>')
         .append(self.titleBar.element.hide())

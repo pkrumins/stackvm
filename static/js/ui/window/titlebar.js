@@ -3,6 +3,7 @@ function TitleBar (params) {
     
     var self = this;
     var name = params.name;
+    var share = params.share;
     
     var menu = $('<div>')
         .addClass('window-menu')
@@ -59,7 +60,21 @@ function TitleBar (params) {
                     }
                 )
             ,
-            $('<div>').text(name),
+            $('<div>')
+                .addClass('title-text')
+                .text(name)
+                .draggable({
+                    appendTo : 'body',
+                    scroll : false,
+                    helper : function () {
+                        return $('<div>')
+                            .text(name)
+                            .addClass('title-text-drag')
+                            .data('share', share)
+                        ;
+                    }
+                })
+            ,
             menu
         )
     ;

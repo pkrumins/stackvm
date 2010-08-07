@@ -5,7 +5,17 @@ function ChatWindow (me, contact) {
     
     self.contact = contact;
     
-    var body = $('<div>').addClass('chat-body');
+    var body = $('<div>')
+        .addClass('chat-body')
+        .droppable({
+            //accept : '.title-text-drag',
+            drop : function (ev, ui) {
+                console.log($(this).data('share'));
+                var fb = $(ui.draggable).data('share');
+                console.dir(fb);
+            }
+        })
+    ;
     
     self.element = $('<div>')
         .addClass('chat-window')

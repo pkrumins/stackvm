@@ -38,7 +38,9 @@ function Workspace (params) {
     
     var chats = {};
     
-    self.hasChat = function (name) { return name in chats };
+    self.hasChat = function (name) {
+        return name in chats
+    };
     
     self.addChat = function (chat) {
         self.element.append(chat.element);

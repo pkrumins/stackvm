@@ -26,7 +26,6 @@ function UI (account) {
     
     var chats = {};
     sidebar.on('chat', function (contact) {
-        // todo: put this complexity into workspace.js
         if (workspace.hasChat(contact.name)) return;
         var chat = new ChatWindow(account.user.name, contact);
         workspace.addChat(chat);
