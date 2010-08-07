@@ -1,0 +1,9 @@
+.chat-window {
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    width: 200px;
+    height: 200px;
+    background-color: white;
+    color: black;
+}

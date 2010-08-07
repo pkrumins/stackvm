@@ -40,6 +40,11 @@ function SideBar (params) {
             .addClass('contact')
             .addClass('contact-' + (contact.online ? 'online' : 'offline'))
             .text(contact.name)
+            .click(function () {
+                if ($(this).hasClass('contact-online')) {
+                    self.emit('chat', contact);
+                }
+            })
         );
     };
     

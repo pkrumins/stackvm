@@ -24,6 +24,24 @@ function UI (account) {
         });
     });
     
+    var chats = {};
+    sidebar.on('chat', function (contact) {
+        if (contact.name in chats) return;
+        var chat = new ChatWindow;
+        var rightMost = Math.min.apply({}, [$(window).width()].concat(
+            Object.keys(chats).map(function (name) {
+                return chats[name].element.offset().left;
+            })
+        ));
+        workspace.element.append(chat.element);
+        console.log(rightMost);
+        chat.element.offset({
+            left : rightMost - 210,
+            top : $(window).height() - 210
+        });
+        chats[contact.name] = chat;
+    });
+    
     taskbar.on('pop', function (win) {
         workspace.attachWindow(win);
     });
