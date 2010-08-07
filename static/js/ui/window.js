@@ -6,15 +6,17 @@ function Window (params) {
     
     var fb = new FB(remoteFB);
     
-    var titleBar = new TitleBar({
+    self.titleBar = new TitleBar({
         name : proc.disk,
         window : self
     });
     
+    self.titleBar.on('kill', function () { proc.kill() });
+    
     Window[params.host] = self;
     
     self.element = $('<div>')
-        .append(titleBar.element.hide())
+        .append(self.titleBar.element.hide())
         .append(fb.element)
         .addClass('vm-window')
         .width(remoteFB.size.width)
@@ -22,7 +24,7 @@ function Window (params) {
         .offset({ left : 100, top : 100 })
         .click(function (ev) { if (!focused) self.focus() })
         .draggable({
-            handle : titleBar.element,
+            handle : self.titleBar.element,
             stack : '.vm-window'
         });
     ;
@@ -32,7 +34,7 @@ function Window (params) {
             .width(dims.width)
             .height(dims.height)
         ;
-        titleBar.element.width(dims.width - 1);
+        self.titleBar.element.width(dims.width - 1);
     });
     
     var focused = true;
@@ -40,8 +42,8 @@ function Window (params) {
     self.focus = function () {
         if (!focused) {
             focused = true;
-            titleBar.element.fadeIn(300);
-            titleBar.element.width(fb.element.width() - 1);
+            self.titleBar.element.fadeIn(300);
+            self.titleBar.element.width(fb.element.width() - 1);
             self.element.height(fb.element.height());
         }
         return self;
@@ -53,8 +55,8 @@ function Window (params) {
             self.emit('unfocus');
             fb.unfocus();
             self.element.removeClass('vm-window-focused');
-            titleBar.element.width(fb.element.width() - 1);
-            titleBar.element.fadeOut(300, function () {
+            self.titleBar.element.width(fb.element.width() - 1);
+            self.titleBar.element.fadeOut(300, function () {
                 self.element.height(fb.element.height());
             });
         }

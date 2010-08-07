@@ -15,17 +15,7 @@ EventEmitter.prototype.emit = function (name) {
     
     var args = [].slice.call(arguments,1);
     this.listeners(name).forEach(function (f) {
-        try {
-            f.apply(self,args);
-        }
-        catch (error) {
-            if (self.listeners('error').length) {
-                self.emit('error', error);
-            }
-            else {
-                throw error;
-            }
-        }
+        f.apply(self,args);
     });
     return this;
 };
@@ -45,7 +35,7 @@ EventEmitter.prototype.removeListener = function (name, listener) {
     };
     
 EventEmitter.prototype.removeAllListeners = function (name) {
-    this.listeners(name) = [];
+    this._events[name] = [];
     return this;
 };
 

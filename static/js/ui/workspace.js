@@ -8,25 +8,23 @@ function Workspace (params) {
     ;
     
     self.attachWindow = function (win) {
-        win.on('minimize', function () {
+        win.titleBar.on('minimize', function () {
             // ..
         });
         
-        win.on('fullscreen', function () {
+        win.titleBar.on('fullscreen', function () {
             // ..
         });
         
-        win.on('close', function () {
-            // ..
+        win.titleBar.on('close', function () {
             self.detachWindow(win);
         });
         
-        win.on('kill', function () {
-            // ..
+        win.titleBar.on('kill', function () {
             self.detachWindow(win);
         });
         
-        win.on('restart', function () {
+        win.titleBar.on('restart', function () {
             // ..
         });
         

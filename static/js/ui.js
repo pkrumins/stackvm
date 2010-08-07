@@ -38,12 +38,10 @@ function UI (account) {
     });
     
     processes.on('spawn', function (proc) {
-        console.log('spawn!');
         sidebar.addInstance(proc);
     });
     
     processes.on('exit', function (addr) {
-        console.log('exit: ' + addr);
         sidebar.removeInstance(addr);
     });
     

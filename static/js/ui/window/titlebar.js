@@ -11,12 +11,18 @@ function TitleBar (params) {
             $('<div>')
                 .addClass('menu-item')
                 .text('restart')
-                .click(function () { self.emit('restart') })
+                .click(function () {
+                    $('.menu-button').click();
+                    self.emit('restart');
+                })
             ,
             $('<div>')
                 .addClass('menu-item')
                 .text('kill')
-                .click(function () { self.emit('kill') })
+                .click(function () {
+                    $('.menu-button').click();
+                    self.emit('kill');
+                })
         )
     ;
     

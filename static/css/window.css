@@ -52,13 +52,15 @@ div.title-bar img.menu-button {
 
 div.window-menu {
     position: absolute;
+    display: block;
     top: 0px;
     left: 0px;
 }
 
 div.window-menu div.menu-item {
-    width: 10em;
+    display: block;
     height: 1em;
+    width: 10em;
     font-weight: bold;
     padding: 4px;
     background-color: white;

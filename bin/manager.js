@@ -33,8 +33,8 @@ function Manager(params) {
     
     self.kill = function (addr, f) {
         Object.keys(managers).forEach(function (engine) {
-            if (addr in managers[proc.engine].processes) {
-                managers[proc.engine].kill(proc, f);
+            if (addr in managers[engine].processes) {
+                managers[engine].kill(addr, f);
             }
         });
     };
