@@ -13,6 +13,13 @@ function ChatWindow (me, contact) {
             $('<div>')
                 .addClass('chat-title')
                 .text(contact.name)
+                .append($('<div>')
+                    .addClass('chat-x')
+                    .text('[x]')
+                    .click(function () {
+                        self.emit('close');
+                    })
+                )
             ,
             body,
             $('<form>')
@@ -35,6 +42,9 @@ function ChatWindow (me, contact) {
             $('<span>').addClass('chat-who').text(who),
             $('<span>').addClass('chat-msg').text(msg)
         ));
+        $('.chat-body').animate({
+            scrollTop : $('.chat-body').attr('scrollHeight')
+        }, 500);
     };
     
     self.say = function (msg) {

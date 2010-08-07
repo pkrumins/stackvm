@@ -58,8 +58,7 @@ function Workspace (params) {
         
         chat.on('close', function () {
             chat.element.remove();
-            contact.message('NO CARRIER');
-            delete chats[contact.name];
+            delete chats[chat.contact.name];
         });
     };
     
