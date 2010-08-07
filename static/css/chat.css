@@ -2,8 +2,30 @@
     position: absolute;
     left: 0px;
     top: 0px;
-    width: 200px;
-    height: 200px;
+    width: 250px;
+    height: 250px;
     background-color: white;
     color: black;
+    z-index: 100;
 }
+
+.chat-title {
+    background-color: rgb(60,60,60);
+    color: white;
+    font-weight: bold;
+    padding: 0.3em;
+}
+
+.chat-body {
+    width: 240px;
+    height: 180px;
+    padding: 0.5em;
+    overflow-y: scroll;
+}
+
+span.chat-who {
+    font-weight: bold;
+    margin-right: 1em;
+}
+
+span.chat-msg { }

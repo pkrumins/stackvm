@@ -35,5 +35,36 @@ function Workspace (params) {
         win.removeAllListeners();
         win.element.remove();
     };
+    
+    var chats = {};
+    
+    self.hasChat = function (name) { return name in chats };
+    
+    self.addChat = function (chat) {
+        self.element.append(chat.element);
+        
+        var rightMost = Math.min.apply({}, [$(window).width()].concat(
+            Object.keys(chats).map(function (name) {
+                return chats[name].element.offset().left;
+            })
+        ));
+        
+        chat.element.offset({
+            left : rightMost - chat.element.width() - 10,
+            top : $(window).height() - chat.element.height() - 10
+        });
+        
+        chats[chat.contact.name] = chat;
+        
+        chat.on('close', function () {
+            chat.element.remove();
+            contact.message('NO CARRIER');
+            delete chats[contact.name];
+        });
+    };
+    
+    self.routeChat = function (msg) {
+        chats[msg.from.name].addMessage(msg.from.name, msg.message);
+    };
 }
 
