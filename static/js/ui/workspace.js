@@ -48,11 +48,7 @@ function Workspace (params) {
                 return chats[name].element.offset().left;
             })
         ));
-        
-        chat.element.offset({
-            left : rightMost - chat.element.width() - 10,
-            top : $(window).height() - chat.element.height() - 10
-        });
+        chat.element.css('right', $(window).width() - rightMost + 10);
         
         chats[chat.contact.name] = chat;
         
