@@ -10,7 +10,6 @@ function ChatWindow (me, contact) {
         .droppable({
             //accept : '.title-text-drag',
             drop : function (ev, ui) {
-                console.log($(this).data('share'));
                 var fb = $(ui.draggable).data('share');
                 console.dir(fb);
             }

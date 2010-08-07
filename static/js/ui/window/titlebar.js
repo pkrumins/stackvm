@@ -70,10 +70,10 @@ function TitleBar (params) {
                         return $('<div>')
                             .text(name)
                             .addClass('title-text-drag')
-                            .data('share', share)
                         ;
                     }
                 })
+                .data('share', share)
             ,
             menu
         )
