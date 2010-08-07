@@ -1,0 +1,50 @@
+div#backdrop {
+    background-color: rgb(20,20,20);
+    position: absolute;
+    top: 0px;
+    bottom: 0px;
+    left: 0px;
+    right : 0px;
+    overflow: hidden;
+}
+ 
+form#login {
+    border-color: white;
+    border-style: solid;
+    border-width: 5px;
+    background-color: rgb(100,100,100);
+    padding: 15px;
+    width: 417px;
+    margin: auto;
+    margin-top: 5%;
+    text-align: center;
+}
+
+form#login img {
+    margin-bottom: 1em;
+}
+
+form#login input {
+    width: 10em;
+    padding: 0.5em;
+    border-color: black;
+    border-style: solid;
+    border-width: 2px;
+}
+
+form#login input[type='submit'] {
+    width: 11.2em;
+}
+
+div.sign-in-failed {
+    border-color: black;
+    border-style: solid;
+    border-width: 2px;
+    background-color: rgb(255,71,71);
+    color: white;
+    font-weight: bold;
+    width: 8.75em;
+    padding: 0.5em;
+    margin: auto;
+}
+
