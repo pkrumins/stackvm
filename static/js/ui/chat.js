@@ -23,6 +23,7 @@ function ChatWindow (me, contact) {
                 .submit(function (ev) {
                     ev.preventDefault();
                     var msg = $(this.elements.msg).val();
+                    self.addMessage(me, msg);
                     contact.message(msg);
                     $(this.elements.msg).val('');
                 })
