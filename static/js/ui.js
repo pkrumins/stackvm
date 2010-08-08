@@ -30,7 +30,7 @@ function UI (account) {
             proc : {
                 addr : vm.addr,
                 shared : true,
-                name : vm.nam
+                name : vm.name
             }
         });
         workspace.attachWindow(win);
