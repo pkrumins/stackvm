@@ -58,6 +58,10 @@ function Workspace (params) {
             chat.element.remove();
             delete chats[chat.contact.name];
         });
+        
+        chat.on('attach', function (vm) {
+            self.emit('attach', vm);
+        });
     };
     
     self.routeChat = function (msg) {
@@ -65,7 +69,7 @@ function Workspace (params) {
     };
     
     self.routeResource = function (vm) {
-        chats[msg.from.name].addResource(vm);
+        chats[vm.from.name].addResource(vm);
     };
 }
 

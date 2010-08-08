@@ -8,7 +8,9 @@ function Window (params) {
     
     self.titleBar = new TitleBar(proc);
     
-    self.titleBar.on('kill', function () { proc.kill() });
+    if (!proc.shared) {
+        self.titleBar.on('kill', function () { proc.kill() });
+    }
     
     Window[proc.addr] = self;
     

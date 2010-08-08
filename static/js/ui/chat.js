@@ -90,11 +90,14 @@ function ChatWindow (params) {
     self.addResource = function (vm) {
         body.append($('<p>')
             .addClass('chat-resource')
-            .append($('<a>')
-                .text(vm.name)
-                .click(function () {
-                    console.dir(vm);
-                })
+            .append(
+                vm.from.name + ' shares ',
+                $('<a>')
+                    .text(vm.name)
+                    .click(function () {
+                        console.dir(vm);
+                        self.emit('attach', vm);
+                    })
             )
         );
     };

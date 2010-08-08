@@ -24,6 +24,18 @@ function UI (account) {
         });
     });
     
+    workspace.on('attach', function (vm) {
+        var win = new Window({
+            remoteFB : vm.fb,
+            proc : {
+                addr : vm.addr,
+                shared : true,
+                name : vm.name
+            }
+        });
+        workspace.attachWindow(win);
+    });
+    
     sidebar.on('chat', function (contact) {
         if (workspace.hasChat(contact.name)) return;
         var chat = new ChatWindow({
@@ -34,9 +46,6 @@ function UI (account) {
     });
      
     contacts.on('share', function (vm) {
-        console.log('share!');
-        console.dir(vm);
-        
         if (!workspace.hasChat(vm.from.name)) {
             var chat = new ChatWindow({
                 me : account.user.name,

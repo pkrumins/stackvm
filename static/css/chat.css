@@ -68,4 +68,6 @@ span.chat-msg { }
 
 .chat-resource a {
     color: rgb(255,150,100);
+    cursor: pointer;
 }
+
