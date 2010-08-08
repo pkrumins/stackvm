@@ -62,6 +62,10 @@ function Workspace (params) {
             // ..
         });
         
+        win.on('exit', function () {
+            self.detachWindow(win);
+        });
+        
         self.element.append(win.element);
         
         windows.push(win);

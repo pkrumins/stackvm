@@ -9,6 +9,8 @@ function FB (remote) {
     var encoder = remote.encoder;
     var size = remote.size;
     
+    encoder.on('end', function () { self.emit('end') });
+    
     var mouseCoords = null;
     
     var focus = false;

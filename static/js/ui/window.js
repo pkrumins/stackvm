@@ -13,6 +13,8 @@ function Window (params) {
         self.titleBar.on('kill', function () { proc.kill() });
     }
     
+    fb.on('end', function () { self.emit('exit') });
+    
     self.element = $('<div>')
         .append(self.titleBar.element)
         .append(fb.element)
