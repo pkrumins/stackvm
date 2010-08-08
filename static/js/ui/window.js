@@ -3,6 +3,7 @@ function Window (params) {
     var self = this;
     var remoteFB = params.remoteFB;
     var proc = params.proc;
+    self.addr = proc.addr;
     
     var fb = new FB(remoteFB);
     
@@ -11,8 +12,6 @@ function Window (params) {
     if (!proc.shared) {
         self.titleBar.on('kill', function () { proc.kill() });
     }
-    
-    Window[proc.addr] = self;
     
     self.element = $('<div>')
         .append(self.titleBar.element)

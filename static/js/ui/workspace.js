@@ -3,9 +3,39 @@ function Workspace (params) {
     if (!(this instanceof Workspace)) return new Workspace(params);
     var self = this;
     
+    var dragging = false;
+    var lastPos = null;
+    
     self.element = $('<div>')
         .attr('id','workspace')
+        .mousedown(function (ev) {
+            dragging = true;
+            ev.preventDefault();
+        })
+        .mouseup(function (ev) {
+            dragging = false;
+            ev.preventDefault();
+        })
+        .mousemove(function (ev) {
+            if (dragging && lastPos) {
+                var delta = {
+                    x : ev.pageX - lastPos.x,
+                    y : ev.pageY - lastPos.y
+                };
+                windows.forEach(function (win) {
+                    var pos = win.element.offset();
+                    pos.left += delta.x;
+                    pos.top += delta.y;
+                    win.element.offset(pos);
+                });
+                console.log(delta.x + ',' + delta.y);
+                ev.preventDefault();
+            }
+            lastPos = { x : ev.pageX, y : ev.pageY };
+        })
     ;
+    
+    var windows = [];
     
     self.attachWindow = function (win) {
         win.titleBar.on('minimize', function () {
@@ -29,11 +59,15 @@ function Workspace (params) {
         });
         
         self.element.append(win.element);
+        
+        windows.push(win);
     };
     
     self.detachWindow = function (win) {
         win.removeAllListeners();
         win.element.remove();
+        var i = windows.indexOf(win);
+        if (i >= 0) windows.splice(i,1);
     };
     
     var chats = {};

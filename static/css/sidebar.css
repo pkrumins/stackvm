@@ -11,6 +11,8 @@ div.sidebar {
     color: white;
     overflow-x: hidden;
     overflow-y: auto;
+    cursor: auto;
+    z-index: 200;
 }
 
 div.sidebar-menu {
@@ -19,7 +21,7 @@ div.sidebar-menu {
     width: 200px;
     top: 55px;
     bottom: 100px;
-    left: 0px;
+    left: 10px;
     color: white;
     overflow-x: hidden;
     overflow-y: auto;
