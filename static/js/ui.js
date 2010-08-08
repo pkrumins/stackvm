@@ -24,7 +24,6 @@ function UI (account) {
         });
     });
     
-    var chats = {};
     sidebar.on('chat', function (contact) {
         if (workspace.hasChat(contact.name)) return;
         var chat = new ChatWindow({
@@ -37,6 +36,15 @@ function UI (account) {
     contacts.on('share', function (vm) {
         console.log('share!');
         console.dir(vm);
+        
+        if (!workspace.hasChat(vm.from.name)) {
+            var chat = new ChatWindow({
+                me : account.user.name,
+                contact : msg.from
+            });
+            workspace.addChat(chat);
+        }
+        workspace.routeResource(vm);
     });
     
     contacts.on('message', function (msg) {

@@ -16,9 +16,24 @@ function ChatWindow (params) {
                     .addClass('chat-share')
                     .append(
                         $('<span>').text(proc.name),
+                        $('<span>').text('Share: '),
                         $('<a>')
-                            .text('[share]')
+                            .text('[r]')
                             .click(function () {
+                                $(this).parent()
+                                    .empty()
+                                    .text('Sharing ' + proc.name + ' (r)')
+                                ;
+                                self.contact.share(proc.addr, 'r');
+                            })
+                        ,
+                        $('<a>')
+                            .text('[rw]')
+                            .click(function () {
+                                $(this).parent()
+                                    .empty()
+                                    .text('Sharing ' + proc.name + ' (rw)')
+                                ;
                                 self.contact.share(proc.addr, 'rw');
                             })
                     )
@@ -70,6 +85,18 @@ function ChatWindow (params) {
     self.say = function (msg) {
         self.addMessage(me, msg);
         self.contact.message(msg);
+    };
+    
+    self.addResource = function (vm) {
+        body.append($('<p>')
+            .addClass('chat-resource')
+            .append($('<a>')
+                .text(vm.name)
+                .click(function () {
+                    console.dir(vm);
+                })
+            )
+        );
     };
 }
 

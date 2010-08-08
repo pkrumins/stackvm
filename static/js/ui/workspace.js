@@ -63,5 +63,9 @@ function Workspace (params) {
     self.routeChat = function (msg) {
         chats[msg.from.name].addMessage(msg.from.name, msg.message);
     };
+    
+    self.routeResource = function (vm) {
+        chats[msg.from.name].addResource(vm);
+    };
 }
 

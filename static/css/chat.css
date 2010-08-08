@@ -57,11 +57,15 @@ span.chat-msg { }
 .chat-share { }
 
 .chat-share span {
-    margin-right: 1em;
+    margin-left: 1em;
 }
 
 .chat-share a {
+    margin-left: 1em;
     color: rgb(255,150,100);
     cursor : pointer;
 }
 
+.chat-resource a {
+    color: rgb(255,150,100);
+}
