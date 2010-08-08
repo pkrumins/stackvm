@@ -9,13 +9,18 @@ function Workspace (params) {
     self.element = $('<div>')
         .attr('id','workspace')
         .mousedown(function (ev) {
-            dragging = true;
-            ev.preventDefault();
+            if ($(ev.target).attr('id') == 'workspace') {
+                dragging = true;
+                ev.preventDefault();
+            }
         })
         .mouseup(function (ev) {
-            dragging = false;
-            ev.preventDefault();
+            if ($(ev.target).attr('id') == 'workspace') {
+                dragging = false;
+                ev.preventDefault();
+            }
         })
+        .mouseleave(function (ev) { dragging = false })
         .mousemove(function (ev) {
             if (dragging && lastPos) {
                 var delta = {
@@ -28,7 +33,6 @@ function Workspace (params) {
                     pos.top += delta.y;
                     win.element.offset(pos);
                 });
-                console.log(delta.x + ',' + delta.y);
                 ev.preventDefault();
             }
             lastPos = { x : ev.pageX, y : ev.pageY };
