@@ -6,10 +6,7 @@ function Window (params) {
     
     var fb = new FB(remoteFB);
     
-    self.titleBar = new TitleBar({
-        name : proc.disk,
-        share : remoteFB
-    });
+    self.titleBar = new TitleBar(proc);
     
     self.titleBar.on('kill', function () { proc.kill() });
     

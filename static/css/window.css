@@ -52,6 +52,7 @@ div.title-bar img.window-button {
     margin-top: 5px;
     width: 20px;
     height: 20px;
+    cursor: pointer;
 }
 
 div.title-bar img.menu-button {

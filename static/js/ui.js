@@ -27,13 +27,24 @@ function UI (account) {
     var chats = {};
     sidebar.on('chat', function (contact) {
         if (workspace.hasChat(contact.name)) return;
-        var chat = new ChatWindow(account.user.name, contact);
+        var chat = new ChatWindow({
+            me : account.user.name,
+            contact : contact
+        });
         workspace.addChat(chat);
+    });
+     
+    contacts.on('share', function (vm) {
+        console.log('share!');
+        console.dir(vm);
     });
     
     contacts.on('message', function (msg) {
         if (!workspace.hasChat(msg.from.name)) {
-            var chat = new ChatWindow(account.user.name, msg.from);
+            var chat = new ChatWindow({
+                me : account.user.name,
+                contact : msg.from
+            });
             workspace.addChat(chat);
         }
         workspace.routeChat(msg);

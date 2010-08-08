@@ -1,9 +1,7 @@
 TitleBar.prototype = new EventEmitter;
-function TitleBar (params) {
+function TitleBar (proc) {
     
     var self = this;
-    var name = params.name;
-    var share = params.share;
     
     var menu = $('<div>')
         .addClass('window-menu')
@@ -62,20 +60,21 @@ function TitleBar (params) {
             ,
             $('<div>')
                 .addClass('title-text')
-                .text(name)
+                .text(proc.name)
                 .draggable({
                     appendTo : 'body',
                     scroll : false,
                     helper : function () {
                         return $('<div>')
-                            .text(name)
+                            .text(proc.name)
                             .addClass('title-text-drag')
                         ;
                     }
                 })
-                .data('share', share)
+                .data('proc', proc)
             ,
             menu
         )
     ;
 }
+

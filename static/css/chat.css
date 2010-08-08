@@ -53,3 +53,15 @@ span.chat-who {
 }
 
 span.chat-msg { }
+
+.chat-share { }
+
+.chat-share span {
+    margin-right: 1em;
+}
+
+.chat-share a {
+    color: rgb(255,150,100);
+    cursor : pointer;
+}
+

@@ -1,17 +1,28 @@
 ChatWindow.prototype = new EventEmitter;
-function ChatWindow (me, contact) {
+function ChatWindow (params) {
     if (!(this instanceof ChatWindow)) return new ChatWindow();
     var self = this;
     
-    self.contact = contact;
+    var me = params.me;
+    self.contact = params.contact;
     
     var body = $('<div>')
         .addClass('chat-body')
         .droppable({
             //accept : '.title-text-drag',
             drop : function (ev, ui) {
-                var fb = $(ui.draggable).data('share');
-                console.dir(fb);
+                var proc = $(ui.draggable).data('proc');
+                body.append($('<div>')
+                    .addClass('chat-share')
+                    .append(
+                        $('<span>').text(proc.name),
+                        $('<a>')
+                            .text('[share]')
+                            .click(function () {
+                                self.contact.share(proc.addr, 'rw');
+                            })
+                    )
+                );
             }
         })
     ;
@@ -21,7 +32,7 @@ function ChatWindow (me, contact) {
         .append(
             $('<div>')
                 .addClass('chat-title')
-                .text(contact.name)
+                .text(self.contact.name)
                 .append($('<div>')
                     .addClass('chat-x')
                     .text('[x]')
@@ -40,7 +51,7 @@ function ChatWindow (me, contact) {
                     ev.preventDefault();
                     var msg = $(this.elements.msg).val();
                     self.addMessage(me, msg);
-                    contact.message(msg);
+                    self.contact.message(msg);
                     $(this.elements.msg).val('');
                 })
         )
@@ -58,7 +69,7 @@ function ChatWindow (me, contact) {
     
     self.say = function (msg) {
         self.addMessage(me, msg);
-        contact.message(msg);
+        self.contact.message(msg);
     };
 }
 
