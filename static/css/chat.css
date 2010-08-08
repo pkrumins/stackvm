@@ -1,5 +1,5 @@
 .chat-window {
-    position: absolute;
+    position: fixed;
     right: 10px;
     bottom: 10px;
     width: 300px;
@@ -22,7 +22,7 @@
 }
 
 .chat-x {
-    position: absolute;
+    position: fixed;
     top: 0px;
     right: 0px;
     color: rgb(255,150,100);

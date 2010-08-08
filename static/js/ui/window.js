@@ -20,10 +20,15 @@ function Window (params) {
         .addClass('vm-window')
         .width(remoteFB.size.width)
         .height(remoteFB.size.height)
-        .offset({ left : 100, top : 100 })
+        .css('margin-bottom', -remoteFB.size.height - 6)
+        .offset({
+            left : 220 + ($(window).width() - 220 - remoteFB.size.width) / 2,
+            top : Math.max(40, ($(window).height() - remoteFB.size.height) / 2)
+        })
         .click(function (ev) { fb.focus() })
         .draggable({
             handle : self.titleBar.element,
+            appendTo : 'body',
             stack : '.vm-window'
         });
     ;
@@ -32,6 +37,7 @@ function Window (params) {
         self.element
             .width(dims.width)
             .height(dims.height)
+            .css('margin-bottom', -dims.height - 6)
         ;
         self.titleBar.element.width(dims.width - 1);
     });

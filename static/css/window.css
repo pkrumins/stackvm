@@ -1,24 +1,13 @@
 div.vm-window {
+    position: fixed;
+    left: 220;
+    top: 20;
     background-color: rgb(100,100,100);
     padding: 1px;
     border-width: 2px;
     border-style: solid;
     border-color: rgb(150,150,150);
     z-index: 100;
-}
-
-div.vm-window-focused { }
-
-div.vm-window-focused div.title-bar {
-    margin-bottom: 2px;
-}
-
-div.vm-window-fullscreen {
-    z-index: 101;
-}
-
-div.vm-window-fullscreen div.title-bar {
-    display: none;
 }
 
 div.title-bar {

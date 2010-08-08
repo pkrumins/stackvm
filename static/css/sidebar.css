@@ -3,7 +3,7 @@ img#logo {
 }
 
 div.sidebar {
-    position: absolute;
+    position: fixed;
     width: 200px;
     top: 5px;
     bottom: 100px;
@@ -15,10 +15,10 @@ div.sidebar {
 
 div.sidebar-menu {
     background-color: rgb(100,100,100);
-    position: absolute;
+    position: fixed;
     width: 200px;
     top: 55px;
-    bottom: 0px;
+    bottom: 100px;
     left: 0px;
     color: white;
     overflow-x: hidden;
