@@ -63,7 +63,9 @@ function Manager(params) {
                 processes : Object.keys(managers).reduce(function (acc,engine) {
                     var ps = managers[engine].processes;
                     Object.keys(ps).forEach(function (addr) {
-                        acc[addr] = ps[addr];
+                        if (ps[addr].user.name == name) {
+                            acc[addr] = ps[addr];
+                        }
                     });
                     return acc;
                 }, {}),
