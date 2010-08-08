@@ -95,7 +95,6 @@ function ChatWindow (params) {
                 $('<a>')
                     .text(vm.name)
                     .click(function () {
-                        console.dir(vm);
                         self.emit('attach', vm);
                     })
             )
