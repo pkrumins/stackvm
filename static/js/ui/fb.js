@@ -84,10 +84,8 @@ function FB (remote) {
         return { x : x, y : y };
     }
     
-    var display = new CanvasDisplay;
+    var display = new Display;
     display.resize(size);
-    if (!display.can)
-        display = new StackedDisplay;
     self.element.append(display.element);
     
     encoder.on('desktopSize', function (dims) {

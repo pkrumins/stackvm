@@ -84,3 +84,14 @@ function StackedDisplay () {
     self.can = true;
 }
 
+function Display () {
+    var display = new CanvasDisplay;
+    if (!display.can)
+        display = new StackedDisplay;
+
+    this.element = display.element;
+    this.rawRect = display.rawRect;
+    this.resize = display.resize;
+    this.copyRect = display.copyRect;
+};
+
