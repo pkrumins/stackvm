@@ -49,7 +49,7 @@ function UI (account) {
         if (!workspace.hasChat(vm.from.name)) {
             var chat = new ChatWindow({
                 me : account.user.name,
-                contact : msg.from
+                contact : vm.from
             });
             workspace.addChat(chat);
         }
