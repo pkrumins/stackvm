@@ -35,7 +35,7 @@ EventEmitter.prototype.removeListener = function (name, listener) {
     };
     
 EventEmitter.prototype.removeAllListeners = function (name) {
-    this._events[name] = [];
+    if (this._events && this._events[name]) this._events[name] = [];
     return this;
 };
 
