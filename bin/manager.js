@@ -25,7 +25,7 @@ function Manager(params) {
     
     self.spawn = function (params, cb) {
         var engine = params.engine; // qemu, vmware, vbox
-        managers[engine].spawn(params.user, params.disk, function (proc) {
+        managers[engine].spawn(params, function (proc) {
             DNode.expose(proc, 'on');
             cb(proc);
         });
