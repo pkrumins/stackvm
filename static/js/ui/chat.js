@@ -97,6 +97,8 @@ function ChatWindow (params) {
                     .click(function () {
                         self.emit('attach', vm);
                     })
+                ,
+                ' [' + vm.mode +  ']'
             )
         );
     };
