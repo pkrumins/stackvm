@@ -3,6 +3,7 @@ function Window (params) {
     var self = this;
     var remoteFB = params.remoteFB;
     var proc = params.proc;
+    self.proc = proc;
     self.addr = proc.addr;
     
     var fb = new FB(remoteFB);

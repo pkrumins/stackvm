@@ -96,6 +96,12 @@ function UI (account) {
     processes.list(function (list) {
         list.forEach(sidebar.addDisk);
     });
+
+    // screencasts and screenshots
+    processes.on('screenshot', function (url) {
+        console.log('got screenshot!');
+        sidebar.addScreenshot({ url : url });
+    })
     
     // --
     

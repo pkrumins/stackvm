@@ -61,6 +61,18 @@ function Workspace (params) {
         win.titleBar.on('restart', function () {
             // ..
         });
+
+        win.titleBar.on('screenshot', function () {
+            win.proc.screenshot();
+        });
+
+        win.titleBar.on('screencastStart', function () {
+            //self.emit('screencastStart');
+        });
+
+        win.titleBar.on('screencastStop', function () {
+            //self.emit('screencastStop');
+        });
         
         win.on('exit', function () {
             self.detachWindow(win);

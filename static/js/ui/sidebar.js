@@ -5,6 +5,8 @@ function SideBar (params) {
     
     var disks = $('<div>');
     var contacts = $('<div>');
+    var screenshots = $('<div>');
+    var screencasts = $('<div>');
     
     var menu = new MenuStack;
     menu.push('main menu', $('<div>').append(
@@ -18,6 +20,18 @@ function SideBar (params) {
             $('<a>').text('disk images')
                 .click(function () {
                     menu.push('disk images', disks);
+                })
+        ),
+        $('<p>').append(
+            $('<a>').text('screenshots')
+                .click(function () {
+                    menu.push('screenshots', screenshots)
+                })
+        ),
+        $('<p>').append(
+            $('<a>').text('screencasts')
+                .click(function () {
+                    menu.push('screencasts', screencasts)
                 })
         )
     ));
@@ -113,5 +127,21 @@ function SideBar (params) {
             }
         });
     };
+
+    function newScreenShotCast(el, sc) {
+        el.append(
+            $('<p>').append(
+                $('<a>').attr('href', sc.url).text(sc.url.split('/').slice(-1)[0])
+            )
+        );
+    }
+
+    self.addScreenshot = function (sc) {
+        newScreenShotCast(screenshots, sc);
+    }
+
+    self.addScreencast = function (sc) {
+        newScreenShotCast(screencasts, sc);
+    }
 }
 

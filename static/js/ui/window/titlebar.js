@@ -22,6 +22,28 @@ function TitleBar (proc) {
                     $('.menu-button').click();
                     self.emit('kill');
                 })
+            ,
+            $('<div>')
+                .addClass('menu-item')
+                .text('screenshot')
+                .click(function () {
+                    $('.menu-button').click();
+                    self.emit('screenshot');
+                })
+            ,
+            $('<div>')
+                .addClass('menu-item')
+                .text('start screencast')
+                .click(function () { 
+                    if (/start/.test($(this).text())) {
+                        $(this).text('stop screencast');
+                        self.emit('startScreencast');
+                    }
+                    else {
+                        $(this).text('start screencast');
+                        self.emit('stopScreencast');
+                    }
+                })
         )
     ;
     
