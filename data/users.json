@@ -11,6 +11,10 @@
             },
             "ReactOS-LiveCD.iso" : {
                 "name" : "ReactOS"
+            },
+            "WinXP" : {
+                "name" : "Windows XP",
+                "host" : "192.168.1.3:5900"
             }
         }
     },
@@ -24,6 +28,10 @@
         "disks" : {
             "linux-0.2.img" : {
                 "name" : "simple linux"
+            },
+            "WinXP" : {
+                "name" : "Windows XP",
+                "host" : "192.168.1.3:5900"
             }
         },
         "contacts" : ["moo", "substack", "ik"]
