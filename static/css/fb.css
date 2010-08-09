@@ -1,5 +1,5 @@
 .fb { /* framebuffer container */
     background-color: black;
-    cursor: url(/img/empty-cursor.cur), auto;
+    cursor: url(/img/empty-cursor.png), auto;
 }
 
