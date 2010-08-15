@@ -98,7 +98,7 @@ function FB (remote) {
         display.resize(dims);
     });
     
-    encoder.requestRedrawScreen();
+    encoder.requestRedraw();
     
     encoder.on('screenUpdate', function (update) {
         display.rawRect(update);
