@@ -1,9 +1,44 @@
-First you'll need these modules on npm (http://npmjs.org):
-    npm install dnode png jpeg video base64
+First you'll need node.js. Download, unpack and install it from http://nodejs.org/
 
-SQLite isn't in npm yet, annoyingly. Anyways, you can get it here:
-    http://github.com/grumdrig/node-sqlite.git
+Next, you'll need npm:
 
-Also add jquery.js, jquery.ui.js, and jquery.mousewheel.js to static/js/vendor/
+    git clone http://github.com/isaacs/npm.git
+    cd npm
+    bash ./scripts/install.sh
+
+Next, you'll need these node.js modules. They can be installed via npm:
+
+    npm install dnode bufferlist rfb png jpeg gif video base64
+
+To get them compiles make sure you have libjpeg, libpng, giflib, libtheora and libogg.
+
+Then get the stackvm itself:
+
+    git clone http://github.com/substack/stackvm.git
+
+Next get jquery, jquery-ui and jquery-mouswheel plugin [1].
+
+Put them in static/js/vendor directory and make sure jquery is named just jquery.js,
+and jquery-ui is named jquery-ui.js.
+
+Then make sure you have qemu and an image you want to run. 
+
+Edit data/users.json to add yourself, and then `mkdir -p users/yournick/disks`. Put the
+vm image in that directory.
+
+Then start manager.js:
+
+    node bin/manager.js
+
+And then webstack.js:
+
+    node bin/webstack.js
+
+Now go to http://localhost:9000.
+
+[1]: http://github.com/brandonaaron/jquery-mousewheel
+
+---
 
 TODO: proper package.json, auto-fetch jquery stuff
+
