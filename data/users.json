@@ -4,7 +4,11 @@
         "contacts" : ["moo", "pkrumins", "ik"],
         "disks" : {
             "linux-0.2.img" : {
-                "name" : "simple linux"
+                "name" : "simple linux @ qemu"
+            },
+            "linux-0.2.img-vmware" : {
+                "name" : "simple linux @ vmware",
+                "host" : "192.168.1.3:5902"
             },
             "liveandroidv0.3.iso" : {
                 "name" : "android"
@@ -28,6 +32,10 @@
         "disks" : {
             "linux-0.2.img" : {
                 "name" : "simple linux"
+            },
+            "linux-0.2.img-vmware" : {
+                "name" : "simple linux @ vmware",
+                "host" : "192.168.1.3:5902"
             },
             "WinXP" : {
                 "name" : "Windows XP",
