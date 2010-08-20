@@ -6,19 +6,33 @@ var User = require('../lib/models/user');
 exports['user contacts'] = function (assert) {
     var port = Math.floor(Math.random() * 40000 + 10000);
     
-    DNode(function (client, conn) {
-        return Remote.attach(conn, User.fromList([
+    var server = DNode(function (client, conn) {
+        var users = Remote.attach(conn, User.fromList([
             { name : 'biff', contacts : ['eho'] },
             { name : 'eho', contacts : ['biff'] },
         ]));
+        
+        setTimeout(function () {
+           users.biff.emit('_online');
+        }, 200);
+        
+        setTimeout(function () {
+           users.eho.emit('_online');
+        }, 250);
+        
+        setTimeout(function () {
+           users.biff.emit('_offline');
+        }, 200);
+        
+        return users;
     }).listen(port);
     
     var events = [];
     
     DNode.connect(port, function (remote) {
         remote.biff.subscribe(function (em) {
-            em.on('online', function () {
-                events.push('biff online');
+            em.on('online', function (name) {
+                events.push('biff sees ' + name + ' sign in');
             });
             
             em.on('offline', function () {
@@ -27,8 +41,8 @@ exports['user contacts'] = function (assert) {
         });
         
         remote.eho.subscribe(function (em) {
-            em.on('online', function () {
-                events.push('eho online');
+            em.on('online', function (name) {
+                events.push('eho sees ' + name + ' sign in');
             });
             
             em.on('offline', function () {
@@ -38,7 +52,11 @@ exports['user contacts'] = function (assert) {
     });
     
     setTimeout(function () {
-        console.log(events.join('|'));
+        assert.equal(
+            events.join(', '),
+            'eho sees biff sign in, eho offline, biff sees eho sign in'
+        );
+        server.end();
     }, 500);
 };
 
