@@ -27,35 +27,55 @@ exports['user contacts'] = function (assert) {
         return users;
     }).listen(port);
     
-    var events = [];
+    var events = 0;
     
     DNode.connect(port, function (remote) {
         remote.biff.subscribe(function (em) {
             em.on('online', function (name) {
-                events.push('biff sees ' + name + ' sign in');
+                assert.equal(name, 'eho');
+                remote.biff.contacts(function (contacts) {
+                    contacts.eho.message('sup');
+                });
+                events ++;
             });
             
             em.on('offline', function () {
-                events.push('biff offline');
+                throw 'biff sees somebody sign off';
+            });
+            
+            remote.biff.contacts(function (contacts) {
+                em.on('message', function f (msg) {
+                    assert.equal(msg.from.name, 'eho');
+                    assert.equal(msg.text, 'nada');
+                    events ++;
+                });
             });
         });
         
         remote.eho.subscribe(function (em) {
             em.on('online', function (name) {
-                events.push('eho sees ' + name + ' sign in');
+                assert.equal(name, 'biff');
+                events ++;
             });
             
-            em.on('offline', function () {
-                events.push('eho offline');
+            em.on('offline', function (name) {
+                assert.equal(name, 'biff');
+                events ++;
+            });
+            
+            remote.eho.contacts(function (contacts) {
+                em.on('message', function (msg) {
+                    assert.equal(msg.from.name, 'biff');
+                    assert.equal(msg.text, 'sup');
+                    contacts.biff.message('nada');
+                    events ++;
+                });
             });
         });
     });
     
     setTimeout(function () {
-        assert.equal(
-            events.join(', '),
-            'eho sees biff sign in, eho offline, biff sees eho sign in'
-        );
+        assert.equal(events, 5);
         server.end();
     }, 500);
 };
