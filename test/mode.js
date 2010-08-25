@@ -16,9 +16,21 @@ exports['mode permissions'] = function (assert) {
         },
     });
     
-    var m1 = new Mode(users.biff, {
-        users : { biff : '+w' },
-        groups : { everyone : '+r' },
-    });
+    var modes = {
+        biff : new Mode(users.biff, {
+            users : { eho : '+w' },
+            groups : { everyone : '+r' },
+        }),
+    };
+    
+    var biffForEho = modes.biff.forUser(users.eho);
+    assert.equal(biffForEho.r, true);
+    assert.equal(biffForEho.w, true);
+    assert.equal(biffForEho.x, false);
+    
+    var biffForBiff = modes.biff.forUser(users.biff);
+    assert.equal(biffForBiff.r, true);
+    assert.equal(biffForBiff.w, true);
+    assert.equal(biffForBiff.x, true);
 };
 
