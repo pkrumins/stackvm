@@ -7,10 +7,10 @@ exports['user contacts'] = function (assert) {
     var port = Math.floor(Math.random() * 40000 + 10000);
     
     var server = DNode(function (client, conn) {
-        var users = Remote.attach(conn, User.fromList([
-            { name : 'biff', contacts : ['eho'] },
-            { name : 'eho', contacts : ['biff'] },
-        ]));
+        var users = Remote.attach(conn, User.fromBatch({
+            biff : { contacts : ['eho'], disks : [] },
+            eho : { contacts : ['biff'], disks : [] },
+        }));
         
         setTimeout(function () {
            users.biff.emit('_online');

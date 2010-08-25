@@ -1,6 +1,5 @@
-[
-    {
-        "name" : "substack",
+{
+    "substack" : {
         "hash" : "dce1198b941cdda02f092c9702ee8d0a3efeb89aec50f95bfd31b778a2109cfcb0979fbbec6df4d27ff0da9bc9efb4806ab563bfd4e960ba5a5f2b2fe683e273",
         "contacts" : ["moo", "pkrumins", "ik"],
         "disks" : {
@@ -19,14 +18,12 @@
             }
         }
     },
-    {
-        "name" : "moo",
+    "moo" : {
         "hash" : "0224ebe0490f6917c2ab4a632367e42dd049bf89770f9be2ff69b77e8f8be9e67ee332dc22ce6d86e0f4218edb93dfe3d2775baa9c6378f88e7398c1d84d4309",
         "contacts" : ["substack"],
         "disks" : {}
     },
-    {
-        "name" : "pkrumins",
+    "pkrumins" : {
         "hash" : "119a7a63f6bda3c96eeff52cf0376b2a0199753aa2da144bf313aeeded199f708d8a108948aa06c3ff94e468e842de1e0c0f3498b994be1bb1711e2efb65a647",
         "disks" : {
             "linux-0.2.img" : {
@@ -39,8 +36,7 @@
         },
         "contacts" : ["moo", "substack", "ik"]
     },
-    {
-        "name" : "ik",
+    "ik" : {
         "hash" : "0224ebe0490f6917c2ab4a632367e42dd049bf89770f9be2ff69b77e8f8be9e67ee332dc22ce6d86e0f4218edb93dfe3d2775baa9c6378f88e7398c1d84d4309",
         "disks" : {
             "linux-0.2.img" : {
@@ -49,4 +45,4 @@
         },
         "contacts" : ["pkrumins", "substack"]
     }
-]
+}
