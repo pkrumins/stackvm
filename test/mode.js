@@ -38,7 +38,7 @@ exports['mode permissions'] = function (assert) {
             users : { biff : '+r-x' },
             groups : {
                 friends : '+w',
-                enemies : '-rwx',
+                enemies : '-rwx', // for now -x yields to +x in everyone
                 everyone : '-r+x'
             },
         }),
@@ -62,6 +62,19 @@ exports['mode permissions'] = function (assert) {
     var ehoForFeld = modes.eho.forUser(users.feld);
     assert.equal(ehoForFeld.r, false);
     assert.equal(ehoForFeld.w, false);
-    assert.equal(ehoForFeld.x, false);
+    assert.equal(ehoForFeld.x, true);
+    
+    var times = 0;
+    modes.eho.on('update', function () {
+        var ehoForFeld2 = modes.eho.forUser(users.feld);
+        assert.equal(ehoForFeld2.r, true);
+        assert.equal(ehoForFeld2.w, false);
+        assert.equal(ehoForFeld2.x, true);
+        times ++;
+    });
+    
+    modes.eho.update({ users : { 'feld' : '+rx' } });
+    
+    assert.equal(times, 1);
 };
 
