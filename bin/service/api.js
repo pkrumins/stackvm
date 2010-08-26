@@ -50,7 +50,7 @@ DNode(function (client, conn) {
                 cb(Remote.attach(conn, users.anonymous));
             }
             else {
-                users[params.name].authenticate(pass, function (user) {
+                users[params.name].authenticate(params.pass, function (user) {
                     cb(Remote.attach(conn, user));
                 });
             }
