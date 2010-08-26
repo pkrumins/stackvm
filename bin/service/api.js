@@ -28,23 +28,22 @@ var users = User.fromBatch(JSON.parse(
     fs.readFileSync(__dirname + '/../../data/users.json', 'ascii')
 ));
 
-//DNode.connect(9077, function (manager) {
-    DNode(function (client, conn) {
-        this.authenticate = function (name, pass, cb) {
-            if (name == 'anonymous') {
-                // no password for anonymous
-                cb(Remote.attach(conn, users.anonymous));
-            }
-            else {
-                users[name].authenticate(pass, function (user) {
-                    cb(Remote.attach(conn, user));
-                });
-            }
-        };
-    }).listen({
-        protocol : 'socket.io',
-        server : webserver,
-        transports : 'websocket xhr-multipart xhr-polling htmlfile'
-            .split(/\s+/),
-    }).listen(9002);
-//});
+DNode(function (client, conn) {
+    this.authenticate = function (name, pass, cb) {
+        if (name == 'anonymous') {
+            // no password for anonymous
+            cb(Remote.attach(conn, users.anonymous));
+        }
+        else {
+            users[name].authenticate(pass, function (user) {
+                cb(Remote.attach(conn, user));
+            });
+        }
+    };
+}).listen({
+    protocol : 'socket.io',
+    server : webserver,
+    transports : 'websocket xhr-multipart xhr-polling htmlfile'
+        .split(/\s+/),
+}).listen(9002);
+
