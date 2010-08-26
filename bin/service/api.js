@@ -30,7 +30,7 @@ var users = User.fromBatch(JSON.parse(
 
 cookieSessions = {
     'xyzzypkrumins' : { user: 'pkrumins' },
-    'xyzzysubstack' : { user: 'substack' }
+    'xyzzysubstack' : { user: 'substack' },
 };
 
 //DNode.connect(9077, function (manager) {
@@ -41,15 +41,20 @@ cookieSessions = {
                 if (cookieData) {
                     cb(Remote.attach(conn, users[cookieData.user]));
                 }
-            }
-            if (name == 'anonymous') {
-                // no password for anonymous
-                cb(Remote.attach(conn, users.anonymous));
+                else {
+                    cb(null);
+                }
             }
             else {
-                users[name].authenticate(pass, function (user) {
-                    cb(Remote.attach(conn, user));
-                });
+                if (params.name == 'anonymous') {
+                    // no password for anonymous
+                    cb(Remote.attach(conn, users.anonymous));
+                }
+                else {
+                    users[params.name].authenticate(pass, function (user) {
+                        cb(Remote.attach(conn, user));
+                    });
+                }
             }
         };
     }).listen({
