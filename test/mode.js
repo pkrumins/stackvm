@@ -12,7 +12,10 @@ exports['mode permissions'] = function (assert) {
         eho : {
             contacts : ['biff'],
             disks : [],
-            groups : {},
+            groups : {
+                friends : ['biff'],
+                enemies : ['feld'],
+            },
         },
         feld : {
             contacts : [],
@@ -21,6 +24,11 @@ exports['mode permissions'] = function (assert) {
         },
     });
     
+    assert.equal(
+        sys.inspect(users.eho.groupsFor(users.biff)),
+        sys.inspect(['friends'])
+    );
+    
     var modes = {
         biff : new Mode(users.biff, {
             users : { eho : '+w' },
@@ -28,7 +36,11 @@ exports['mode permissions'] = function (assert) {
         }),
         eho : new Mode(users.eho, {
             users : { biff : '+r-x' },
-            groups : { everyone : '-r+x' },
+            groups : {
+                friends : '+w',
+                enemies : '-rwx',
+                everyone : '-r+x'
+            },
         }),
     };
     
@@ -44,12 +56,12 @@ exports['mode permissions'] = function (assert) {
     
     var ehoForBiff = modes.eho.forUser(users.biff);
     assert.equal(ehoForBiff.r, true);
-    assert.equal(ehoForBiff.w, false);
+    assert.equal(ehoForBiff.w, true);
     assert.equal(ehoForBiff.x, false);
     
     var ehoForFeld = modes.eho.forUser(users.feld);
     assert.equal(ehoForFeld.r, false);
     assert.equal(ehoForFeld.w, false);
-    assert.equal(ehoForFeld.x, true);
+    assert.equal(ehoForFeld.x, false);
 };
 
