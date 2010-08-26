@@ -7,7 +7,7 @@ exports['user contacts'] = function (assert) {
     var port = Math.floor(Math.random() * 40000 + 10000);
     
     var server = DNode(function (client, conn) {
-        var users = Remote.attach(conn, User.fromBatch({
+        var users = Remote.attach(conn, User.load({
             biff : { contacts : ['eho'], disks : [] },
             eho : { contacts : ['biff'], disks : [] },
         }));

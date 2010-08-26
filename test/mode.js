@@ -3,7 +3,7 @@ var Mode = require('../lib/models/mode');
 var User = require('../lib/models/user');
 
 exports['mode permissions'] = function (assert) {
-    var users = User.fromBatch({
+    var users = User.load({
         biff : {
             contacts : ['eho'],
             disks : [],
