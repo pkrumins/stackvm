@@ -28,9 +28,20 @@ var users = User.fromBatch(JSON.parse(
     fs.readFileSync(__dirname + '/../../data/users.json', 'ascii')
 ));
 
+cookieSessions = {
+    'xyzzypkrumins' : { user: 'pkrumins' },
+    'xyzzysubstack' : { user: 'substack' }
+};
+
 //DNode.connect(9077, function (manager) {
     DNode(function (client, conn) {
-        this.authenticate = function (name, pass, cb) {
+        this.authenticate = function (params, cb) {
+            if ('cookie' in params) {
+                var cookieData = cookieSessions[params.cookie];
+                if (cookieData) {
+                    cb(Remote.attach(conn, users[cookieData.user]));
+                }
+            }
             if (name == 'anonymous') {
                 // no password for anonymous
                 cb(Remote.attach(conn, users.anonymous));
