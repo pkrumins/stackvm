@@ -24,20 +24,36 @@ var webserver = connect.createServer(
 ).listen(port, '0.0.0.0');
 console.log('Connect server listening on port ' + port);
 
-var users = User.fromBatch(JSON.parse(
+var users = User.load(JSON.parse(
     fs.readFileSync(__dirname + '/../../data/users.json', 'ascii')
 ));
 
+cookieSessions = {
+    'xyzzypkrumins' : { user: 'pkrumins' },
+    'xyzzysubstack' : { user: 'substack' },
+};
+
 DNode(function (client, conn) {
-    this.authenticate = function (name, pass, cb) {
-        if (name == 'anonymous') {
-            // no password for anonymous
-            cb(Remote.attach(conn, users.anonymous));
+    this.authenticate = function (params, cb) {
+        if ('cookie' in params) {
+            var cookieData = cookieSessions[params.cookie];
+            if (cookieData) {
+                cb(Remote.attach(conn, users[cookieData.user]));
+            }
+            else {
+                cb(null);
+            }
         }
         else {
-            users[name].authenticate(pass, function (user) {
-                cb(Remote.attach(conn, user));
-            });
+            if (params.name == 'anonymous') {
+                // no password for anonymous
+                cb(Remote.attach(conn, users.anonymous));
+            }
+            else {
+                users[params.name].authenticate(pass, function (user) {
+                    cb(Remote.attach(conn, user));
+                });
+            }
         }
     };
 }).listen({
