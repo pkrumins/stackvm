@@ -14,12 +14,21 @@ exports['mode permissions'] = function (assert) {
             disks : [],
             groups : {},
         },
+        feld : {
+            contacts : [],
+            disks : [],
+            groups : {},
+        },
     });
     
     var modes = {
         biff : new Mode(users.biff, {
             users : { eho : '+w' },
             groups : { everyone : '+r' },
+        }),
+        eho : new Mode(users.eho, {
+            users : { biff : '+r-x' },
+            groups : { everyone : '-r+x' },
         }),
     };
     
@@ -32,5 +41,15 @@ exports['mode permissions'] = function (assert) {
     assert.equal(biffForBiff.r, true);
     assert.equal(biffForBiff.w, true);
     assert.equal(biffForBiff.x, true);
+    
+    var ehoForBiff = modes.eho.forUser(users.biff);
+    assert.equal(ehoForBiff.r, true);
+    assert.equal(ehoForBiff.w, false);
+    assert.equal(ehoForBiff.x, false);
+    
+    var ehoForFeld = modes.eho.forUser(users.feld);
+    assert.equal(ehoForFeld.r, false);
+    assert.equal(ehoForFeld.w, false);
+    assert.equal(ehoForFeld.x, true);
 };
 
