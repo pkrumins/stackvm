@@ -12,6 +12,7 @@ var User = require('lib/models/user');
 var port = Number(process.argv[2]) || 9001;
 
 var dnodeJS = require('dnode/web').source();
+var clientcode = require('lib/clientcode');
 
 var webserver = connect.createServer(
     connect.staticProvider(__dirname + '/../../static/api'),
@@ -19,6 +20,14 @@ var webserver = connect.createServer(
         if (req.url == '/dnode.js') {
             res.writeHead(200, { 'Content-Type' : 'text/javascript' });
             res.end(dnodeJS)
+        }
+        else if (req.url == '/stackvm.js') {
+            res.writeHead(200, { 'Content-Type' : 'text/javascript' });
+            res.end(clientcode.js());
+        }
+        else if (req.url == '/stackvm.css') {
+            res.writeHead(200, { 'Content-Type' : 'text/css' });
+            res.end(clientcode.css());
         }
     }
 ).listen(port, '0.0.0.0');
