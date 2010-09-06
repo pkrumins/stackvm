@@ -80,12 +80,18 @@ function UI (account) {
         sidebar.updateContact(who, 'online');
     });
     
-    processes.on('spawn', function (proc) {
-        sidebar.addInstance(proc);
-    });
-    
-    processes.on('exit', function (addr) {
-        sidebar.removeInstance(addr);
+    processes.subscribe(function (ev) {
+        ev.on('spawn', function (proc) {
+console.log('caught spawn');
+            sidebar.addInstance(proc);
+        });
+        ev.on('exit', function (addr) {
+            sidebar.removeInstance(addr);
+        });
+        ev.on('screenshot', function (url) {
+            console.log('got screenshot!');
+            sidebar.addScreenshot({ url : url });
+        });
     });
     
     // fetch some lists:
@@ -96,14 +102,6 @@ function UI (account) {
     processes.list(function (list) {
         list.forEach(sidebar.addDisk);
     });
-
-    // screencasts and screenshots
-    processes.on('screenshot', function (url) {
-        console.log('got screenshot!');
-        sidebar.addScreenshot({ url : url });
-    })
-    
-    // --
     
     this.element = workspace.element;
 }
