@@ -82,7 +82,6 @@ function UI (account) {
     
     processes.subscribe(function (ev) {
         ev.on('spawn', function (proc) {
-console.log('caught spawn');
             sidebar.addInstance(proc);
         });
         ev.on('exit', function (addr) {
