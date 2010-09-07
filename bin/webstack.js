@@ -31,13 +31,15 @@ DNode(function (client, conn) {
             var name = params.user.toLowerCase();
             var user = users[name];
             if (users.hasOwnProperty(name) && hash == user.hash) {
-                var session = new Session(user);
+                var session = new Session(user, conn);
+                user.sessions[conn.id] = session;
                 
                 if (user.connections == 0) user.emit('online');
                 user.connections ++;
                 
                 conn.on('end', function () {
                     user.connections --;
+                    delete user.sessions[conn.id];
                     if (user.connections == 0) user.emit('offline');
                 });
                 

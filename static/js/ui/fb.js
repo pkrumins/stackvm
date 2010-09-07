@@ -5,7 +5,6 @@ FB.prototype = new EventEmitter;
 function FB (remote) {
     var self = this;
     
-console.dir(remote);
     var input = remote.input;
     var encoder = remote.encoder;
     var size = remote.size;
