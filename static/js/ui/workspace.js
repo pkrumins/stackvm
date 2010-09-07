@@ -118,12 +118,12 @@ function Workspace (params) {
         });
     };
     
-    self.routeChat = function (msg) {
-        chats[msg.from.name].addMessage(msg.from.name, msg.message);
+    self.routeChat = function (contact, msg) {
+        chats[contact.name].addMessage(contact.name, msg);
     };
     
-    self.routeResource = function (vm) {
-        chats[vm.from.name].addResource(vm);
+    self.routeResource = function (contact, proc) {
+        chats[contact.name].addResource(proc);
     };
 }
 

@@ -61,7 +61,7 @@ function UI (account) {
                     var chat = new ChatWindow(account.name, contact);
                     workspace.addChat(chat);
                 }
-                workspace.routeResource(proc);
+                workspace.routeResource(contact, proc);
             });
     
         });

@@ -1,10 +1,8 @@
 ChatWindow.prototype = new EventEmitter;
-function ChatWindow (params) {
+function ChatWindow (me, contact) {
     if (!(this instanceof ChatWindow)) return new ChatWindow();
     var self = this;
-    
-    var me = params.me;
-    self.contact = params.contact;
+    self.contact = contact;
     
     var body = $('<div>')
         .addClass('chat-body')
@@ -24,7 +22,7 @@ function ChatWindow (params) {
                                     .empty()
                                     .text('Sharing ' + proc.name + ' (r)')
                                 ;
-                                self.contact.share(proc.addr, 'r');
+                                contact.share(proc.addr, 'r');
                             })
                         ,
                         $('<a>')
@@ -34,7 +32,7 @@ function ChatWindow (params) {
                                     .empty()
                                     .text('Sharing ' + proc.name + ' (rw)')
                                 ;
-                                self.contact.share(proc.addr, 'rw');
+                                contact.share(proc.addr, 'rw');
                             })
                     )
                 );
@@ -47,7 +45,7 @@ function ChatWindow (params) {
         .append(
             $('<div>')
                 .addClass('chat-title')
-                .text(self.contact.name)
+                .text(contact.name)
                 .append($('<div>')
                     .addClass('chat-x')
                     .text('[x]')
@@ -66,7 +64,7 @@ function ChatWindow (params) {
                     ev.preventDefault();
                     var msg = $(this.elements.msg).val();
                     self.addMessage(me, msg);
-                    self.contact.message(msg);
+                    contact.message(msg);
                     $(this.elements.msg).val('');
                 })
         )
@@ -84,7 +82,7 @@ function ChatWindow (params) {
     
     self.say = function (msg) {
         self.addMessage(me, msg);
-        self.contact.message(msg);
+        contact.message(msg);
     };
     
     self.addResource = function (vm) {
