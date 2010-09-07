@@ -18,7 +18,7 @@ function UI (account) {
     });
     
     sidebar.on('attach', function (proc) {
-        proc.attach(function (fb) {
+        proc.framebuffer(function (fb) {
             var win = new Window({ remoteFB : fb, proc : proc });
             workspace.attachWindow(win);
         });

@@ -104,7 +104,6 @@ function SideBar (params) {
         
         function addInstance (proc) {
             var elem = $('<li>')
-                .data('addr', proc.addr)
                 .text(proc.engine + ':' + proc.pid)
                 .click(function () { self.emit('attach', proc) })
                 .appendTo(ol)
