@@ -1,7 +1,7 @@
 function UI (account) {
     if (!(this instanceof UI)) return UI(account);
     var contacts = account.contacts;
-    var processes = account.processes;
+    var disks = account.disks;
     
     var workspace = new Workspace;
     var sidebar = new SideBar({ engines : ['qemu','vmware'] });
@@ -38,68 +38,34 @@ function UI (account) {
     
     sidebar.on('chat', function (contact) {
         if (workspace.hasChat(contact.name)) return;
-        var chat = new ChatWindow({
-            me : account.user.name,
-            contact : contact
-        });
+        var chat = new ChatWindow(account.name, contact);
         workspace.addChat(chat);
     });
      
-    contacts.on('share', function (vm) {
-        if (!workspace.hasChat(vm.from.name)) {
-            var chat = new ChatWindow({
-                me : account.user.name,
-                contact : vm.from
-            });
-            workspace.addChat(chat);
-        }
-        workspace.routeResource(vm);
-    });
-    
-    contacts.on('message', function (msg) {
-        if (!workspace.hasChat(msg.from.name)) {
-            var chat = new ChatWindow({
-                me : account.user.name,
-                contact : msg.from
-            });
-            workspace.addChat(chat);
-        }
-        workspace.routeChat(msg);
-    });
-    
     taskbar.on('pop', function (win) {
         workspace.attachWindow(win);
     });
     
-    // external resource hooks:
-    contacts.on('offline', function (who) {
-        sidebar.updateContact(who, 'offline');
-    });
+    Hash(disks).forEach(sidebar.addDisk);
+    Hash(contacts).forEach(function (contact) {
+        contact.subscribe(function (sub) {
+            sub.on('message', function (msg) {
+                if (!workspace.hasChat(contact.name)) {
+                    var chat = new ChatWindow(account.name, contact);
+                    workspace.addChat(chat);
+                }
+                workspace.routeChat(contact, msg);
+            });
+            sub.on('share', function (proc) {
+                if (!workspace.hasChat(contact.name)) {
+                    var chat = new ChatWindow(account.name, contact);
+                    workspace.addChat(chat);
+                }
+                workspace.routeResource(proc);
+            });
     
-    contacts.on('online', function (who) {
-        sidebar.updateContact(who, 'online');
-    });
-    
-    processes.subscribe(function (ev) {
-        ev.on('spawn', function (proc) {
-            sidebar.addInstance(proc);
         });
-        ev.on('exit', function (addr) {
-            sidebar.removeInstance(addr);
-        });
-        ev.on('screenshot', function (url) {
-            console.log('got screenshot!');
-            sidebar.addScreenshot({ url : url });
-        });
-    });
-    
-    // fetch some lists:
-    contacts.list(function (list) {
-        list.forEach(sidebar.addContact);
-    });
-    
-    processes.list(function (list) {
-        list.forEach(sidebar.addDisk);
+        sidebar.addContact(contact);
     });
     
     this.element = workspace.element;

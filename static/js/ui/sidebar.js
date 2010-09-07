@@ -3,35 +3,37 @@ function SideBar (params) {
     var self = this;
     var engines = params.engines;
     
-    var disks = $('<div>');
-    var contacts = $('<div>');
-    var screenshots = $('<div>');
-    var screencasts = $('<div>');
+    var elements = {
+        disks : $('<div>'),
+        contacts : $('<div>'),
+        screenshots : $('<div>'),
+        screencasts : $('<div>'),
+    };
     
     var menu = new MenuStack;
     menu.push('main menu', $('<div>').append(
         $('<p>').append(
             $('<a>').text('contacts')
                 .click(function () {
-                    menu.push('contacts', contacts);
+                    menu.push('contacts', elements.contacts);
                 })
         ),
         $('<p>').append(
             $('<a>').text('disk images')
                 .click(function () {
-                    menu.push('disk images', disks);
+                    menu.push('disk images', elements.disks);
                 })
         ),
         $('<p>').append(
             $('<a>').text('screenshots')
                 .click(function () {
-                    menu.push('screenshots', screenshots)
+                    menu.push('screenshots', elements.screenshots)
                 })
         ),
         $('<p>').append(
             $('<a>').text('screencasts')
                 .click(function () {
-                    menu.push('screencasts', screencasts)
+                    menu.push('screencasts', elements.screencasts)
                 })
         )
     ));
@@ -50,7 +52,7 @@ function SideBar (params) {
     );
     
     self.addContact = function (contact) {
-        contacts.append($('<div>')
+        var elem = $('<div>')
             .addClass('contact')
             .addClass('contact-' + (contact.online ? 'online' : 'offline'))
             .text(contact.name)
@@ -59,18 +61,15 @@ function SideBar (params) {
                     self.emit('chat', contact);
                 }
             })
-        );
-    };
-    
-    self.updateContact = function (name, status) {
-        $('.contact').each(function () {
-            if ($(this).text() == name) {
-                $(this)
-                    .removeClass('contact-online')
-                    .removeClass('contact-offline')
-                    .addClass('contact-' + status)
-                ;
-            }
+            .appendTo(elements.contacts)
+        ;
+        contact.subscribe(function (sub) {
+            sub.on('online', function () {
+                elem.removeClass('contact-offline').addClass('contact-online');
+            });
+            sub.on('offline', function () {
+                elem.removeClass('contact-online').addClass('contact-offline');
+            });
         });
     };
     
@@ -82,6 +81,8 @@ function SideBar (params) {
                 .click(function () { disk.spawn(engine) })
             , $('<span>').text(' '));
         });
+        
+        var ol = $('<ol>').addClass('instances').attr('start',0);
         
         var div = $('<div>')
             .addClass('disk')
@@ -96,52 +97,42 @@ function SideBar (params) {
                     .text('Spawn in ')
                     .append(engineLinks)
                 ,
-                $('<ol>')
-                    .addClass('instances')
-                    .data('disk', disk.filename)
-                    .attr('start',0)
+                ol
             )
         ;
-        disks.append(div);
-        Object.keys(disk.processes).forEach(function (addr) {
-            self.addInstance(disk.processes[addr]);
+        elements.disks.append(div);
+        
+        function addInstance (proc) {
+            var elem = $('<li>')
+                .data('addr', proc.addr)
+                .text(proc.engine + ':' + proc.pid)
+                .click(function () { self.emit('attach', proc) })
+                .appendTo(ol)
+            ;
+            proc.subscribe(function (sub) {
+                sub.on('exit', function () {
+                    elem.remove();
+                });
+            });
+        };
+        
+        function addScreenX(elem, url) {
+            $('<p>').append($('<a>')
+                .attr('href', url)
+                .text(url.split('/').slice(-1)[0])
+            ).appendTo(elem);
+        }
+        
+        disk.subscribe(function (sub) {
+            sub.on('spawn', addInstance);
+            sub.on('screenshot', function (url) {
+                addScreenX(elements.screenshots, url);
+            });
+            sub.on('screencast', function (url) {
+                addScreenX(elements.screencasts, url);
+            });
         });
+        Hash(disk.processes).forEach(addInstance);
     };
-    
-    self.addInstance = function (proc) {
-        disks.find('ol.instances').each(function () {
-            if ($(this).data('disk') == proc.disk) {
-                $(this).append($('<li>')
-                    .data('addr', proc.addr)
-                    .text(proc.engine + ':' + proc.pid)
-                    .click(function () { self.emit('attach', proc) })
-                );
-            }
-        });
-    };
-    
-    self.removeInstance = function (addr) {
-        $('ol.instances li').each(function () {
-            if ($(this).data('addr') == addr) {
-                $(this).remove();
-            }
-        });
-    };
-
-    function newScreenShotCast(el, sc) {
-        el.append(
-            $('<p>').append(
-                $('<a>').attr('href', sc.url).text(sc.url.split('/').slice(-1)[0])
-            )
-        );
-    }
-
-    self.addScreenshot = function (sc) {
-        newScreenShotCast(screenshots, sc);
-    }
-
-    self.addScreencast = function (sc) {
-        newScreenShotCast(screencasts, sc);
-    }
 }
 
