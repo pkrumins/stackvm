@@ -22,25 +22,26 @@ var cookies = {};
 
 var jsonFile = __dirname + '/../data/users.json';
 var json = JSON.parse(fs.readFileSync(jsonFile));
-var users = Hash.map(json, function (user, name) {
-    user.processes = {};
-    user.name = name;
-    return user;
-});
+var users = User.fromHashes(json);
 
-DNode(function (client,conn) {
+DNode(function (client, conn) {
     this.authenticate = function (params, cb) {
         if (params.user && params.pass) {
             var hash = User.hash(params.pass);
             var name = params.user.toLowerCase();
             var user = users[name];
             if (users.hasOwnProperty(name) && hash == user.hash) {
-                var session = new Session({
-                    client : client,
-                    connection : conn,
-                    user : user,
+                var session = new Session(user);
+                
+                if (user.connections == 0) user.emit('online');
+                user.connections ++;
+                
+                conn.on('end', function () {
+                    user.connections --;
+                    if (user.connections == 0) user.emit('offline');
                 });
-                cb(session);
+                
+                cb(session.attach(conn));
             }
             else {
                 cb(null);
