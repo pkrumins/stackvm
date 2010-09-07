@@ -18,10 +18,8 @@ function UI (account) {
     });
     
     sidebar.on('attach', function (proc) {
-        proc.framebuffer(function (fb) {
-            var win = new Window({ remoteFB : fb, proc : proc });
-            workspace.attachWindow(win);
-        });
+        var win = new Window({ remoteFB : proc.fb, proc : proc });
+        workspace.attachWindow(win);
     });
     
     workspace.on('attach', function (vm) {
