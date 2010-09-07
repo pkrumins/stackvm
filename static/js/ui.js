@@ -22,15 +22,8 @@ function UI (account) {
         workspace.attachWindow(win);
     });
     
-    workspace.on('attach', function (vm) {
-        var win = new Window({
-            remoteFB : vm.fb,
-            proc : {
-                addr : vm.addr,
-                shared : true,
-                name : vm.name
-            }
-        });
+    workspace.on('attach', function (proc) {
+        var win = new Window({ remoteFB : proc.fb, proc : proc });
         workspace.attachWindow(win);
     });
     

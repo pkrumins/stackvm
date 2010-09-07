@@ -123,7 +123,7 @@ function Workspace (params) {
     };
     
     self.routeResource = function (contact, proc) {
-        chats[contact.name].addResource(proc);
+        chats[contact.name].addResource(contact, proc);
     };
 }
 

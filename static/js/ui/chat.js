@@ -85,18 +85,18 @@ function ChatWindow (me, contact) {
         contact.message(msg);
     };
     
-    self.addResource = function (vm) {
+    self.addResource = function (contact, proc) {
         body.append($('<p>')
             .addClass('chat-resource')
             .append(
-                vm.from.name + ' shares ',
+                contact.name + ' shares ',
                 $('<a>')
-                    .text(vm.name)
+                    .text(proc.filename)
                     .click(function () {
-                        self.emit('attach', vm);
+                        self.emit('attach', proc);
                     })
                 ,
-                ' [' + vm.mode +  ']'
+                ' [' + proc.mode +  ']'
             )
         );
     };

@@ -1,6 +1,5 @@
 TitleBar.prototype = new EventEmitter;
 function TitleBar (proc) {
-    
     var self = this;
     
     var menu = $('<div>')
