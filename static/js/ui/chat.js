@@ -22,7 +22,9 @@ function ChatWindow (me, contact) {
                                     .empty()
                                     .text('Sharing ' + proc.name + ' (r)')
                                 ;
-                                contact.share(proc.addr, 'r');
+                                var rule = {};
+                                rule[contact.name] = { input : false, view : true };
+                                contact.share('process', proc.addr, rule);
                             })
                         ,
                         $('<a>')
@@ -32,7 +34,9 @@ function ChatWindow (me, contact) {
                                     .empty()
                                     .text('Sharing ' + proc.name + ' (rw)')
                                 ;
-                                contact.share(proc.addr, 'rw');
+                                var rule = {};
+                                rule[contact.name] = { input : true, view : true };
+                                contact.share('process', proc.addr, rule);
                             })
                     )
                 );
@@ -85,20 +89,25 @@ function ChatWindow (me, contact) {
         contact.message(msg);
     };
     
-    self.addResource = function (contact, proc) {
-        body.append($('<p>')
-            .addClass('chat-resource')
-            .append(
-                contact.name + ' shares ',
-                $('<a>')
-                    .text(proc.filename)
-                    .click(function () {
-                        self.emit('attach', proc);
-                    })
-                ,
-                ' [' + proc.mode +  ']'
-            )
-        );
+    self.addResource = function (contact, type, res) {
+        var elem = {
+            process : function () {
+                return $('<p>').append(
+                    contact.name + ' shares ',
+                    $('<a>')
+                        .text(res.filename)
+                        .click(function () {
+                            self.emit('attach', res);
+                        })
+                    ,
+                    ' [' + res.mode +  ']'
+                );
+            },
+            disk : function () {
+                return $('<p>').text('Sharing disks not yet implemented');
+            }
+        }[type]();
+        body.append(elem.addClass('chat-resource'));
     };
 }
 

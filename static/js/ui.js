@@ -47,12 +47,12 @@ function UI (account) {
                 }
                 workspace.routeChat(contact, msg);
             });
-            sub.on('share', function (proc) {
+            sub.on('share', function (type, res) {
                 if (!workspace.hasChat(contact.name)) {
                     var chat = new ChatWindow(account.name, contact);
                     workspace.addChat(chat);
                 }
-                workspace.routeResource(contact, proc);
+                workspace.routeResource(contact, type, res);
             });
     
         });

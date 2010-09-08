@@ -122,8 +122,8 @@ function Workspace (params) {
         chats[contact.name].addMessage(contact.name, msg);
     };
     
-    self.routeResource = function (contact, proc) {
-        chats[contact.name].addResource(contact, proc);
+    self.routeResource = function (contact, type, res) {
+        chats[contact.name].addResource(contact, type, res);
     };
 }
 
