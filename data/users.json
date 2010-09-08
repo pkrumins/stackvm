@@ -4,13 +4,15 @@
         "contacts" : ["moo", "pkrumins", "ik"],
         "disks" : {
             "linux-0.2.img" : {
-                "name" : "simple linux"
+                "name" : "simple linux",
+                "rules" : { "moo" : { "spawn" : true } }
             },
             "liveandroidv0.3.iso" : {
                 "name" : "android"
             },
             "ReactOS-LiveCD.iso" : {
-                "name" : "ReactOS"
+                "name" : "ReactOS",
+                "rules" : { "anonymous" : { "spawn" : true } }
             },
             "WinXP" : {
                 "name" : "Windows XP",
