@@ -1,6 +1,6 @@
 {
     "name" : "stackvm",
-    "version" : "0.0.1",
+    "version" : "0.0.2",
     "descrption" : "Control virtual machines in a browser",
     "repository" : {
         "type" : "git",
