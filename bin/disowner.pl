@@ -1,4 +1,6 @@
 #!/usr/bin/env perl
+use strict;
+use warnings;
 use POSIX qw/WNOHANG/;
 use Time::HiRes qw/sleep/;
 $|++;
