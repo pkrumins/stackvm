@@ -12,13 +12,18 @@ require.paths.unshift(__dirname + '/lib');
 
 var Service = require('lib/service');
 var User = require('models/user');
+var nStoreSession = require('nStoreSession');
 
 var app = express.createServer();
 app.use(express.staticProvider(__dirname + '/static'));
-app.get('/js/dnode.js', require('dnode/web').route());
-app.listen(port, '0.0.0.0');
+app.use(express.cookieDecoder());
+app.use(express.session({
+    store : new nStoreSession({ dbFile : __dirname + '/data/sessions.db' })
+}));
 
-var sessions = nStore(__dirname + '/data/sessions.db');
+app.get('/js/dnode.js', require('dnode/web').route());
+app.use(express.router(require('lib/web')));
+app.listen(port, '0.0.0.0');
 
 nStore(__dirname + '/data/users.db').all(
     function () { return true },

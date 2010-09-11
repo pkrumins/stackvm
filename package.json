@@ -1,6 +1,6 @@
 {
     "name" : "stackvm",
-    "version" : "0.0.2",
+    "version" : "0.0.3",
     "descrption" : "Control virtual machines in a browser",
     "repository" : {
         "type" : "git",
@@ -10,6 +10,7 @@
         "dnode" : ">=0.2.11",
         "traverse" : ">=0.2.0",
         "nStore" : ">=0.2.1",
+        "nStoreSession" : ">=0.0.1",
         "express" : ">=0.6.1",
         "rfb" : ">=0.0.5",
         "png" : ">=1.0.3",
