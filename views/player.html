@@ -4,31 +4,13 @@
 <head>
 <title>stackVM</title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<link rel="StyleSheet" href="/css/login.css" type="text/css">
-<link rel="StyleSheet" href="/css/workspace.css" type="text/css">
-<link rel="StyleSheet" href="/css/fb.css" type="text/css">
-<link rel="StyleSheet" href="/css/window.css" type="text/css">
-<link rel="StyleSheet" href="/css/sidebar.css" type="text/css">
-<link rel="StyleSheet" href="/css/chat.css" type="text/css">
+<% stylesheets.forEach(function (href) { %>
+    <link rel="StyleSheet" href="<%= href %>" type="text/css">
+<% } %>
+<% scripts.forEach(function (src) { %>
+    <script src="<%= src %>" type="text/javascript"></script>
+<% } %>
 
-<script src="/js/vendor/jquery.js"></script>
-<script src="/js/vendor/jquery-ui.js"></script>
-<script src="/js/vendor/jquery.mousewheel.js"></script>
-
-<script type="text/javascript" src="/js/dnode.js"></script>
-<script type="text/javascript" src="/js/util/events.js"></script>
-<script type="text/javascript" src="/js/util/keymap.js"></script>
-<script type="text/javascript" src="/js/session.js"></script>
-<script type="text/javascript" src="/js/ui.js"></script>
-<script type="text/javascript" src="/js/ui/workspace.js"></script>
-<script type="text/javascript" src="/js/ui/fb/display.js"></script>
-<script type="text/javascript" src="/js/ui/fb.js"></script>
-<script type="text/javascript" src="/js/ui/chat.js"></script>
-<script type="text/javascript" src="/js/ui/window.js"></script>
-<script type="text/javascript" src="/js/ui/window/titlebar.js"></script>
-<script type="text/javascript" src="/js/ui/sidebar.js"></script>
-<script type="text/javascript" src="/js/ui/sidebar/menustack.js"></script>
-<script type="text/javascript" src="/js/ui/taskbar.js"></script>
 <script type="text/javascript">
     $(window).load(function () {
         $('form#login')[0].elements['user'].focus();

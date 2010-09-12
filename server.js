@@ -18,24 +18,34 @@ var app = express.createServer();
 app.use(express.staticProvider(__dirname + '/static'));
 app.use(express.cookieDecoder());
 app.use(express.session({
-    store : new nStoreSession({ dbFile : __dirname + '/data/sessions.db' })
+    store : new nStoreSession({ dbFile : __dirname + '/data/sessions.db' }),
+    secret : 'todo: set this in the stackvm site config with cli.js'
 }));
 
+app.configure('development', function () {
+    app.use(express.errorHandler({ 
+        dumpExceptions: true,
+        showStack: true 
+    }));
+});
+
+app.configure('production', function () {
+    app.use(express.errorHandler());
+});
+
 app.get('/js/dnode.js', require('dnode/web').route());
-app.use(express.router(require('lib/web')));
+app.use(require('lib/web'));
+
 app.listen(port, '0.0.0.0');
 
-nStore(__dirname + '/data/users.db').all(
-    function () { return true },
-    function (err, hashes, metas) {
-        var keys = metas.map(function (x) { return x.key });
-        var users = User.fromHashes(Hash.zip(keys, hashes));
-        var service = Service(users);
-        DNode(service).listen({
-            server : app,
-            transports : 'websocket xhr-multipart xhr-polling htmlfile'
-                .split(/\s+/),
-        });
-        console.log('StackVM running at http://localhost:' + port);
-    }
-);
+nStore(__dirname + '/data/users.db').all(function (err, hashes, metas) {
+    var keys = metas.map(function (x) { return x.key });
+    var users = User.fromHashes(Hash.zip(keys, hashes));
+    var service = Service(users);
+    DNode(service).listen({
+        server : app,
+        transports : 'websocket xhr-multipart xhr-polling htmlfile'
+            .split(/\s+/),
+    });
+    console.log('StackVM running at http://localhost:' + port);
+});
