@@ -10,7 +10,6 @@ var port = Number(process.argv[2]) || 9000;
 var Service = require('./lib/service');
 var User = require('./lib/models/user');
 var nStoreSession = require('nStoreSession');
-var web = require('./lib/web');
 
 var app = express.createServer();
 app.use(express.staticProvider(__dirname + '/static'));
@@ -32,7 +31,7 @@ app.configure('production', function () {
 });
 
 app.get('/js/dnode.js', require('dnode/web').route());
-require('./lib/web')(__dirname, app);
+require('./lib/web')(app);
 
 app.listen(port, '0.0.0.0');
 
