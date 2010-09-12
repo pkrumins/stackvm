@@ -7,8 +7,6 @@ var Hash = require('traverse/hash');
 
 var port = Number(process.argv[2]) || 9000;
 
-var Service = require('./lib/service');
-var User = require('./lib/models/user');
 var nStoreSession = require('nStoreSession');
 
 var app = express.createServer();
@@ -33,19 +31,21 @@ app.configure('production', function () {
 
 app.get('/js/dnode.js', require('dnode/web').route());
 
-var userDB = nStore(__dirname + '/data/users.db');
-require('./lib/web')(app, userDB);
+var db = {
+    user : nStore(__dirname + '/data/users.db'),
+    key : nStore(__dirname + '/data/keys.db'),
+};
+require('./lib/web')(app, db);
 
 app.listen(port, '0.0.0.0');
 
-userDB.all(function (err, hashes, metas) {
-    var keys = metas.map(function (x) { return x.key });
-    var users = User.fromHashes(Hash.zip(keys, hashes));
-    var service = Service(users);
-    DNode(service).listen({
-        server : app,
-        transports : 'websocket xhr-multipart xhr-polling htmlfile'
-            .split(/\s+/),
+var Service = require('./lib/service');
+db.user.all(function (err, hashes, metas) {
+    Service(db, function (service) {
+        DNode(service).listen(app, {
+            transports : 'websocket xhr-multipart xhr-polling htmlfile'
+                .split(/\s+/),
+        });
+        console.log('StackVM running at http://localhost:' + port);
     });
-    console.log('StackVM running at http://localhost:' + port);
 });
