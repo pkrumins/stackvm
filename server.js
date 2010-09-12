@@ -32,8 +32,7 @@ app.configure('production', function () {
 });
 
 app.get('/js/dnode.js', require('dnode/web').route());
-var web = require('./lib/web')(process.env.PWD);
-app.use(web);
+require('./lib/web')(__dirname, app);
 
 app.listen(port, '0.0.0.0');
 
