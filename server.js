@@ -7,12 +7,10 @@ var Hash = require('traverse/hash');
 
 var port = Number(process.argv[2]) || 9000;
 
-require.paths.unshift(__dirname + '/.');
-require.paths.unshift(__dirname + '/lib');
-
-var Service = require('lib/service');
-var User = require('models/user');
+var Service = require('./lib/service');
+var User = require('./lib/models/user');
 var nStoreSession = require('nStoreSession');
+var web = require('./lib/web');
 
 var app = express.createServer();
 app.use(express.staticProvider(__dirname + '/static'));
@@ -34,7 +32,8 @@ app.configure('production', function () {
 });
 
 app.get('/js/dnode.js', require('dnode/web').route());
-app.use(require('lib/web'));
+var web = require('./lib/web')(process.env.PWD);
+app.use(web);
 
 app.listen(port, '0.0.0.0');
 
