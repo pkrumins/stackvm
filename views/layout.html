@@ -7,10 +7,16 @@
 </head>
 <body>
 
+<div>
 <img src="/img/stackvm.png" width="417" height="100">
+</div>
 
-<% if (user) { %>
+<div>
+<% if (user.name) { %>
     signed in as <%= user.name %>
+    <form action='/logout' method='post'>
+        <input type='submit' value='logout'>
+    </form>
 <% } else { %>
     <form action='/' method='post'>
         <input type='text' name='user'>
@@ -18,6 +24,7 @@
         <input type='submit' value='sign in'>
     </form>
 <% } %>
+</div>
 
 <%- body %>
 
