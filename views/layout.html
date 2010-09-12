@@ -7,6 +7,18 @@
 </head>
 <body>
 
+<img src="/img/stackvm.png" width="417" height="100">
+
+<% if (user) { %>
+    signed in as <%= user.name %>
+<% } else { %>
+    <form action='/' method='post'>
+        <input type='text' name='user'>
+        <input type='password' name='pass'>
+        <input type='submit' value='sign in'>
+    </form>
+<% } %>
+
 <%- body %>
 
 </body>

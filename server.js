@@ -14,6 +14,7 @@ var nStoreSession = require('nStoreSession');
 var app = express.createServer();
 app.use(express.staticProvider(__dirname + '/static'));
 app.use(express.cookieDecoder());
+app.use(express.bodyDecoder());
 app.use(express.session({
     store : new nStoreSession({ dbFile : __dirname + '/data/sessions.db' }),
     secret : 'todo: set this in the stackvm site config with cli.js'
@@ -31,11 +32,13 @@ app.configure('production', function () {
 });
 
 app.get('/js/dnode.js', require('dnode/web').route());
-require('./lib/web')(app);
+
+var userDB = nStore(__dirname + '/data/users.db');
+require('./lib/web')(app, userDB);
 
 app.listen(port, '0.0.0.0');
 
-nStore(__dirname + '/data/users.db').all(function (err, hashes, metas) {
+userDB.all(function (err, hashes, metas) {
     var keys = metas.map(function (x) { return x.key });
     var users = User.fromHashes(Hash.zip(keys, hashes));
     var service = Service(users);
