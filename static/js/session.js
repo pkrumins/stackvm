@@ -1,7 +1,8 @@
-function Session (params, cb) {
+function Session (cb) {
     DNode().connect(function (remote, conn) {
-        remote.authenticate(params, function (account) {
-            cb(account ? new UI(account) : null);
+        remote.authenticate(function (err, account) {
+            if (err) console.error(err);
+            else cb(new UI(account));
         });
     });
 }

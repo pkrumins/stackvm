@@ -27,7 +27,7 @@
             
             var user = this.elements.user.value;
             var pass = this.elements.pass.value;
-            Session({ user : user, pass : pass }, function (ui) {
+            Session(function (ui) {
                 if (ui) {
                     $('form#login').fadeOut(400);
                     ui.element
