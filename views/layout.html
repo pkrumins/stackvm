@@ -4,6 +4,7 @@
 <head>
 <title>StackVM</title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<script src="/js/vendor/jquery.js"></script>
 </head>
 <body>
 
@@ -12,8 +13,8 @@
 </div>
 
 <div>
-<% if (user.name) { %>
-    signed in as <%= user.name %>
+<% if (session.name) { %>
+    signed in as <%= session.name %>
     <form action='/logout' method='post'>
         <input type='submit' value='logout'>
     </form>
