@@ -15,59 +15,29 @@
 
 <script type="text/javascript">
     $(window).load(function () {
-        $('form#login')[0].elements['user'].focus();
-        
-        $('form#login').submit(function (ev) {
-            ev.preventDefault();
-        });
-        
-        var form = $('form#login');
-        form.submit(function (ev) {
-            ev.preventDefault();
-            
-            var user = this.elements.user.value;
-            var pass = this.elements.pass.value;
-            Session(function (ui) {
-                if (ui) {
-                    $('form#login').fadeOut(400);
-                    ui.element
-                        .hide()
-                        .fadeIn(400)
-                        .appendTo('#backdrop')
-                    ;
-                }
-                else {
-                    $('.sign-in-failed').remove();
-                    form.append($('<div>')
-                        .addClass('sign-in-failed')
-                        .text('sign-in failed')
-                        .fadeIn(400, function () {
-                            var elem = $(this);
-                            setTimeout(function () {
-                                elem.fadeOut(2000);
-                            }, 5000);
-                        })
-                    );
-                }
-            });
+        Session(function (err, ui) {
+            if (ui) {
+                ui.element.appendTo('#backdrop');
+            }
+            else {
+                $('.sign-in-failed').remove();
+                $('<div>')
+                    .addClass('sign-in-failed')
+                    .text('Sign-in failed: ' + err)
+                    .fadeIn(400, function () {
+                        var elem = $(this);
+                        setTimeout(function () {
+                            elem.fadeOut(2000);
+                        }, 5000);
+                    })
+                    .appendTo('#backdrop')
+                ;
+            }
         });
     });
 </script>
 </head>
 <body>
-    <div id="backdrop">
-        <form id="login" method="post">
-            <img
-                src="/img/stackvm.png"
-                width="417" height="100"
-            >
-            <input type="text" name="user">
-            <br>
-            <input type="password" name="pass">
-            <br>
-            <input type="submit" value="sign in">
-            <br>
-        </form>
-    </div>
+    <div id="backdrop"></div>
 </body>
 </html>
