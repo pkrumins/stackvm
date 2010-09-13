@@ -1,24 +1,3 @@
-<script type="text/javascript">
-    function player () {
-        $.ajax({
-            type : 'POST',
-            url : '/authorize',
-            error : function (req) {
-                console.error(req.responseText);
-            },
-            success : function (data) {
-                console.log('got data: ' + data);
-            }
-        });
-    }
-    
-    $(document).ready(function () {
-        $('#runPlayer').click(function (ev) {
-            ev.preventDefault();
-            player();
-        });
-    });
-</script>
 <% if (session.name) { %>
-    <a id='runPlayer' href="#">click here to access the player</a>
+    <a href="/player/">click here to access the player</a>
 <% } %>

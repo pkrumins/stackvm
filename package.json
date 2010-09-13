@@ -7,7 +7,7 @@
         "url" : "http://github.com/substack/stackvm.git"
     },
     "dependencies" : {
-        "dnode" : ">=0.2.11",
+        "dnode" : ">=0.2.13",
         "traverse" : ">=0.2.0",
         "nStore" : ">=0.2.1",
         "nStoreSession" : ">=0.0.1",
