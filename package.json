@@ -9,8 +9,6 @@
     "dependencies" : {
         "dnode" : ">=0.2.13",
         "traverse" : ">=0.2.0",
-        "nStore" : ">=0.2.1",
-        "nStoreSession" : ">=0.0.1",
         "glob" : ">=1.0.2",
         "express" : ">=0.6.1",
         "ejs" : ">=0.2.0",
@@ -18,7 +16,8 @@
         "png" : ">=1.0.3",
         "base64" : ">=1.0.1",
         "video" : ">=1.0.2",
-        "supermarket" : ">=1.0.0"
+        "supermarket" : ">=1.0.0",
+        "cart" : ">=1.0.4"
     },
     "engine" : ["node >=0.2.0"],
     "bin" : { "stackvm" : "./server.js" }
