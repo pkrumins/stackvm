@@ -17,7 +17,7 @@ var json = JSON.parse(fs.readFileSync(process.argv[2]));
 
 Store(__dirname + '/../data/users.db', function (err, db) {
     Hash(json).forEach(function (user, name) {
-        db.set(name, user, function (err) {
+        db.set(name, JSON.stringify(user), function (err) {
             if (err) throw err;
         });
     });
