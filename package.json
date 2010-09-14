@@ -17,7 +17,8 @@
         "rfb" : ">=0.0.5",
         "png" : ">=1.0.3",
         "base64" : ">=1.0.1",
-        "video" : ">=1.0.2"
+        "video" : ">=1.0.2",
+        "supermarket" : ">=1.0.0"
     },
     "engine" : ["node >=0.2.0"],
     "bin" : { "stackvm" : "./server.js" }
