@@ -15,11 +15,14 @@ if (process.argv.length <= 2) {
 
 var json = JSON.parse(fs.readFileSync(process.argv[2]));
 
-Store(__dirname + '/../data/users.db', function (err, db) {
-    Hash(json).forEach(function (user, name) {
-        db.set(name, JSON.stringify(user), function (err) {
-            if (err) throw err;
+Store(
+    { filename : __dirname + '/../data/users.db', json : true },
+    function (err, db) {
+        Hash(json).forEach(function (user, name) {
+            db.set(name, user, function (err) {
+                if (err) throw err;
+            });
         });
-    });
-});
+    }
+);
 
