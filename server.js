@@ -39,6 +39,7 @@ app.listen(port, '0.0.0.0');
 var Service = require('./lib/service');
 Service(db, function (service) {
     DNode(service).listen(app, {
+        ping : 5000, timeout : 5000,
         transports : 'websocket xhr-multipart xhr-polling htmlfile'
             .split(/\s+/),
     });
