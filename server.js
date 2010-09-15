@@ -31,7 +31,7 @@ app.configure('production', function () {
 
 app.get('/js/dnode.js', require('dnode/web').route());
 
-var db = { user : Store(__dirname + '/data/users.db') };
+var db = { user : Store({ filename : __dirname + '/data/users.db', json : true }) };
 require('./lib/web')(app, db);
 
 app.listen(port, '0.0.0.0');
