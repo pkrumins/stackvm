@@ -1,6 +1,6 @@
 {
     "ycdemo" : {
-        "hash" : "2cef66e485a1601325e91c252e2c3702659200a80a096229929dc9d2e1e93978a162f7a07863b0e78a0c2c7da421143ae41c9d72ea7e85a4cca9c7fb65d736ed",
+        "hash" : "",
         "contacts" : [ "robit" ],
         "disks" : {
             "linux-0.2.img" : {
@@ -10,7 +10,7 @@
         }
     },
     "robit" : {
-        "hash" : "",
+        "hash" : "2cef66e485a1601325e91c252e2c3702659200a80a096229929dc9d2e1e93978a162f7a07863b0e78a0c2c7da421143ae41c9d72ea7e85a4cca9c7fb65d736ed",
         "contacts" : [ "ycdemo" ],
         "disks" : {
             "linux-0.2.img" : {

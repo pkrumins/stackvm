@@ -2,7 +2,7 @@ function Session (cb) {
     DNode().connect(
         { ping : 2000, timeout : 100 },
         function (remote, conn) {
-            remote.authenticate(function (err, account) {
+            remote.session(function (err, account) {
                 if (err) cb(err);
                 else cb(null, new UI(account));
             });

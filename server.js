@@ -38,12 +38,15 @@ app.listen(port, '0.0.0.0');
 
 var Service = require('./lib/service');
 Service(db, function (service) {
-    DNode(service).listen(app, {
-        ping : 1000,
-        timeout : 1000,
-        transports : 'websocket xhr-multipart xhr-polling htmlfile'
-            .split(/\s+/),
-    });
+    DNode(service)
+        .listen(app, {
+            ping : 1000,
+            timeout : 1000,
+            transports : 'websocket xhr-multipart xhr-polling htmlfile'
+                .split(/\s+/),
+        })
+        .listen(9090)
+    ;
     console.log('StackVM running at http://localhost:' + port);
 });
 
