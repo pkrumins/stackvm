@@ -39,6 +39,14 @@ function script (yc, proc) {
                 ycdemo : { input : true, view : true }
             });
         } ],
+        [ 10000, function () {
+            yc.message('The VM is bound to the framebuffer, '
+                + 'so you can `xinit` and everything!');
+        } ],
+        [ 20000, function () {
+            yc.message('Now try spawning your own VM. '
+                + 'Click "qemu" under "disk images" in the left pane.');
+        } ],
     ];
     
     (function next (yc) {
