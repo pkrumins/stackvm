@@ -24,7 +24,7 @@ function ChatWindow (me, contact) {
                                 ;
                                 var rule = {};
                                 rule[contact.name] = { input : false, view : true };
-                                contact.share('process', proc.addr, rule);
+                                contact.share('process', proc.address, rule);
                             })
                         ,
                         $('<a>')
@@ -36,7 +36,7 @@ function ChatWindow (me, contact) {
                                 ;
                                 var rule = {};
                                 rule[contact.name] = { input : true, view : true };
-                                contact.share('process', proc.addr, rule);
+                                contact.share('process', proc.address, rule);
                             })
                     )
                 );
