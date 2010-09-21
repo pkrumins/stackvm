@@ -4,18 +4,19 @@
 <head>
 <title>StackVM</title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="StyleSheet" href="/css/site/layout.css">
 <script src="/js/vendor/jquery.js"></script>
 </head>
 <body>
 
-<div>
+<div id="logo">
 <img src="/img/stackvm.png" width="417" height="100">
 </div>
 
-<div>
+<div id="login">
 <% if (session.name) { %>
-    signed in as <%= session.name %>
     <form action='/logout' method='post'>
+        signed in as <%= session.name %>
         <input type='submit' value='logout'>
     </form>
 <% } else { %>
@@ -27,7 +28,9 @@
 <% } %>
 </div>
 
+<div id="content">
 <%- body %>
+</div>
 
 </body>
 </html>

@@ -1,0 +1,25 @@
+body {
+    background-color: rgb(70,70,70);
+}
+
+#logo {
+    margin: auto;
+    width: 417px;
+}
+
+#login {
+    width: 800px;
+    margin: auto;
+    background-color: rgb(150,70,70);
+    padding: 0.5em;
+    padding-left: 2em;
+    padding-right: 2em;
+    color: rgb(230,230,230);
+}
+
+#content {
+    margin: auto;
+    width: 800px;
+    background-color: rgb(220,220,220);
+    padding: 2em;
+}
