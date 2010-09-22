@@ -17,7 +17,7 @@ jquery_ui="http://jqueryui.com/download/jquery-ui-1.8.5.custom.zip"
 jquery_wheel="http://github.com/brandonaaron/jquery-mousewheel.git"
 
 function jQuery {
-    wget $jquery -O "$dst/${jquery##*/}"
+    wget $jquery -O "$dst/jquery.js"
 }
 
 function jQueryUi {
@@ -25,7 +25,7 @@ function jQueryUi {
     jquery_ui_dir="/tmp/jquery-ui-$RANDOM"
     mkdir $jquery_ui_dir
     unzip "/tmp/${jquery_ui##*/}" -d $jquery_ui_dir
-    cp "$jquery_ui_dir/js/jquery-ui-1.8.5.custom.min.js" "$dst"
+    cp "$jquery_ui_dir/js/jquery-ui-1.8.5.custom.min.js" "$dst/jquery-ui.js"
     rm -rf $jquery_ui_dir
 }
 
