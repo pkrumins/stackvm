@@ -1,3 +1,9 @@
 <% if (session.user) { %>
     <a href="/player/">click here to access the player</a>
+    
+    <% session.user.disks.forEach(function (disk, filename) { %>
+        <p>
+        <%= filename %>
+        </p>
+    <% }) %>
 <% } %>
