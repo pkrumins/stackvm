@@ -14,9 +14,9 @@
 </div>
 
 <div id="login">
-<% if (session.name) { %>
+<% if (session.user) { %>
     <form action='/logout' method='post'>
-        signed in as <%= session.name %>
+        signed in as <%= session.user.name %>
         <input type='submit' value='logout'>
     </form>
 <% } else { %>
