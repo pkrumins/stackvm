@@ -8,12 +8,8 @@ DNode.connect(9090, function (remote, conn) {
         
         var simpleLinux = account.disks['linux-0.2.img'];
         simpleLinux.subscribe(function (sub) {
-            sub.on('spawn', function (proc) {
-                proc.saveThumb(function (err, filename) {
-                    if (err) throw err;
-                    console.log(filename);
-                    conn.end();
-                });
+            sub.on('thumb', function (filename) {
+                console.log(simpleLinux.filename + '/' + filename);
             });
         });
         simpleLinux.spawn('qemu');
