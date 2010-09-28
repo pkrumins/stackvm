@@ -14,9 +14,9 @@ function registerDisk (disk, filename) {
     ;
     
     function registerProc (proc) {
-        var thumb = $('<div>');
         function makeImg () {
-            var uri = '/disks/' + filename + '/' + proc.address + '/thumbnail';
+            var uri = '/disks/' + filename + '/' + proc.address + '/thumbnail'
+                + '?' + Math.floor(Math.random() * 1e12);
             return $('<img>').attr('src', uri).width(200).height(150);
         }
         
@@ -27,12 +27,13 @@ function registerDisk (disk, filename) {
         ;
         proc.subscribe(function (sub) {
             sub.on('exit', function () {
-                thumb.remove();
+                procElem.remove();
             });
             
             sub.on('thumb', function () {
-                thumb.find('img').remove();
-                thumb.append(makeImg());
+console.log('caught thumb');
+                procElem.find('img').remove();
+                procElem.append(makeImg());
             });
         });
     }
