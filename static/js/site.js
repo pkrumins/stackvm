@@ -31,7 +31,6 @@ function registerDisk (disk, filename) {
             });
             
             sub.on('thumb', function () {
-console.log('caught thumb');
                 procElem.find('img').remove();
                 procElem.append(makeImg());
             });
