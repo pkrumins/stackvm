@@ -1,13 +1,16 @@
 #!/usr/bin/env node
 
 var express = require('express');
-var Store = require('supermarket');
 var DNode = require('dnode');
 var Hash = require('traverse/hash');
+var Cart = require('cart');
+var fs = require('fs');
+
+var User = require('./lib/models/user');
+var Web = require('./lib/web');
+var Service = require('./lib/service');
 
 var port = Number(process.argv[2]) || 9000;
-
-var Cart = require('cart');
 
 var app = express.createServer();
 app.use(express.staticProvider(__dirname + '/static'));
@@ -31,13 +34,12 @@ app.configure('production', function () {
 
 app.get('/js/dnode.js', require('dnode/web').route());
 
-var db = { user : Store({ filename : __dirname + '/data/users.db', json : true }) };
-require('./lib/web')(app, db);
+var users = User.fromHashes(
+    JSON.parse(fs.readFileSync(__dirname + '/data/users.json'))
+);
 
-app.listen(port, '0.0.0.0');
-
-var Service = require('./lib/service');
-Service(db, function (service) {
+Web(app, users);
+Service(users, function (service) {
     DNode(service)
         .listen(app, {
             ping : 1000,
@@ -50,3 +52,4 @@ Service(db, function (service) {
     console.log('StackVM running at http://localhost:' + port);
 });
 
+app.listen(port, '0.0.0.0');
