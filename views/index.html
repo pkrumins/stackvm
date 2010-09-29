@@ -1,11 +1,5 @@
-<% if (session.user) { %>
+<% if (user) { %>
     <a href="/player/">click here to access the player</a>
     
-    <%= JSON.stringify(session.user.disks) %>
-    
-    <% session.user.disks.forEach(function (disk, filename) { %>
-        <p>
-        <%= filename %>
-        </p>
-    <% }) %>
+    <div id="disks"></div>
 <% } %>
