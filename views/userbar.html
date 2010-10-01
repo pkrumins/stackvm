@@ -4,9 +4,8 @@
         <input type='submit' value='logout'>
         <div id="tabs">
             <% tabs.forEach(function (tab) { %>
-                <span class="<%= request.url == tab.path
-                    ? 'tab active'
-                    : 'tab'
+                <span class="tab <%= request.url.match(tab.path)
+                    ? 'active' : 'inactive'
                 %>"><a href="/admin">administer</a></span>
             <% }) %>
         </div>
