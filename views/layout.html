@@ -15,23 +15,16 @@
 <a href="/"><img src="/img/stackvm.png" width="417" height="100"></a>
 </div>
 
-<div id="login">
-<% if (user) { %>
-    <form action='/logout' method='post'>
-        signed in as <%= user.name %>
-        <input type='submit' value='logout'>
-    </form>
-<% } else { %>
-    <form action='/' method='post'>
-        <input type='text' name='user'>
-        <input type='password' name='pass'>
-        <input type='submit' value='sign in'>
-    </form>
-<% } %>
+<div id="block">
+
+<div id="userbar">
+<%- views.userbar({ user : user, tabs : tabs, request : request }) %>
 </div>
 
 <div id="content">
 <%- body %>
+</div>
+
 </div>
 
 </body>

@@ -1,0 +1,19 @@
+<% if (user) { %>
+    <form action='/logout' method='post'>
+        signed in as <%= user.name %>
+        <input type='submit' value='logout'>
+        <div id="tabs">
+            <% tabs.forEach(function (tab) { %>
+                <span class="tab <%= request.url.match(tab.path)
+                    ? 'active' : 'inactive'
+                %>"><a href="/admin">administer</a></span>
+            <% }) %>
+        </div>
+    </form>
+<% } else { %>
+    <form action='/' method='post'>
+        <input type='text' name='user'>
+        <input type='password' name='pass'>
+        <input type='submit' value='sign in'>
+    </form>
+<% } %>

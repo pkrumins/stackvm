@@ -22,6 +22,7 @@
     "substack" : {
         "hash" : "dce1198b941cdda02f092c9702ee8d0a3efeb89aec50f95bfd31b778a2109cfcb0979fbbec6df4d27ff0da9bc9efb4806ab563bfd4e960ba5a5f2b2fe683e273",
         "contacts" : ["moo", "pkrumins", "ik"],
+        "admin" : true,
         "disks" : {
             "linux-0.2.img" : {
                 "name" : "simple linux",
