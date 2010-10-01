@@ -2,6 +2,13 @@
     <form action='/logout' method='post'>
         signed in as <%= user.name %>
         <input type='submit' value='logout'>
+        <div id="tabs">
+            <% if (user.admin) { %>
+                <span class="tab">
+                    <a href="/admin">administer</a>
+                </span>
+            <% } %>
+        </div>
     </form>
 <% } else { %>
     <form action='/' method='post'>
