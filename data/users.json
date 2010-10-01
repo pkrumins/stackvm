@@ -48,6 +48,7 @@
     },
     "pkrumins" : {
         "hash" : "119a7a63f6bda3c96eeff52cf0376b2a0199753aa2da144bf313aeeded199f708d8a108948aa06c3ff94e468e842de1e0c0f3498b994be1bb1711e2efb65a647",
+        "admin" : true,
         "disks" : {
             "linux-0.2.img" : {
                 "name" : "simple linux"
