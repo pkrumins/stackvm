@@ -3,11 +3,12 @@
         signed in as <%= user.name %>
         <input type='submit' value='logout'>
         <div id="tabs">
-            <% if (user.admin) { %>
-                <span class="tab">
-                    <a href="/admin">administer</a>
-                </span>
-            <% } %>
+            <% tabs.forEach(function (tab) { %>
+                <span class="<%= request.url == tab.path
+                    ? 'tab active'
+                    : 'tab'
+                %>"><a href="/admin">administer</a></span>
+            <% }) %>
         </div>
     </form>
 <% } else { %>
