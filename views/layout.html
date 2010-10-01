@@ -16,18 +16,7 @@
 </div>
 
 <div id="login">
-<% if (user) { %>
-    <form action='/logout' method='post'>
-        signed in as <%= user.name %>
-        <input type='submit' value='logout'>
-    </form>
-<% } else { %>
-    <form action='/' method='post'>
-        <input type='text' name='user'>
-        <input type='password' name='pass'>
-        <input type='submit' value='sign in'>
-    </form>
-<% } %>
+<%- views.login_bar({ user : user }) %>
 </div>
 
 <div id="content">
