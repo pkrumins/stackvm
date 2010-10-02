@@ -1,20 +1,39 @@
 {
+    "ycdemo" : {
+        "hash" : "",
+        "contacts" : [ "robit" ],
+        "disks" : {
+            "linux-0.2.img" : {
+                "name" : "simple linux",
+                "rules" : {}
+            }
+        }
+    },
+    "robit" : {
+        "hash" : "2cef66e485a1601325e91c252e2c3702659200a80a096229929dc9d2e1e93978a162f7a07863b0e78a0c2c7da421143ae41c9d72ea7e85a4cca9c7fb65d736ed",
+        "contacts" : [ "ycdemo" ],
+        "disks" : {
+            "linux-0.2.img" : {
+                "name" : "simple linux",
+                "rules" : { "moo" : { "spawn" : true } }
+            }
+        }
+    },
     "substack" : {
         "hash" : "dce1198b941cdda02f092c9702ee8d0a3efeb89aec50f95bfd31b778a2109cfcb0979fbbec6df4d27ff0da9bc9efb4806ab563bfd4e960ba5a5f2b2fe683e273",
         "contacts" : ["moo", "pkrumins", "ik"],
+        "admin" : true,
         "disks" : {
             "linux-0.2.img" : {
-                "name" : "simple linux @ qemu"
-            },
-            "linux-0.2.img-vmware" : {
-                "name" : "simple linux @ vmware",
-                "host" : "192.168.1.3:5902"
+                "name" : "simple linux",
+                "rules" : { "moo" : { "spawn" : true } }
             },
             "liveandroidv0.3.iso" : {
                 "name" : "android"
             },
             "ReactOS-LiveCD.iso" : {
-                "name" : "ReactOS"
+                "name" : "ReactOS",
+                "rules" : { "anonymous" : { "spawn" : true } }
             },
             "WinXP" : {
                 "name" : "Windows XP",

@@ -9,8 +9,6 @@ function FB (remote) {
     var encoder = remote.encoder;
     var size = remote.size;
     
-    encoder.on('end', function () { self.emit('end') });
-    
     var mouseCoords = null;
     
     var focus = false;
@@ -88,24 +86,28 @@ function FB (remote) {
     display.resize(size);
     self.element.append(display.element);
     
-    encoder.on('desktopSize', function (dims) {
-        size = dims;
-        self.emit('resize', dims);
-        self.element
-            .width(dims.width)
-            .height(dims.height)
-        ;
-        display.resize(dims);
+    encoder.subscribe(function (sub) {
+        sub.on('end', function () { self.emit('end') });
+        
+        sub.on('desktopSize', function (dims) {
+            size = dims;
+            self.emit('resize', dims);
+            self.element
+                .width(dims.width)
+                .height(dims.height)
+            ;
+            display.resize(dims);
+        });
+        
+        sub.on('screenUpdate', function (update) {
+            display.rawRect(update);
+        });
+        
+        sub.on('copyRect', function (rect) {
+            display.copyRect(rect);
+        });
     });
     
     encoder.requestRedraw();
-    
-    encoder.on('screenUpdate', function (update) {
-        display.rawRect(update);
-    });
-    
-    encoder.on('copyRect', function (rect) {
-        display.copyRect(rect);
-    });
 }
 

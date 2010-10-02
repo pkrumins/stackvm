@@ -1,10 +1,8 @@
 ChatWindow.prototype = new EventEmitter;
-function ChatWindow (params) {
+function ChatWindow (me, contact) {
     if (!(this instanceof ChatWindow)) return new ChatWindow();
     var self = this;
-    
-    var me = params.me;
-    self.contact = params.contact;
+    self.contact = contact;
     
     var body = $('<div>')
         .addClass('chat-body')
@@ -24,7 +22,9 @@ function ChatWindow (params) {
                                     .empty()
                                     .text('Sharing ' + proc.name + ' (r)')
                                 ;
-                                self.contact.share(proc.addr, 'r');
+                                var rule = {};
+                                rule[contact.name] = { input : false, view : true };
+                                contact.share('process', proc.address, rule);
                             })
                         ,
                         $('<a>')
@@ -34,7 +34,9 @@ function ChatWindow (params) {
                                     .empty()
                                     .text('Sharing ' + proc.name + ' (rw)')
                                 ;
-                                self.contact.share(proc.addr, 'rw');
+                                var rule = {};
+                                rule[contact.name] = { input : true, view : true };
+                                contact.share('process', proc.address, rule);
                             })
                     )
                 );
@@ -47,7 +49,7 @@ function ChatWindow (params) {
         .append(
             $('<div>')
                 .addClass('chat-title')
-                .text(self.contact.name)
+                .text(contact.name)
                 .append($('<div>')
                     .addClass('chat-x')
                     .text('[x]')
@@ -66,7 +68,7 @@ function ChatWindow (params) {
                     ev.preventDefault();
                     var msg = $(this.elements.msg).val();
                     self.addMessage(me, msg);
-                    self.contact.message(msg);
+                    contact.message(msg);
                     $(this.elements.msg).val('');
                 })
         )
@@ -84,23 +86,28 @@ function ChatWindow (params) {
     
     self.say = function (msg) {
         self.addMessage(me, msg);
-        self.contact.message(msg);
+        contact.message(msg);
     };
     
-    self.addResource = function (vm) {
-        body.append($('<p>')
-            .addClass('chat-resource')
-            .append(
-                vm.from.name + ' shares ',
-                $('<a>')
-                    .text(vm.name)
-                    .click(function () {
-                        self.emit('attach', vm);
-                    })
-                ,
-                ' [' + vm.mode +  ']'
-            )
-        );
+    self.addResource = function (contact, type, res) {
+        var elem = {
+            process : function () {
+                return $('<p>').append(
+                    contact.name + ' shares ',
+                    $('<a>')
+                        .text(res.filename)
+                        .click(function () {
+                            self.emit('attach', res);
+                        })
+                    ,
+                    ' [' + res.mode +  ']'
+                );
+            },
+            disk : function () {
+                return $('<p>').text('Sharing disks not yet implemented');
+            }
+        }[type]();
+        body.append(elem.addClass('chat-resource'));
     };
 }
 

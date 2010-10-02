@@ -1,6 +1,5 @@
 TitleBar.prototype = new EventEmitter;
 function TitleBar (proc) {
-    
     var self = this;
     
     var menu = $('<div>')
@@ -82,13 +81,13 @@ function TitleBar (proc) {
             ,
             $('<div>')
                 .addClass('title-text')
-                .text(proc.name)
+                .text(proc.filename)
                 .draggable({
                     appendTo : 'body',
                     scroll : false,
                     helper : function () {
                         return $('<div>')
-                            .text(proc.name)
+                            .text(proc.filename)
                             .addClass('title-text-drag')
                         ;
                     }

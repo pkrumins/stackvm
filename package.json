@@ -1,0 +1,24 @@
+{
+    "name" : "stackvm",
+    "version" : "0.0.4",
+    "descrption" : "Control virtual machines in a browser",
+    "repository" : {
+        "type" : "git",
+        "url" : "http://github.com/substack/stackvm.git"
+    },
+    "dependencies" : {
+        "dnode" : ">=0.2.13",
+        "traverse" : ">=0.2.0",
+        "glob" : ">=1.0.2",
+        "express" : ">=0.6.1",
+        "ejs" : ">=0.2.0",
+        "rfb" : ">=0.0.5",
+        "png" : ">=1.0.3",
+        "base64" : ">=1.0.1",
+        "video" : ">=1.0.2",
+        "supermarket" : ">=1.0.1",
+        "cart" : ">=1.0.6"
+    },
+    "engine" : ["node >=0.2.0"],
+    "bin" : { "stackvm" : "./server.js" }
+}

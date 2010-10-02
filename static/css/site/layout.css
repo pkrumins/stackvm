@@ -1,0 +1,101 @@
+body {
+    background-color: rgb(70,70,70);
+}
+
+#logo {
+    position: relative;
+    margin: auto;
+    width: 417px;
+    z-index: 2;
+}
+
+#block {
+    border-color: rgb(50,50,50);
+    border-style: solid;
+    border-width: 2px;
+    margin: auto;
+    width: 880px;
+    margin-bottom: 10px;
+    margin-top: -10px;
+}
+
+#userbar {
+    position: relative;
+    width: 800px;
+    height: 2em;
+    margin: auto;
+    background-color: rgb(230,70,70);
+    padding: 0.5em;
+    padding-left: 2em;
+    padding-right: 2em;
+    color: rgb(230,230,230);
+    
+    border-color: rgb(150,100,100);
+    border-style: solid;
+    border-width: 10px;
+    border-bottom-width: 0px;
+    
+    z-index: 1;
+    
+    font-weight: bold;
+}
+
+#tabs {
+    position: absolute;
+    right: 5px;
+    top: 0.9em;
+}
+
+#tabs .tab {
+    padding: 0.5em;
+    height: 1em;
+}
+
+#tabs .tab a {
+    text-decoration: none;
+}
+
+#tabs .active {
+    background-color: rgb(250,240,240);
+}
+
+#tabs .active a {
+    color: rgb(200,0,0);
+}
+
+#tabs .inactive {
+    background-color: rgb(245,100,100);
+}
+
+#tabs .inactive a {
+    color: rgb(250,240,240);
+}
+
+#content {
+    margin: auto;
+    width: 800px;
+    background-color: rgb(220,220,220);
+    padding: 2em;
+    border-color: rgb(100,100,100);
+    border-style: solid;
+    border-width: 10px;
+    border-top-width: 0px;
+}
+
+table#admin-users tr th {
+    width: 300px;
+    background-color: rgb(130,200,130);
+    color: rgb(255,240,240);
+    text-align: left;
+    padding: 0.5em;
+}
+
+table#admin-users tr td {
+    border-bottom-style: solid;
+    border-bottom-width: 1px;
+    border-bottom-color: rgb(100,100,100);
+}
+
+table#admin-users tr td.buttons {
+    width: 50px;
+}

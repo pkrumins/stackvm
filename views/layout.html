@@ -1,0 +1,31 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+    "http://www.w3.org/TR/html4/strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-US" xml:lang="en-US">
+<head>
+<title>StackVM</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="StyleSheet" href="/css/site/layout.css">
+<script src="/js/vendor/jquery.js" type="text/javascript"></script>
+<script src="/js/dnode.js" type="text/javascript"></script>
+<script src="/js/site.js" type="text/javascript"></script>
+</head>
+<body>
+
+<div id="logo">
+<a href="/"><img src="/img/stackvm.png" width="417" height="100"></a>
+</div>
+
+<div id="block">
+
+<div id="userbar">
+<%- views.userbar({ user : user, tabs : tabs, request : request }) %>
+</div>
+
+<div id="content">
+<%- body %>
+</div>
+
+</div>
+
+</body>
+</html>

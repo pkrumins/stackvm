@@ -1,0 +1,43 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+    "http://www.w3.org/TR/html4/strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-US" xml:lang="en-US">
+<head>
+<title>stackVM</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<% stylesheets.forEach(function (href) { %>
+    <link rel="StyleSheet" href="<%= href %>" type="text/css">
+<% }) %>
+<script src="/js/dnode.js" type="text/javascript"></script>
+<% scripts.forEach(function (src) { %>
+    <script src="<%= src %>" type="text/javascript"></script>
+<% }) %>
+
+<script type="text/javascript">
+    $(window).load(function () {
+        Session(function (err, ui) {
+            if (ui) {
+                ui.element.appendTo('#backdrop');
+            }
+            else {
+                $('.sign-in-failed').remove();
+                $('<div>')
+                    .addClass('sign-in-failed')
+                    .text('Sign-in failed: ' + err)
+                    .fadeIn(400, function () {
+                        var elem = $(this);
+                        setTimeout(function () {
+                            elem.fadeOut(2000);
+                        }, 5000);
+                    })
+                    .appendTo('#backdrop')
+                ;
+            }
+        });
+    });
+</script>
+</head>
+<body>
+    <div id="backdrop"></div>
+</body>
+</html>
