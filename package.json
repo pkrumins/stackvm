@@ -16,8 +16,8 @@
         "png" : ">=1.0.3",
         "base64" : ">=1.0.1",
         "video" : ">=1.0.2",
-        "supermarket" : ">=1.0.2",
-        "cart" : ">=1.0.8"
+        "supermarket" : ">=1.0.9",
+        "cart" : ">=1.0.2"
     },
     "engine" : ["node >=0.2.0"],
     "bin" : { "stackvm" : "./server.js" }
