@@ -1,17 +1,31 @@
 #!/usr/bin/env node
+var fs = require('fs');
+var sys = require('sys');
+var setup = require('../lib/models/setup');
 
-var argv = require('optimist').argv;
-var spawn = require('child_process').spawn;
+var argv = require('optimist')
+    .usage(fs.readFileSync(__dirname + '/../doc/cli.txt', 'utf8'))
+    .check(function (args) { if (args._.length == 0) throw '' })
+    .argv;
 
-// not sure how to proceed
+var cmd = argv._.shift();
+var action = {
+    deploy : function () {
+        if (argv._.length == 0) {
+            throw 'Usage: deploy [directory] {options}'
+        }
+        setup.deploy(argv._[0]);
+    }
+}[cmd];
 
-
-function hasQemu (cb) {
-    var which = spawn('which', ['qemu']);
-    which.on('exit', function (code) {
-        cb(code==0);
-    });
+if (action === undefined) {
+    console.error('Undefined command ' + sys.inspect(cmd));
 }
-
-exports.hasQemu = hasQemu;
-
+else {
+    try {
+        action();
+    }
+    catch (err) {
+        console.error(err);
+    }
+}
