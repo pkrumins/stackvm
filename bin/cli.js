@@ -14,7 +14,9 @@ var action = {
         if (argv._.length == 0) {
             throw 'Usage: deploy [directory] {options}'
         }
-        setup.deploy(argv._[0]);
+        setup.deploy(argv._[0], argv, function (err) {
+            if (err) console.error('Error: ' + err);
+        });
     }
 }[cmd];
 
