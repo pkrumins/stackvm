@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 var fs = require('fs');
 var sys = require('sys');
-var deploy = require('../lib/setup/deploy');
+var Deployer = require('../lib/setup/deploy');
 var Hash = require('traverse/hash');
 
 var argv = require('optimist')
@@ -25,7 +25,7 @@ var action = {
         }
         
         sys.print('Deploying StackVM to ' + argv._[1] + '...    ');
-        deploy(Hash.merge(argv, {
+        Deployer.deploy(Hash.merge(argv, {
             name : argv._[0],
             base : argv._[1],
             done : function (err) {
@@ -38,6 +38,22 @@ var action = {
                 else console.log('ok');
             },
         }));
+    },
+    undeploy : function () {
+        if (argv._.length == 0) {
+            throw 'Usage: undeploy [name] {options}';
+        }
+        
+        sys.print('Undeploying StackVM at ' + argv._[0] + '...    ');
+        Deployer.undeploy(argv._[0], function (err) {
+            if (err) {
+                console.log('failed');
+                console.error('\n    !!! '
+                    + (err.stack ? err.stack : err) + '\n'
+                );
+            }
+            else console.log('ok');
+        });
     },
     start : function () {
         var name = argv._.length ? argv._[0] : 'main';
