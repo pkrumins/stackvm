@@ -6,11 +6,11 @@ var Hash = require('traverse/hash');
 var Cart = require('cart');
 var fs = require('fs');
 
-var User = require('./lib/models/user');
-var Web = require('./lib/web');
-var Service = require('./lib/service');
+var User = require('../lib/models/user');
+var Web = require('../lib/web');
+var Service = require('../lib/service');
 
-var argv = require('argv').argv;
+var argv = require('optimist').argv;
 var port = parseInt(argv._[0], 10) || 9000;
 
 var app = express.createServer();
