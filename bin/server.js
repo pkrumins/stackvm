@@ -10,14 +10,15 @@ var User = require('./lib/models/user');
 var Web = require('./lib/web');
 var Service = require('./lib/service');
 
-var port = Number(process.argv[2]) || 9000;
+var argv = require('argv').argv;
+var port = parseInt(argv._[0], 10) || 9000;
 
 var app = express.createServer();
-app.use(express.staticProvider(__dirname + '/static'));
+app.use(express.staticProvider(__dirname + '/../static'));
 app.use(express.cookieDecoder());
 app.use(express.bodyDecoder());
 app.use(express.session({
-    store : new Cart({ dbFile : __dirname + '/data/sessions.db' }),
+    store : new Cart({ dbFile : __dirname + '/../data/sessions.db' }),
     secret : 'todo: set this in the stackvm site config with cli.js'
 }));
 
@@ -35,7 +36,7 @@ app.configure('production', function () {
 app.get('/js/dnode.js', require('dnode/web').route());
 
 var users = User.fromHashes(
-    JSON.parse(fs.readFileSync(__dirname + '/data/users.json'))
+    JSON.parse(fs.readFileSync(__dirname + '/../data/users.json'))
 );
 
 Web(app, users);
