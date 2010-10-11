@@ -1,9 +1,10 @@
 #!/usr/bin/env node
 var fs = require('fs');
 var sys = require('sys');
-var spawn = require('child_process').spawn;
-var Deployer = require('../lib/setup/deploy');
 var Hash = require('traverse/hash');
+
+var Deployer = require('../lib/setup/deploy');
+var Starter = require('../lib/setup/starter');
 
 var argv = require('optimist')
     .usage(fs.readFileSync(__dirname + '/../doc/cli.txt', 'utf8'))
@@ -45,12 +46,7 @@ var action = {
     start : function () {
         var name = argv._.length ? argv._[0] : 'main';
         runAction('Starting StackVM:' + name, function (cb) {
-            Config(function (err, config) {
-                if (err) { cb(err); return }
-                var dir = config.local[name];
-                console.log(' *** dir = ' + dir);
-                cb(null);
-            });
+            Starter.start(name, cb)
         });
     },
     stop : function () {
