@@ -1,6 +1,6 @@
 {
     "name" : "stackvm",
-    "version" : "0.0.4",
+    "version" : "0.0.5",
     "descrption" : "Control virtual machines in a browser",
     "repository" : {
         "type" : "git",
@@ -16,9 +16,10 @@
         "png" : ">=1.0.3",
         "base64" : ">=1.0.1",
         "video" : ">=1.0.2",
-        "supermarket" : ">=1.0.9",
-        "cart" : ">=1.0.2"
+        "supermarket" : ">=1.0.1",
+        "cart" : ">=1.0.6",
+        "step" : ">=0.0.3"
     },
-    "engine" : ["node >=0.2.0"],
-    "bin" : { "stackvm" : "./server.js" }
+    "engine" : [ "node >=0.2.0" ],
+    "bin" : { "stackvm" : "./bin/cli.js" }
 }
