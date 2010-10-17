@@ -78,6 +78,7 @@ function SideBar (params) {
     self.addDisk = function (disk) {
         var engineLinks = $('<span>');
         engines.forEach(function (engine) {
+            if (engine == 'vmware') return;
             engineLinks.append($('<a>')
                 .text(engine)
                 .click(function () { disk.spawn(engine) })
