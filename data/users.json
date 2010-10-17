@@ -1,3 +1,4 @@
+
 {
     "ycdemo" : {
         "hash" : "",
@@ -6,6 +7,14 @@
             "linux-0.2.img" : {
                 "name" : "simple linux",
                 "rules" : {}
+            },
+            "dsl-4.4.10.iso" : {
+                "name" : "damn small linux",
+                "rules" : {}
+            },
+            "ReactOS-LiveCD.iso" : {
+                "name" : "reactos",
+                "rules": {}
             }
         }
     },
@@ -27,9 +36,6 @@
             "linux-0.2.img" : {
                 "name" : "simple linux",
                 "rules" : { "moo" : { "spawn" : true } }
-            },
-            "liveandroidv0.3.iso" : {
-                "name" : "android"
             },
             "ReactOS-LiveCD.iso" : {
                 "name" : "ReactOS",
