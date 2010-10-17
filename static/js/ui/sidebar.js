@@ -23,7 +23,8 @@ function SideBar (params) {
                 .click(function () {
                     menu.push('disk images', elements.disks);
                 })
-        ),
+        )
+        /*
         $('<p>').append(
             $('<a>').text('screenshots')
                 .click(function () {
@@ -36,6 +37,7 @@ function SideBar (params) {
                     menu.push('screencasts', elements.screencasts)
                 })
         )
+        */
     ));
     
     self.element = $('<div>').addClass('sidebar').append(
