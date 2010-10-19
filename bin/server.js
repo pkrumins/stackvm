@@ -44,7 +44,7 @@ Web(app, users);
 Service(users, function (service) {
     DNode(service)
         .listen(app, {
-            ping : 1000,
+            ping : 3600*1000,
             timeout : 1000,
             transports : 'websocket xhr-multipart xhr-polling htmlfile'
                 .split(/\s+/),

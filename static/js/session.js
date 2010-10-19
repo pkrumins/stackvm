@@ -1,6 +1,6 @@
 function Session (cb) {
     DNode().connect(
-        { ping : 2000, timeout : 100 },
+        { ping : 3600*1000, timeout : 100 },
         function (remote, conn) {
             remote.session(function (err, account) {
                 if (err) cb(err);
